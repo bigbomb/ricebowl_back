@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.ProcessOrderMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.ProcessOrder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberId" />
+     <result column="contractNo" jdbcType="VARCHAR" property="contractno" />
+    <result column="customerName" jdbcType="VARCHAR" property="customerName" />
+    <result column="processNo" jdbcType="VARCHAR" property="processno" />
+    <result column="processType" jdbcType="VARCHAR" property="processtype" />
+    <result column="warehouseName" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="warehouseId" jdbcType="VARCHAR" property="warehouseId" />
+    <result column="processFee" jdbcType="DECIMAL" property="processfee" />
+    <result column="processWeight" jdbcType="DECIMAL" property="processweight" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from process_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <select id="findByPage" resultType="com.shiro.steel.pojo.vo.ProcessOrderVo">
+		SELECT
+		id,memberId,contractNo, customerName, processNo,processType,warehouseName,warehouseId,
+		processFee,processWeight,remark,crt,upt,createBy
+		FROM
+		process_order
+		WHERE 1=1
+		<if test="''!= dto.keyword and dto.keyword!=null">
+        AND customerName LIKE CONCAT('%',#{dto.keyword},'%')
+		</if>
+		<if test="''!= memberId and memberId!=null">
+        AND memberId =#{memberId}
+		</if>
+		<if test="startTime != null and startTime != ''">
+		 AND  DATE_FORMAT(crt,'%Y-%m-%d') <![CDATA[>=]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
+ 		</if>
+	 	<if test="endTime != null and endTime != ''">
+		 AND  DATE_FORMAT(crt,'%Y-%m-%d')  <![CDATA[<=]]> DATE_FORMAT(#{endTime},'%Y-%m-%d ')
+	 	</if>
+		<if test="''!= createby and createby!=null">
+        AND createBy =#{createby}
+		</if>
+		order by crt desc
+	</select>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.ProductmarkMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.Productmark">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="markName" jdbcType="VARCHAR" property="markname" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+    <result column="createBy" jdbcType="VARCHAR" property="createby" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from productmark
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.Productmark">
+    update productmark
+    set markName = #{markname,jdbcType=VARCHAR},
+      memberId = #{memberid,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP},
+      createBy = #{createby,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, markName, memberId, crt, upt, createBy
+    from productmark
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, markName, memberId, crt, upt, createBy
+    from productmark
+  </select>
+</mapper>

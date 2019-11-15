@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.PurchaseContractDetailMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.PurchaseContractDetail">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="purchaseNo" jdbcType="VARCHAR" property="purchaseno" />
+    <result column="productName" jdbcType="VARCHAR" property="productname" />
+    <result column="productSpec" jdbcType="VARCHAR" property="productspec" />
+    <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
+    <result column="productMark" jdbcType="VARCHAR" property="productmark" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="total" jdbcType="DECIMAL" property="total" />
+    <result column="stockOutType" jdbcType="VARCHAR" property="stockouttype" />
+    <result column="quality" jdbcType="VARCHAR" property="quality" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from purchase_contract_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.PurchaseContractDetail">
+    update purchase_contract_detail
+    set purchaseNo = #{purchaseno,jdbcType=VARCHAR},
+      productName = #{productname,jdbcType=VARCHAR},
+      productSpec = #{productspec,jdbcType=VARCHAR},
+      productFactory = #{productfactory,jdbcType=VARCHAR},
+      productMark = #{productmark,jdbcType=VARCHAR},
+      num = #{num,jdbcType=INTEGER},
+      weight = #{weight,jdbcType=DECIMAL},
+      price = #{price,jdbcType=DECIMAL},
+      unit = #{unit,jdbcType=VARCHAR},
+      total = #{total,jdbcType=DECIMAL},
+      stockOutType = #{stockouttype,jdbcType=VARCHAR},
+      quality = #{quality,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByDetail" parameterType="com.shiro.steel.entity.PurchaseContractDetail">
+    update purchase_contract_detail
+    set status = #{status,jdbcType=VARCHAR}
+    where purchaseNo = #{purchaseno,jdbcType=VARCHAR}
+  </update>
+  
+  
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, purchaseNo, productName, productSpec, productFactory, productMark, num, 
+    weight, price, unit, total, stockOutType, quality, remark, crt, upt
+    from purchase_contract_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, purchaseNo, productName, productSpec, productFactory, productMark, num, 
+    weight, price, unit, total, stockOutType, quality, remark, crt, upt
+    from purchase_contract_detail
+  </select>
+  
+    <delete id = "deleteBatchNos" parameterType = "java.util.List">    
+        <![CDATA[    
+           delete from purchase_contract_detail where purchaseNo in    
+        ]]>    
+        <foreach collection="list" item = "items" open="(" separator="," close=")">
+        #{items}    
+        
+        </foreach>    
+    </delete> 
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.CustomerInfoMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.CustomerInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="companyName" jdbcType="VARCHAR" property="companyname" />
+    <result column="companyAddress" jdbcType="VARCHAR" property="companyaddress" />
+    <result column="companyPhone" jdbcType="VARCHAR" property="companyphone" />
+    <result column="fax" jdbcType="VARCHAR" property="fax" />
+    <result column="bankName" jdbcType="VARCHAR" property="bankname" />
+    <result column="bankAccount" jdbcType="VARCHAR" property="bankaccount" />
+    <result column="taxNumber" jdbcType="VARCHAR" property="taxnumber" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="wxopenid" jdbcType="VARCHAR" property="wxopenid" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+   <select id="findByPage" resultType="com.shiro.steel.pojo.dto.CustomerInfoDto">
+    select id, companyName, companyPhone,companyAddress, fax, bankName, bankAccount, taxNumber, memberId,status,crt,upt
+    from customer_info
+    where 1=1
+    <if test="''!= dto.keyword">
+        AND companyName LIKE CONCAT('%',#{dto.keyword},'%')
+    </if>
+    <if test="''!= memberId and memberId !=null">
+        AND memberId =#{memberId}
+    </if>
+    <if test="''!= createby and createby !=null">
+        AND createBy =#{createby}
+    </if>
+  </select>
+  <insert id="getIdAfterInsert" parameterType="com.shiro.steel.entity.CustomerInfo">
+  insert into customer_info(companyName,memberId,crt) values(#{companyname},#{memberid},#{crt})
+  <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+       select LAST_INSERT_ID()
+   </selectKey>
+  </insert>
+  
+
+</mapper>

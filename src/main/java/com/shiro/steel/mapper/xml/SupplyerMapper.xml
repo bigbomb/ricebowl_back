@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.SupplyerMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.Supplyer">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="supplyerName" jdbcType="VARCHAR" property="supplyername" />
+    <result column="supplyerPhone" jdbcType="VARCHAR" property="supplyerphone" />
+    <result column="supplyerAddress" jdbcType="VARCHAR" property="supplyeraddress" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from supplyer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.Supplyer">
+    update supplyer
+    set supplyerName = #{supplyername,jdbcType=VARCHAR},
+      supplyerPhone = #{supplyerphone,jdbcType=VARCHAR},
+      supplyerAddress = #{supplyeraddress,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      memberId = #{memberid,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, supplyerName, supplyerPhone, supplyerAddress, status, memberId, crt, upt
+    from supplyer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, supplyerName, supplyerPhone, supplyerAddress, status, memberId, crt, upt
+    from supplyer
+  </select>
+</mapper>

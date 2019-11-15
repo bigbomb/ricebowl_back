@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.DeliveryOrderMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.DeliveryOrder">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="contractNo" jdbcType="VARCHAR" property="contractno" />
+    <result column="deliveryNo" jdbcType="VARCHAR" property="deliveryno" />
+    <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="startTime" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="customerName" jdbcType="VARCHAR" property="customername" />
+    <result column="warehouseId" jdbcType="VARCHAR" property="warehouseid" />
+    <result column="warehouseName" jdbcType="VARCHAR" property="warehousename" />
+    <result column="warehouseAddress" jdbcType="VARCHAR" property="warehouseaddress" />
+    <result column="warehousePhone" jdbcType="VARCHAR" property="warehousephone" />
+    <result column="warehouseFax" jdbcType="VARCHAR" property="warehousefax" />
+    <result column="vehicleNumber" jdbcType="VARCHAR" property="vehiclenumber" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="deliveryMethod" jdbcType="VARCHAR" property="deliverymethod" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  <select id="findByPage" resultType="com.shiro.steel.pojo.vo.DeliveryOrderVo">
+		SELECT
+		id,memberId,deliveryNo,contractNo, weight,finalWeight,startTime, endTime,customerName,warehouseName,warehouseAddress,warehousePhone,warehouseFax,vehicleNumber,
+		deliveryMethod,remark,crt,upt,createBy,overtimefee,isItemRight
+		FROM
+		delivery_order
+		WHERE 1=1
+		<if test="''!= dto.keyword and dto.keyword!=null">
+        AND customerName LIKE CONCAT('%',#{dto.keyword},'%')
+		</if>
+		<if test="''!= memberId and memberId!=null">
+        AND memberId =#{memberId}
+		</if>
+		<if test="''!= createby and createby!=null">
+        AND createBy =#{createby}
+		</if>
+		<if test="startTime != null and startTime != ''">
+		 AND  DATE_FORMAT(crt,'%Y-%m-%d') <![CDATA[>=]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
+ 		</if>
+	 	<if test="endTime != null and endTime != ''">
+		 AND  DATE_FORMAT(crt,'%Y-%m-%d')  <![CDATA[<=]]> DATE_FORMAT(#{endTime},'%Y-%m-%d ')
+	 	</if>
+		order by crt desc
+	</select>
+</mapper>

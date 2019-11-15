@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.ProcessTemplateMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.ProcessTemplate">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="warehouseId" jdbcType="VARCHAR" property="warehouseid" />
+    <result column="warehouseName" jdbcType="VARCHAR" property="warehousename" />
+    <result column="processFee" jdbcType="VARCHAR" property="processfee" />
+    <result column="processType" jdbcType="VARCHAR" property="processtype" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="createBy" jdbcType="VARCHAR" property="createby" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="templateName" jdbcType="VARCHAR" property="templatename" />
+    <result column="customerId" jdbcType="VARCHAR" property="customerid" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from process_template
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.shiro.steel.entity.ProcessTemplate">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into process_template (memberId, warehouseId, warehouseName, 
+      processFee, processType, remark, 
+      createBy, crt, templateName,customerId
+      )
+    values (#{memberid,jdbcType=VARCHAR}, #{warehouseid,jdbcType=VARCHAR}, #{warehousename,jdbcType=VARCHAR}, 
+      #{processfee,jdbcType=VARCHAR}, #{processtype,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{createby,jdbcType=VARCHAR}, #{crt,jdbcType=TIMESTAMP}, #{templatename,jdbcType=VARCHAR}, #{customerid,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.ProcessTemplate">
+    update process_template
+    set memberId = #{memberid,jdbcType=VARCHAR},
+      warehouseId = #{warehouseid,jdbcType=VARCHAR},
+      warehouseName = #{warehousename,jdbcType=VARCHAR},
+      processFee = #{processfee,jdbcType=VARCHAR},
+      processType = #{processtype,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      createBy = #{createby,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      templateName = #{templatename,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, memberId, warehouseId, warehouseName, processFee, processType, remark, 
+    createBy, crt, templateName
+    from process_template
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, memberId, warehouseId, warehouseName, processFee, processType, remark, 
+    createBy, crt, templateName
+    from process_template
+  </select>
+</mapper>

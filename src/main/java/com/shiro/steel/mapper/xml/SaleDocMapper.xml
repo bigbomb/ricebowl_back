@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.SaleDocMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.SaleDoc">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="companyName" jdbcType="VARCHAR" property="companyname" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+    <result column="priceContent" jdbcType="LONGVARCHAR" property="pricecontent" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sale_doc
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.SaleDoc">
+    update sale_doc
+    set memberId = #{memberid,jdbcType=VARCHAR},
+      companyName = #{companyname,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP},
+      priceContent = #{pricecontent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, memberId, companyName, crt, upt, priceContent
+    from sale_doc
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, memberId, companyName, crt, upt, priceContent
+    from sale_doc
+  </select>
+</mapper>

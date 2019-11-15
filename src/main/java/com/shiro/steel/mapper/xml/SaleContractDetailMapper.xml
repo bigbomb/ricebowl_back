@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.SaleContractDetailMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.SaleContractDetail">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="contractNo" jdbcType="VARCHAR" property="contractno" />
+    <result column="productName" jdbcType="VARCHAR" property="productname" />
+    <result column="productSpec" jdbcType="VARCHAR" property="productspec" />
+    <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
+    <result column="productMark" jdbcType="VARCHAR" property="productmark" />
+    <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="total" jdbcType="DECIMAL" property="total" />
+    <result column="stockOutType" jdbcType="VARCHAR" property="stockouttype" />
+    <result column="warehouseName" jdbcType="VARCHAR" property="warehousename" />
+    <result column="quality" jdbcType="VARCHAR" property="quality" />
+    <result column="processStatus" jdbcType="VARCHAR" property="processstatus" />
+    <result column="deliveryStatus" jdbcType="VARCHAR" property="deliverystatus" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+   <delete id="deleteByMap" parameterType="java.util.Map">
+     delete from sale_contract_detail
+    where contractNo = #{cm.contractNo,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sale_contract_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.SaleContractDetail">
+    update sale_contract_detail
+    set contractNo = #{contractno,jdbcType=VARCHAR},
+      productName = #{productname,jdbcType=VARCHAR},
+      productSpec = #{productspec,jdbcType=VARCHAR},
+      productFactory = #{productfactory,jdbcType=VARCHAR},
+      productMark = #{productmark,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=DECIMAL},
+      price = #{price,jdbcType=DECIMAL},
+      total = #{total,jdbcType=DECIMAL},
+      stockOutType = #{stockouttype,jdbcType=VARCHAR},
+      warehouseName = #{warehousename,jdbcType=VARCHAR},
+      processStatus = #{processstatus,jdbcType=VARCHAR},
+      deliveryStatus = #{deliverystatus,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  
+    <update id="updateByContractno" parameterType="com.shiro.steel.entity.SaleContractDetail">
+    update sale_contract_detail
+    set status ='已审核',
+      upt = #{upt,jdbcType=TIMESTAMP}
+    where contractNo = #{contractno,jdbcType=VARCHAR}
+  </update>
+  
+  
+  
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, contractNo, productName, productSpec, productFactory, productMark, weight, 
+    price, total, stockOutType, status, crt, upt
+    from sale_contract_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, contractNo, productName, productSpec, productFactory, productMark, weight, 
+    price, total, stockOutType, status, crt, upt
+    from sale_contract_detail
+  </select>
+  
+  <select id="findSaleContractDetailByPage" resultType="com.shiro.steel.pojo.dto.SaleContractDetailDto">
+		select id,stockid, contractNo, productName, productSpec, productFactory, productMark, weight, actualWeight,finalWeight,num,
+    price, unit,total,stockOutFee,shortTransportFee, stockOutType,warehouseName,quality, processStatus,deliveryStatus,transportStatus,remark, status,crt, upt
+    from sale_contract_detail
+		WHERE 1=1
+		<if test="''!= dto.keyword">
+        AND contractNo = #{dto.keyword}
+		</if>
+	</select>
+	
+  <delete id = "deleteBatchNos" parameterType = "java.util.List">    
+        <![CDATA[    
+           delete from sale_contract_detail where contractNo in    
+        ]]>    
+        <foreach collection="list" item = "items" open="(" separator="," close=")">
+        #{items}    
+        
+        </foreach>    
+    </delete> 
+    
+    <update id = "batchProcessUpdate" parameterType = "java.util.List">    
+        <![CDATA[    
+           update sale_contract_detail set processStatus = null where contractNo in    
+        ]]>    
+        <foreach collection="list" item = "items" open="(" separator="," close=")">
+        #{items}    
+        
+        </foreach>   
+        and id in 
+         <foreach collection="sdlist" item = "sditems" open="(" separator="," close=")">
+        #{sditems}    
+        
+        </foreach>  
+    </update> 
+    
+     <update id = "batchDeliveryOrderUpdate" parameterType = "java.util.List">    
+        <![CDATA[    
+           update sale_contract_detail set deliveryStatus = null where contractNo in    
+        ]]>    
+        <foreach collection="list" item = "items" open="(" separator="," close=")">
+        #{items}    
+        
+        </foreach>
+        and id in 
+         <foreach collection="sdlist" item = "sditems" open="(" separator="," close=")">
+        #{sditems}    
+        
+        </foreach>    
+    </update> 
+    <update id = "batchTransportOrderUpdate" parameterType = "java.util.List">    
+        <![CDATA[    
+           update sale_contract_detail set transportStatus = null where contractNo in    
+        ]]>    
+        <foreach collection="list" item = "items" open="(" separator="," close=")">
+        #{items}    
+        
+        </foreach>
+        and id in 
+         <foreach collection="sdlist" item = "sditems" open="(" separator="," close=")">
+        #{sditems}    
+        
+        </foreach>    
+    </update> 
+</mapper>

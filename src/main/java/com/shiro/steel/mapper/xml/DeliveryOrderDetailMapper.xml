@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.DeliveryOrderDetailMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.DeliveryOrderDetail">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="deliveryNo" jdbcType="VARCHAR" property="deliveryno" />
+    <result column="saleDetailId" jdbcType="VARCHAR" property="saledetailid" />
+    <result column="productName" jdbcType="VARCHAR" property="productname" />
+    <result column="productSpec" jdbcType="VARCHAR" property="productspec" />
+    <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
+    <result column="productMark" jdbcType="VARCHAR" property="productmark" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="actualWeight" jdbcType="DECIMAL" property="actualweight" />
+    <result column="finalWeight" jdbcType="DECIMAL" property="finalweight" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="processStatus" jdbcType="VARCHAR" property="processstatus" />
+    <result column="deliveryStatus" jdbcType="VARCHAR" property="deliverystatus" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+<delete id = "deleteBatchDeliveryOrderNos" parameterType = "java.util.List">    
+        <![CDATA[    
+           delete from delivery_order_detail where deliveryNo in    
+        ]]>    
+        <foreach collection="list" item = "items" open="(" separator="," close=")">
+        #{items}    
+        
+        </foreach>    
+    </delete> 
+    
+     <select id="findDetailByPageList" resultType="com.shiro.steel.pojo.vo.DeliveryOrderDetailVo">
+		SELECT
+		id,deliveryNo,productName, productSpec,productFactory, productMark,num,actualWeight,finalWeight,unit,remark
+		FROM
+		delivery_order_detail
+		WHERE 1=1
+		<if test="''!= deliveryNo and deliveryNo!=null">
+        AND deliveryNo =#{deliveryNo}
+		</if>
+		order by crt asc
+	</select>
+</mapper>

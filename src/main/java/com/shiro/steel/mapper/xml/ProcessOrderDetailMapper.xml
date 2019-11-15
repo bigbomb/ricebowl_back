@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.ProcessOrderDetailMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.ProcessOrderDetail">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="processNo" jdbcType="VARCHAR" property="processno" />
+    <result column="productName" jdbcType="VARCHAR" property="productname" />
+    <result column="productSpec" jdbcType="VARCHAR" property="productspec" />
+    <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
+    <result column="productMark" jdbcType="VARCHAR" property="productmark" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from process_order_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+ <delete id = "deleteBatchProcessNos" parameterType = "java.util.List">    
+        <![CDATA[    
+           delete from process_order_detail where processNo in    
+        ]]>    
+        <foreach collection="list" item = "items" open="(" separator="," close=")">
+        #{items}    
+        
+        </foreach>    
+    </delete> 
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.SysNoticeMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.SysNotice">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberId" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sys_notice
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+ <select id="findSysNoticeByPage" resultMap="BaseResultMap">
+	SELECT
+		sn.id,
+		sn.title,
+		sn.content,
+		sn.memberId,
+		sn.crt,
+		sn.upt
+	FROM
+		sys_notice AS sn
+		where sn.memberId = #{memberId,jdbcType=VARCHAR}
+    order by sn.crt desc
+	</select>
+ <select id="findNoticeByPage" resultMap="BaseResultMap">
+	SELECT
+		sn.id,
+		sn.title,
+		sn.content,
+		sn.memberId,
+		sn.crt,
+		sn.upt
+	FROM
+		sys_notice AS sn
+		WHERE (1=1)
+		<if test="''!=dto.keyword">
+			AND sn.title LIKE CONCAT('%',#{dto.keyword},'%')
+		</if>
+	</select>
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.SysNotice">
+    update sys_notice
+    set title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, title, content, crt, upt
+    from sys_notice
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, title, content, crt, upt
+    from sys_notice
+  </select>
+</mapper>

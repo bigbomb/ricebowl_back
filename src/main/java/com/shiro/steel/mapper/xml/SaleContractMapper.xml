@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.SaleContractMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.SaleContract">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="customerId" jdbcType="VARCHAR" property="customerid" />
+    <result column="customerName" jdbcType="VARCHAR" property="customername" />
+    <result column="contractNo" jdbcType="VARCHAR" property="contractno" />
+    <result column="contractAddress" jdbcType="VARCHAR" property="contractaddress" />
+    <result column="contractDate" jdbcType="TIMESTAMP" property="contractdate" />
+    <result column="deliveryDate" jdbcType="TIMESTAMP" property="deliverydate" />
+    <result column="contractWeight" jdbcType="DECIMAL" property="contractweight" />
+    <result column="contractAmount" jdbcType="DECIMAL" property="contractamount" />
+    <result column="actualWeight" jdbcType="DECIMAL" property="actualweight" />
+    <result column="actualAmount" jdbcType="DECIMAL" property="actualamount" />
+    <result column="payment" jdbcType="VARCHAR" property="payment" />
+    <result column="percent" jdbcType="VARCHAR" property="percent" />
+    <result column="depositDate" jdbcType="TIMESTAMP" property="depositdate" />
+    <result column="settlement" jdbcType="VARCHAR" property="settlement" />
+    <result column="transportType" jdbcType="VARCHAR" property="transporttype" />
+    <result column="contractType" jdbcType="VARCHAR" property="contracttype" />
+    <result column="contractStatus" jdbcType="VARCHAR" property="contractstatus" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sale_contract
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.SaleContract">
+    update sale_contract
+    set memberId = #{memberid,jdbcType=VARCHAR},
+      customerId = #{customerid,jdbcType=VARCHAR},
+      customerName = #{customername,jdbcType=VARCHAR},
+      contractAddress =  #{contractaddress,jdbcType=VARCHAR},
+      deliveryDate = #{deliverydate,jdbcType=TIMESTAMP},
+      contractWeight = #{contractweight,jdbcType=DECIMAL},
+      contractAmount = #{contractamount,jdbcType=DECIMAL},
+      actualWeight = #{actualweight,jdbcType=DECIMAL},
+      actualAmount = #{actualamount,jdbcType=DECIMAL},
+      payment = #{payment,jdbcType=VARCHAR},
+      percent = #{percent,jdbcType=VARCHAR},
+      depositdate = #{depositdate,jdbcType=TIMESTAMP},
+      settlement = #{settlement,jdbcType=VARCHAR},
+      transportType = #{transporttype,jdbcType=VARCHAR},
+      contractType = #{contracttype,jdbcType=VARCHAR},
+      upt = #{upt,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, memberId, customerId, customerName, contractNo, contractDate, deliveryDate, 
+    contractWeight, contractAmount, actualWeight, actualAmount, payment, settlement, 
+    transportType, contractType, contractStatus, crt, upt,remark
+    from sale_contract
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, memberId, customerId, customerName, contractNo, contractDate, deliveryDate, 
+    contractWeight, contractAmount, actualWeight, actualAmount, payment, settlement, 
+    transportType, contractType, contractStatus, crt, upt,remark
+    from sale_contract
+  </select>
+  
+  
+  <select id="findSaleContractByPage" resultType="com.shiro.steel.pojo.dto.SaleContractDto">
+		SELECT
+		id,memberId, customerId, customerName, 
+      contractNo, contractAddress,contractDate,deliveryDate,
+      contractWeight, contractAmount, actualWeight, 
+      actualAmount, payment, settlement, percent,depositDate,
+      transportType, contractType, contractStatus, 
+      crt, upt,remark
+		FROM
+		sale_contract
+		WHERE 1=1
+		<if test="''!= dto.keyword and dto.keyword!=null">
+        AND customerName LIKE CONCAT('%',#{dto.keyword},'%')
+		</if>
+		<if test="''!= dto.id and dto.id!=null">
+        AND customerId =#{dto.id}
+		</if>
+		<if test="''!=searchDate and searchDate!=null">
+       <![CDATA[ AND TO_DAYS(NOW()) - TO_DAYS(contractDate) < #{searchDate} ]]>
+		</if>
+		
+		order by crt desc
+	</select>
+	
+	<select id="findSaleContractByStatusPage" resultType="com.shiro.steel.pojo.dto.SaleContractDto">
+		SELECT
+		id,memberId, customerId, customerName, 
+      contractNo, contractAddress,contractDate,deliveryDate,
+      contractWeight, contractAmount, actualWeight, 
+      actualAmount, payment, settlement, percent,depositDate,
+      transportType, contractType, contractStatus, invoiceStatus,
+      createBy,verifyBy,crt, upt,remark
+		FROM
+		sale_contract
+		WHERE 1=1
+		<if test="''!= dto.keyword and dto.keyword!=null">
+        AND customerName LIKE CONCAT('%',#{dto.keyword},'%')
+		</if>
+		<if test="''!=statusTab and statusTab!=null">
+       	AND contractStatus =#{statusTab}
+		</if>
+		<if test="''!=createby and createby!=null">
+       	AND createBy =#{createby}
+		</if>
+		<if test="''!=contracttype and contracttype!=null">
+       	AND contractType =#{contracttype}
+		</if>
+		<if test="''!= invoicestatus and invoicestatus!=null">
+        AND invoiceStatus =#{invoicestatus}
+		</if>
+	 	<if test="startTime != null and startTime != ''">
+		 AND  DATE_FORMAT(contractDate,'%Y-%m-%d') <![CDATA[>=]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
+ 		</if>
+	 	<if test="endTime != null and endTime != ''">
+		 AND  DATE_FORMAT(contractDate,'%Y-%m-%d')  <![CDATA[<=]]> DATE_FORMAT(#{endTime},'%Y-%m-%d ')
+	 	</if>
+ 		<if test="verifyBy=='yes'">
+        AND verifyBy is not NULL
+		</if>
+		order by crt desc
+	</select>
+	
+	
+	
+	<update id="updateByParam" parameterType="com.shiro.steel.entity.SaleContract">
+    update sale_contract
+    set 
+      actualWeight = #{actualweight,jdbcType=DECIMAL},
+      actualAmount = #{actualamount,jdbcType=DECIMAL},
+      contractStatus = #{contractstatus,jdbcType=VARCHAR}
+    where contractNo = #{contractno,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateByContract" parameterType="com.shiro.steel.entity.SaleContract">
+    update sale_contract
+    set 
+      actualWeight = #{actualweight,jdbcType=DECIMAL},
+      actualAmount = #{actualamount,jdbcType=DECIMAL}
+    where contractNo = #{contractno,jdbcType=VARCHAR}
+  </update>
+ 
+</mapper>

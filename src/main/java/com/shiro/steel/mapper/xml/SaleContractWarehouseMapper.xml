@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.SaleContractWarehouseMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.SaleContractWarehouse">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="warehouseName" jdbcType="VARCHAR" property="warehousename" />
+    <result column="warehouseAddress" jdbcType="VARCHAR" property="warehouseaddress" />
+    <result column="warehousePhone" jdbcType="VARCHAR" property="warehousephone" />
+    <result column="warehouseFax" jdbcType="VARCHAR" property="warehousefax" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from sale_contract_warehouse
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.SaleContractWarehouse">
+    update sale_contract_warehouse
+    set warehouseName = #{warehousename,jdbcType=VARCHAR},
+      warehouseAddress = #{warehouseaddress,jdbcType=VARCHAR},
+      warehousePhone = #{warehousephone,jdbcType=VARCHAR},
+      warehouseFax = #{warehousefax,jdbcType=VARCHAR},
+      memberId = #{memberid,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, warehouseName, warehouseAddress, warehousePhone, warehouseFax, memberId, 
+    crt, upt
+    from sale_contract_warehouse
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, warehouseName, warehouseAddress, warehousePhone, warehouseFax, memberId, 
+    crt, upt
+    from sale_contract_warehouse
+  </select>
+</mapper>

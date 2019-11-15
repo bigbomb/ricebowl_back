@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.PurchaseContractMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.PurchaseContract">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="purchaseStatus" jdbcType="VARCHAR" property="purchasestatus" />
+    <result column="invoiceStatus" jdbcType="VARCHAR" property="invoicestatus" />
+    <result column="supplyerName" jdbcType="VARCHAR" property="supplyername" />
+    <result column="purchaseNo" jdbcType="VARCHAR" property="purchaseno" />
+    <result column="contractNo" jdbcType="VARCHAR" property="contractno" />
+    <result column="customerName" jdbcType="VARCHAR" property="customername" />
+    <result column="purchaseWeight" jdbcType="DECIMAL" property="purchaseweight" />
+    <result column="purchaseAmount" jdbcType="DECIMAL" property="purchaseamount" />
+    <result column="purchaseDate" jdbcType="TIMESTAMP" property="purchasedate" />
+    <result column="payment" jdbcType="VARCHAR" property="payment" />
+    <result column="createBy" jdbcType="VARCHAR" property="createby" />
+    <result column="verifyBy" jdbcType="VARCHAR" property="verifyby" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from purchase_contract
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.PurchaseContract">
+    update purchase_contract
+    set memberId = #{memberid,jdbcType=VARCHAR},
+      supplyerName = #{supplyername,jdbcType=VARCHAR},
+      purchaseNo = #{purchaseno,jdbcType=VARCHAR},
+      contractNo = #{contractno,jdbcType=VARCHAR},
+      customerName = #{customername,jdbcType=VARCHAR},
+      purchaseWeight = #{purchaseweight,jdbcType=DECIMAL},
+      purchaseAmount = #{purchaseamount,jdbcType=DECIMAL},
+      purchaseDate = #{purchasedate,jdbcType=TIMESTAMP},
+      payment = #{payment,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      upt = #{upt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, memberId, purchaseStatus, supplyerName, purchaseNo, contractNo, customerName, 
+    purchaseWeight, purchaseAmount, purchaseDate, payment, createBy, verifyBy, remark, 
+    crt, upt
+    from purchase_contract
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, memberId, purchaseStatus, supplyerName, purchaseNo, contractNo, customerName, 
+    purchaseWeight, purchaseAmount, purchaseDate, payment, createBy, verifyBy, remark, 
+    crt, upt
+    from purchase_contract
+  </select>
+  <select id="findPurchaseContractByPage" resultType="com.shiro.steel.pojo.dto.PurchaseContractDto">
+		SELECT
+		id,memberId, purchaseStatus, supplyerName, 
+      purchaseNo, contractNo,customerName,purchaseWeight,
+      purchaseAmount, purchaseDate, payment, 
+      createBy, verifyBy, remark, crt,upt
+		FROM
+		purchase_contract
+		WHERE 1=1
+		<if test="''!= dto.keyword and dto.keyword!=null">
+        AND supplyerName LIKE CONCAT('%',#{dto.keyword},'%')
+		</if>
+
+		order by crt desc
+	</select>
+   <select id="findPurchaseContractByStatusPage" resultType="com.shiro.steel.pojo.dto.PurchaseContractDto">
+		SELECT
+		id,memberId, purchaseStatus, invoiceStatus,supplyerName, 
+      purchaseNo, contractNo,customerName,purchaseWeight,
+      purchaseAmount, purchaseDate, payment, 
+      createBy, verifyBy, remark, crt,upt
+		FROM
+		purchase_contract
+		WHERE 1=1
+		<if test="''!= dto.keyword and dto.keyword!=null">
+        AND supplyerName LIKE CONCAT('%',#{dto.keyword},'%')
+		</if>
+		<if test="''!=statusTab and statusTab!=null">
+       	AND purchaseStatus =#{statusTab}
+		</if>
+		<if test="''!= invoicestatus and invoicestatus!=null">
+        AND invoiceStatus =#{invoicestatus}
+		</if>
+	 	<if test="startTime != null and startTime != ''">
+		 AND  DATE_FORMAT(purchaseDate,'%Y-%m-%d') <![CDATA[>=]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
+ 		</if>
+	 	<if test="endTime != null and endTime != ''">
+		 AND  DATE_FORMAT(purchaseDate,'%Y-%m-%d')  <![CDATA[<=]]> DATE_FORMAT(#{endTime},'%Y-%m-%d')
+	 	</if>
+		<if test="''!=createby and createby!=null">
+       	AND createBy =#{createby}
+		</if>
+		order by purchaseDate desc
+	</select>
+</mapper>

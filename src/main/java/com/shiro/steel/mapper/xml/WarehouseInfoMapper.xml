@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.WarehouseInfoMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.WarehouseInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="warehouseName" jdbcType="VARCHAR" property="warehousename" />
+    <result column="warehouseAddress" jdbcType="VARCHAR" property="warehouseaddress" />
+    <result column="warehousePhone" jdbcType="VARCHAR" property="warehousephone" />
+    <result column="warehouseFax" jdbcType="VARCHAR" property="warehousefax" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  <select id="findByPage" resultMap="BaseResultMap">
+        SELECT
+        id,
+        warehousename,
+        warehouseaddress,
+		warehousephone,
+		warehousefax,
+		memberid
+        FROM
+        warehouse_info 
+		<!-- WHERE (1=1)
+		<if test="''!=dto.keyword">
+			AND role.`name` LIKE CONCAT('%',#{dto.keyword},'%')
+		</if> -->
+	</select>
+</mapper>

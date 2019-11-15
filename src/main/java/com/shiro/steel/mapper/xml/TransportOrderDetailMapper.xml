@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.TransportOrderDetailMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.TransportOrderDetail">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="transportNo" jdbcType="VARCHAR" property="transportno" />
+    <result column="saleDetailId" jdbcType="VARCHAR" property="saledetailid" />
+    <result column="productName" jdbcType="VARCHAR" property="productname" />
+    <result column="productSpec" jdbcType="VARCHAR" property="productspec" />
+    <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
+    <result column="productMark" jdbcType="VARCHAR" property="productmark" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="actualWeight" jdbcType="DECIMAL" property="actualweight" />
+    <result column="finalWeight" jdbcType="DECIMAL" property="finalweight" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="stockId" jdbcType="INTEGER" property="stockid" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from transport_order_detail
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.TransportOrderDetail">
+    update transport_order_detail
+    set transportNo = #{transportno,jdbcType=VARCHAR},
+      saleDetailId = #{saledetailid,jdbcType=VARCHAR},
+      productName = #{productname,jdbcType=VARCHAR},
+      productSpec = #{productspec,jdbcType=VARCHAR},
+      productFactory = #{productfactory,jdbcType=VARCHAR},
+      productMark = #{productmark,jdbcType=VARCHAR},
+      num = #{num,jdbcType=INTEGER},
+      actualWeight = #{actualweight,jdbcType=DECIMAL},
+      finalWeight = #{finalweight,jdbcType=DECIMAL},
+      unit = #{unit,jdbcType=VARCHAR},
+      stockId = #{stockid,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, transportNo, saleDetailId, productName, productSpec, productFactory, productMark, 
+    num, actualWeight, finalWeight, unit, stockId, remark, status, crt, upt
+    from transport_order_detail
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, transportNo, saleDetailId, productName, productSpec, productFactory, productMark, 
+    num, actualWeight, finalWeight, unit, stockId, remark, status, crt, upt
+    from transport_order_detail
+  </select>
+  
+    <select id="findDetailByPageList" resultType="com.shiro.steel.pojo.vo.TransportOrderDetailVo">
+		SELECT
+		id, transportNo, saleDetailId, productName, productSpec, productFactory, productMark, 
+    	num, actualWeight, finalWeight, unit, stockId, remark, status, crt, upt
+		FROM
+		transport_order_detail
+		WHERE 1=1
+		<if test="''!= transportNo and transportNo!=null">
+        AND transportNo =#{transportNo}
+		</if>
+		order by crt asc
+	</select>
+	
+	<delete id = "deleteBatchTransportOrderNos" parameterType = "java.util.List">    
+        <![CDATA[    
+           delete from transport_order_detail where transportNo in    
+        ]]>    
+        <foreach collection="list" item = "items" open="(" separator="," close=")">
+        #{items}    
+        
+        </foreach>    
+    </delete> 
+</mapper>

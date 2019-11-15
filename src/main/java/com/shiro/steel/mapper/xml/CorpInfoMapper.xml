@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.CorpInfoMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.CorpInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="companyName" jdbcType="VARCHAR" property="companyname" />
+    <result column="companyAddress" jdbcType="VARCHAR" property="companyaddress" />
+    <result column="fax" jdbcType="VARCHAR" property="fax" />
+    <result column="bankName" jdbcType="VARCHAR" property="bankname" />
+    <result column="bankAccount" jdbcType="VARCHAR" property="bankaccount" />
+    <result column="taxNumber" jdbcType="VARCHAR" property="taxnumber" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberId" />
+    <result column="inviteCode" jdbcType="VARCHAR" property="inviteCode" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from corp_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.CorpInfo">
+    update corp_info
+    set companyName = #{companyname,jdbcType=VARCHAR},
+      companyAddress = #{companyaddress,jdbcType=VARCHAR},
+      fax = #{fax,jdbcType=VARCHAR},
+      bankName = #{bankname,jdbcType=VARCHAR},
+      bankAccount = #{bankaccount,jdbcType=VARCHAR},
+      taxNumber = #{taxnumber,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, companyName, companyAddress, fax, bankName, bankAccount, taxNumber,memberId
+    from corp_info
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, companyName, companyAddress, fax, bankName, bankAccount, taxNumber,memberId
+    from corp_info
+  </select>
+</mapper>
