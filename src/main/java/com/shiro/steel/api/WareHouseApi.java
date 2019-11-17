@@ -1,9 +1,14 @@
 package com.shiro.steel.api;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,18 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.shiro.steel.Enum.EnumCode;
+import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.api.base.BaseApi;
 import com.shiro.steel.entity.ProcessOrderDetail;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.WarehouseInfo;
 import com.shiro.steel.pojo.dto.ParamsDto;
-import com.shiro.steel.pojo.dto.SaleContractDto;
 import com.shiro.steel.pojo.vo.WarehouseInfoVo;
 import com.shiro.steel.service.ProcessOrderDetailService;
-import com.shiro.steel.service.ProcessOrderService;
-import com.shiro.steel.service.SaleContractDetailService;
 import com.shiro.steel.service.StockService;
 import com.shiro.steel.service.WarehouseInfoService;
+import com.shiro.steel.utils.RedisHelper;
 import com.shiro.steel.utils.ResultUtil;
 
 @RestController
@@ -42,6 +46,9 @@ public class WareHouseApi extends BaseApi{
     
     @Autowired
     private StockService stockService;
+    
+    @Autowired
+    private RedisHelper redisHelper;
 	/**
      * @desc: 新增报价单
      *
@@ -128,5 +135,42 @@ public class WareHouseApi extends BaseApi{
          Page<Stock> list = stockService.selectPage(page,wrapper);
          return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list.getRecords(), page.getTotal(),page.getPages());
     }
+    
+    @RequestMapping(value = "/lock" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
+    public Object lock(String ids,String endTime){
+    	List<Stock> stocklist = new ArrayList<Stock>();
+    	 String[] st = ids.split(",");  
+    	 try {
+    		 for (String id : st) {  
+    			    Boolean lckBoolean = redisHelper.lock(id);
+    			    if(lckBoolean)
+    			    {
+    			    	Stock stock  = new Stock();
+        	    		stock.setId(Integer.valueOf(id));
+        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+        	    		stocklist.add(stock);
+    			    }
+    	    }
+    		Boolean status =stockService.updateBatchById(stocklist);
+    		if (status)
+    		{
+    			StringBuffer stocklockBuffer = new StringBuffer();
+    			stocklist.forEach(str-> stocklockBuffer.append(str.getId()+","));
+    			return ResultUtil.result(EnumCode.OK.getValue(),stocklockBuffer.toString()+ "锁货成功");  
+    		}
+    		else {
+    			return ResultUtil.result(EnumCode.OK.getValue(), stocklist.toString() +"锁货失败");  
+    		}
+    	 
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResultUtil.result(EnumCode.OK.getValue(), "锁货失败");  
+		}
+    	 
+		
+         
+    }
+    
    
 }

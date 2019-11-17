@@ -1,6 +1,6 @@
 package com.shiro.steel.Enum;
 
-public enum ContractStatus {
+public enum EnumContractStatus {
 	  /**
      * 待支付
      */
@@ -20,7 +20,7 @@ public enum ContractStatus {
 	private final Integer value;
     private final String text;
 
-    private ContractStatus(Integer value, String text) {
+    private EnumContractStatus(Integer value, String text) {
         this.value = value;
         this.text = text;
     }

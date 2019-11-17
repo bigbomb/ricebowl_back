@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
-import com.shiro.steel.Enum.ContractStatus;
+import com.shiro.steel.Enum.EnumContractStatus;
 import com.shiro.steel.Enum.EnumCode;
 import com.shiro.steel.Enum.EnumRoleType;
 import com.shiro.steel.api.base.BaseApi;
