@@ -1,69 +1,41 @@
 package com.shiro.steel.api;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.shiro.steel.Enum.EnumContractStatus;
-import com.shiro.steel.Enum.EnumCode;
-import com.shiro.steel.Enum.EnumRoleType;
-import com.shiro.steel.api.base.BaseApi;
-import com.shiro.steel.entity.CorpInfo;
-import com.shiro.steel.entity.CustomerInfo;
-import com.shiro.steel.entity.ProcessOrderDetail;
-import com.shiro.steel.entity.PurchaseContract;
-import com.shiro.steel.entity.PurchaseContractDetail;
-import com.shiro.steel.entity.SaleContract;
-import com.shiro.steel.entity.SaleContractDetail;
-import com.shiro.steel.entity.Supplyer;
-import com.shiro.steel.ftp.UploadUtil;
-import com.shiro.steel.pojo.dto.ParamsDto;
-import com.shiro.steel.pojo.dto.PurchaseContractDto;
-import com.shiro.steel.pojo.dto.SaleContractDetailDto;
-import com.shiro.steel.pojo.dto.SaleContractDto;
-import com.shiro.steel.pojo.dto.UserDto;
-import com.shiro.steel.pojo.dto.UserInfoDto;
-import com.shiro.steel.pojo.vo.ContractVo;
-import com.shiro.steel.pojo.vo.ProcessOrderVo;
-import com.shiro.steel.pojo.vo.PurchaseContractVo;
-import com.shiro.steel.pojo.vo.UserInfoVo;
-import com.shiro.steel.pojo.vo.UserVo;
-import com.shiro.steel.service.CorpInfoService;
-import com.shiro.steel.service.CustomerInfoService;
-import com.shiro.steel.service.PurchaseContractDetailService;
-import com.shiro.steel.service.PurchaseContractService;
-import com.shiro.steel.service.SaleContractDetailService;
-import com.shiro.steel.service.SaleContractService;
-import com.shiro.steel.service.SupplyerService;
-import com.shiro.steel.service.UserService;
-import com.shiro.steel.utils.CnUpperCaser;
-import com.shiro.steel.utils.GeneratorUtil;
-import com.shiro.steel.utils.ResultUtil;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.MediaType;
-import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.UUID;
+
+import javax.validation.Valid;
+
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.baomidou.mybatisplus.plugins.Page;
+import com.shiro.steel.Enum.EnumCode;
+import com.shiro.steel.api.base.BaseApi;
+import com.shiro.steel.entity.PurchaseContract;
+import com.shiro.steel.entity.PurchaseContractDetail;
+import com.shiro.steel.entity.Supplyer;
+import com.shiro.steel.pojo.dto.ParamsDto;
+import com.shiro.steel.pojo.dto.PurchaseContractDto;
+import com.shiro.steel.pojo.dto.UserInfoDto;
+import com.shiro.steel.pojo.vo.PurchaseContractVo;
+import com.shiro.steel.service.PurchaseContractDetailService;
+import com.shiro.steel.service.PurchaseContractService;
+import com.shiro.steel.service.SupplyerService;
+import com.shiro.steel.utils.ResultUtil;
 
 /**
  * @desc: 用户接口

@@ -45,6 +45,8 @@ public class Stock implements Serializable {
     private Date crt;
 
     private Date upt;
+    
+    private String lockman;
 
     private static final long serialVersionUID = 1L;
 
@@ -211,4 +213,14 @@ public class Stock implements Serializable {
     public void setUpt(Date upt) {
         this.upt = upt;
     }
+
+	public String getLockman() {
+		return lockman;
+	}
+
+	public void setLockman(String lockman) {
+		this.lockman = lockman;
+	}
+    
+    
 }

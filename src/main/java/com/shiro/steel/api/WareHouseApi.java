@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,6 +28,7 @@ import com.shiro.steel.entity.ProcessOrderDetail;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.WarehouseInfo;
 import com.shiro.steel.pojo.dto.ParamsDto;
+import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.WarehouseInfoVo;
 import com.shiro.steel.service.ProcessOrderDetailService;
 import com.shiro.steel.service.StockService;
@@ -139,7 +142,11 @@ public class WareHouseApi extends BaseApi{
     @RequestMapping(value = "/lock" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object lock(String ids,String endTime){
-    	List<Stock> stocklist = new ArrayList<Stock>();
+    	List<Stock> successstocklist = new ArrayList<Stock>();
+    	List<Stock> failstocklist = new ArrayList<Stock>();
+    	UserInfoDto userInfoDto = new UserInfoDto();
+        Subject subject = SecurityUtils.getSubject();   
+	    userInfoDto = (UserInfoDto) subject.getPrincipal();
     	 String[] st = ids.split(",");  
     	 try {
     		 for (String id : st) {  
@@ -149,6 +156,50 @@ public class WareHouseApi extends BaseApi{
     			    	Stock stock  = new Stock();
         	    		stock.setId(Integer.valueOf(id));
         	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+        	    		stock.setLockman(userInfoDto.getUsername());
+        	    		Integer status =stockService.updateByPrimaryKey(stock);
+        	    		if(status==1)
+        	    		{
+        	    			successstocklist.add(stock);
+        	    		}
+        	    		else
+        	    		{
+        	    			failstocklist.add(stock);
+        	    		}
+        	    		
+        	    		
+    			    }
+    	    }
+    		if (successstocklist.size()>0)
+    		{
+    			StringBuffer stocklockBuffer = new StringBuffer();
+    			successstocklist.forEach(str-> stocklockBuffer.append(str.getId()+","));
+    			return ResultUtil.result(EnumCode.OK.getValue(),stocklockBuffer.toString()+ "锁货成功");  
+    		}
+    		else {
+    			StringBuffer stocklockBuffer = new StringBuffer();
+    			failstocklist.forEach(str-> stocklockBuffer.append(str.getId()+","));
+    			return ResultUtil.result(EnumCode.OK.getValue(), stocklockBuffer.toString() +"锁货失败");  
+    		}
+    	 
+		} catch (Exception e) {
+			// TODO: handle exception
+			return ResultUtil.result(EnumCode.OK.getValue(), "锁货失败");  
+		}   
+    }
+    
+    @RequestMapping(value = "/unlock" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
+    public Object unlock(String ids,String endTime){
+    	List<Stock> stocklist = new ArrayList<Stock>();
+    	 String[] st = ids.split(",");  
+    	 try {
+    		 for (String id : st) {  
+    			    {
+    			    	Stock stock  = new Stock();
+        	    		stock.setId(Integer.valueOf(id));
+        	    		stock.setStatus(EnumStockStatus.INSTOCK.getText());
+        	    		stock.setLockman("");
         	    		stocklist.add(stock);
     			    }
     	    }
@@ -157,19 +208,16 @@ public class WareHouseApi extends BaseApi{
     		{
     			StringBuffer stocklockBuffer = new StringBuffer();
     			stocklist.forEach(str-> stocklockBuffer.append(str.getId()+","));
-    			return ResultUtil.result(EnumCode.OK.getValue(),stocklockBuffer.toString()+ "锁货成功");  
+    			return ResultUtil.result(EnumCode.OK.getValue(),stocklockBuffer.toString()+ "解锁成功");  
     		}
     		else {
-    			return ResultUtil.result(EnumCode.OK.getValue(), stocklist.toString() +"锁货失败");  
+    			return ResultUtil.result(EnumCode.OK.getValue(), stocklist.toString() +"解锁失败");  
     		}
     	 
 		} catch (Exception e) {
 			// TODO: handle exception
-			return ResultUtil.result(EnumCode.OK.getValue(), "锁货失败");  
-		}
-    	 
-		
-         
+			return ResultUtil.result(EnumCode.OK.getValue(), "解锁失败");  
+		}   
     }
     
    

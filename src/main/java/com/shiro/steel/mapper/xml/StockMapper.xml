@@ -20,6 +20,7 @@
     <result column="status" jdbcType="VARCHAR" property="status" />
     <result column="crt" jdbcType="TIMESTAMP" property="crt" />
     <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+    <result column="lockman" jdbcType="VARCHAR" property="lockman" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from stock
@@ -28,36 +29,76 @@
 
   <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.Stock">
     update stock
-    set memberId = #{memberid,jdbcType=VARCHAR},
-      productName = #{productname,jdbcType=VARCHAR},
-      productSpec = #{productspec,jdbcType=VARCHAR},
-      productFactory = #{productfactory,jdbcType=VARCHAR},
-      productMark = #{productmark,jdbcType=VARCHAR},
-      num = #{num,jdbcType=INTEGER},
-      weight = #{weight,jdbcType=DECIMAL},
-      price = #{price,jdbcType=DECIMAL},
-      unit = #{unit,jdbcType=VARCHAR},
-      total = #{total,jdbcType=DECIMAL},
-      warehousename = #{warehousename,jdbcType=VARCHAR},
-      stockOutType = #{stockouttype,jdbcType=VARCHAR},
-      quality = #{quality,jdbcType=VARCHAR},
-      remark = #{remark,jdbcType=VARCHAR},
-      status = #{status,jdbcType=VARCHAR},
-      crt = #{crt,jdbcType=TIMESTAMP},
-      upt = #{upt,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
+   <trim prefix="SET" suffixOverrides=",">
+		    <if test="memberid != null and '' != memberid">
+		       memberId = #{memberid,jdbcType=VARCHAR},
+		      </if>
+		    <if test="productname != null and '' != productname">
+		      productName = #{productname,jdbcType=VARCHAR},
+		      </if>
+		      <if test="productspec != null and '' != productspec">
+		      productSpec = #{productspec,jdbcType=VARCHAR},
+		      </if>
+		      <if test="productfactory != null and '' != productfactory">
+		      productFactory = #{productfactory,jdbcType=VARCHAR},
+		      </if>
+		      <if test="productmark != null and '' != productmark">
+		      productMark = #{productmark,jdbcType=VARCHAR},
+		      </if>
+		      <if test="num != null and '' != num">
+		      num = #{num,jdbcType=INTEGER},
+		      </if>
+		      <if test="weight != null and '' != weight">
+		      weight = #{weight,jdbcType=DECIMAL},
+		      </if>
+		      <if test="price != null and '' != price">
+		      price = #{price,jdbcType=DECIMAL},
+		      </if>
+		      <if test="unit != null and '' != unit">
+		      unit = #{unit,jdbcType=VARCHAR},
+		      </if>
+		      <if test="total != null and '' != total">
+		      total = #{total,jdbcType=DECIMAL},
+		      </if>
+		      <if test="warehousename != null and '' != warehousename">
+		      warehousename = #{warehousename,jdbcType=VARCHAR},
+		      </if>
+		      <if test="stockouttype != null and '' != stockouttype">
+		      stockOutType = #{stockouttype,jdbcType=VARCHAR},
+		      </if>
+		      <if test="quality != null and '' != quality">
+		      quality = #{quality,jdbcType=VARCHAR},
+		      </if>
+		      <if test="remark != null and '' != remark">
+		      remark = #{remark,jdbcType=VARCHAR},
+		      </if>
+		      <if test="status != null and '' != status">
+		      status = #{status,jdbcType=VARCHAR},
+		      </if>
+		      <if test="crt != null and '' != crt">
+		      crt = #{crt,jdbcType=TIMESTAMP},
+		      </if>
+		      <if test="upt != null and '' != upt">
+		      upt = #{upt,jdbcType=TIMESTAMP}
+		      </if>
+		     
+		      lockman = #{lockman,jdbcType=VARCHAR}
+
+       </trim>
+      where id = #{id,jdbcType=INTEGER}
   </update>
+  
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select id, memberId, productName, productSpec, productFactory, productMark, num, 
     weight, price, unit, total, warehousename, stockOutType, quality, remark, status, 
-    crt, upt
+    crt, upt, lockman
     from stock
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, memberId, productName, productSpec, productFactory, productMark, num, 
     weight, price, unit, total, warehousename, stockOutType, quality, remark, status, 
-    crt, upt
+    crt, upt, lockman
     from stock
   </select>
 </mapper>

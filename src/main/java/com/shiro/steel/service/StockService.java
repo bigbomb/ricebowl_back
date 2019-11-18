@@ -5,4 +5,6 @@ import com.shiro.steel.entity.Stock;
 
 public interface StockService extends IService<Stock>{
 
+	Integer updateByPrimaryKey(Stock stock);
+
 }

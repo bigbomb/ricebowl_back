@@ -108,6 +108,9 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 		copier.copy(contractVo, saleContract, null);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		UserInfoDto userInfoDto = new UserInfoDto();
+        Subject subject = SecurityUtils.getSubject();   
+	    userInfoDto = (UserInfoDto) subject.getPrincipal();
 		try {
 			if(StringUtils.isEmpty(contractVo.getContractno()))
 			{
@@ -141,6 +144,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 			  		      Stock stockItem = new Stock();
 			  		      stockItem.setId(s.getStockid());
 			  		      stockItem.setStatus("已锁货");
+			  		      stockItem.setLockman(userInfoDto.getUsername());
 			  		      stockItemList.add(stockItem);
 		  		      }
 		  		 	  EntityWrapper<Product> eWrapper = new EntityWrapper<Product>(product);
@@ -273,9 +277,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 		    	{
 		    		saleContractWarehouseService.insertBatch(saleContractWarehouseList);
 		    	}
-		    	UserInfoDto userInfoDto = new UserInfoDto();
-		        Subject subject = SecurityUtils.getSubject();   
-			    userInfoDto = (UserInfoDto) subject.getPrincipal();
+		    	
 			    String customerIdString ="";
 		    	if(StringUtils.isEmpty(contractVo.getCustomerid()))
 		    	{
