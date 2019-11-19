@@ -135,18 +135,8 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 					  Productspec productspec = new Productspec();
 					  SaleContractWarehouse saleContractWarehouse = new SaleContractWarehouse();
 		  		   	  s.setContractno(contractno); 
-		  			  if("意向临调合同".equals(contractVo.getContractstatus()))
-		  			  {
-	  				  	s.setStatus("待审核");
-		  			  }
-		  		      if(s.getStockid()!=null)
-		  		      {
-			  		      Stock stockItem = new Stock();
-			  		      stockItem.setId(s.getStockid());
-			  		      stockItem.setStatus("已锁货");
-			  		      stockItem.setLockman(userInfoDto.getUsername());
-			  		      stockItemList.add(stockItem);
-		  		      }
+	  				  s.setStatus("待审核");
+
 		  		 	  EntityWrapper<Product> eWrapper = new EntityWrapper<Product>(product);
 		  		 	  product.setProductname(s.getProductname());
 		  		 	  product.setMemberid(contractVo.getMemberid());
@@ -302,7 +292,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 				else
 				{
 					saleContract.setContractstatus("现货合同");
-					saleContract.setVerifyBy(userInfoDto.getUsername());
+//					saleContract.setVerifyBy(userInfoDto.getUsername());
 				}
 				saleContract.setCreateBy(userInfoDto.getUsername());
 				saleContract.setInvoicestatus("未开");
@@ -508,6 +498,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 					Integer stockid = newsaleContractDetail.getStockid();
 					stock.setId(stockid);
 					stock.setStatus("在库");
+					stock.setLockman("");
 					stockList.add(stock);
 				}
 			}
