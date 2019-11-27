@@ -12,6 +12,8 @@ public class Stock implements Serializable {
 	@TableId(type = IdType.AUTO)
     private Integer id;
 
+	private String productid;
+	
     private String memberid;
 
     private String productname;
@@ -48,6 +50,7 @@ public class Stock implements Serializable {
     
     private String lockman;
 
+    private String purchaseno;
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -58,7 +61,16 @@ public class Stock implements Serializable {
         this.id = id;
     }
 
-    public String getMemberid() {
+    
+    public String getProductid() {
+		return productid;
+	}
+
+	public void setProductId(String productid) {
+		this.productid = productid;
+	}
+
+	public String getMemberid() {
         return memberid;
     }
 
@@ -221,6 +233,15 @@ public class Stock implements Serializable {
 	public void setLockman(String lockman) {
 		this.lockman = lockman;
 	}
+
+	public String getPurchaseno() {
+		return purchaseno;
+	}
+
+	public void setPurchaseno(String purchaseno) {
+		this.purchaseno = purchaseno;
+	}
+    
     
     
 }

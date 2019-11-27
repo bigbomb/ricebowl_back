@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -412,8 +413,18 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	@Override
 	public Integer delBatchIds(List<String> asList, List<String> contractnos) {
 		// TODO Auto-generated method stub
+		Integer result = 0;
+		for(String i: asList)
+		{
+			
+			PurchaseContract purchaseContract = super.baseMapper.selectById(i);
+			if("已审核".equals(purchaseContract.getPurchasestatus()))
+			{
+				return result;
+			}
+		}
 		purchaseContractDetailService.deleteBatchNos(contractnos);
-		Integer result = super.baseMapper.deleteBatchIds(asList);
+		result = super.baseMapper.deleteBatchIds(asList);
 		return result;
 	}
 
@@ -438,6 +449,8 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
     		 Stock stock = new Stock();
     		 BeanCopier copier = BeanCopier.create(PurchaseContractDetail.class, Stock.class, false);
     		 copier.copy(lpurchaseContractDetail, stock, null);
+    		 String uuid = UUID.randomUUID().toString().replaceAll("-","");
+    		 stock.setProductId(uuid);
     		 stock.setMemberid(memberId);
     		 stock.setStatus("在库");
     		 stock.setCrt(new Date());

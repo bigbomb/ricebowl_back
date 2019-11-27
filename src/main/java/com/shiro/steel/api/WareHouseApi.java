@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.shiro.SecurityUtils;
@@ -141,24 +143,50 @@ public class WareHouseApi extends BaseApi{
     
     @RequestMapping(value = "/lock" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object lock(String ids,String endTime){
+    public Object lock(String ids,String nums){
     	List<Stock> successstocklist = new ArrayList<Stock>();
     	List<Stock> failstocklist = new ArrayList<Stock>();
     	UserInfoDto userInfoDto = new UserInfoDto();
         Subject subject = SecurityUtils.getSubject();   
 	    userInfoDto = (UserInfoDto) subject.getPrincipal();
-    	 String[] st = ids.split(",");  
+    	String[] st = ids.split(",");
+    	String[] num = nums.split(",");
     	 try {
+    		 int i = 0;
     		 for (String id : st) {  
     			    Boolean lckBoolean = redisHelper.lock(id);
     			    if(lckBoolean)
     			    {
     			    	Stock stock  = new Stock();
-        	    		stock.setId(Integer.valueOf(id));
-        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
-        	    		stock.setLockman(userInfoDto.getUsername());
-        	    		Integer status =stockService.updateByPrimaryKey(stock);
-        	    		if(status==1)
+    			    	stock.setProductId(id);
+    			    	stock.setStatus(EnumStockStatus.INSTOCK.getText());
+    			    	EntityWrapper<Stock> wrapper = new EntityWrapper<Stock>(stock);
+    			    	stock = stockService.selectOne(wrapper);
+    			    	Boolean status = false;
+    			    	if(stock!=null)
+    			    	{
+    			    		//如果判断是锁货的数量和库存数一致
+    			    		EntityWrapper<Stock> newwrapper = new EntityWrapper<Stock>();
+    			    		if(stock.getNum()==Integer.valueOf(num[i]))
+    			    		{
+    	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+    	        	    		stock.setLockman(userInfoDto.getUsername());
+    	        	    		newwrapper.eq("productId", id);
+    	        	    		status=stockService.update(stock, newwrapper);
+    			    		}
+    			    		//如果判断锁货的数量小于库存数
+    			    		else {
+    	        	    		stock.setNum(stock.getNum()-Integer.valueOf(num[i]));
+    	        	    		newwrapper.eq("productId", id);
+    	        	    		status=stockService.update(stock, newwrapper);
+    	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+    	        	    		stock.setLockman(userInfoDto.getUsername());
+    	        	    		stock.setNum(Integer.valueOf(num[i]));
+    	        	    		stockService.insert(stock);
+    			    		}
+    			    	}
+        	    		
+        	    		if(status)
         	    		{
         	    			successstocklist.add(stock);
         	    		}
@@ -166,7 +194,7 @@ public class WareHouseApi extends BaseApi{
         	    		{
         	    			failstocklist.add(stock);
         	    		}
-        	    		
+        	    		i++	;
         	    		
     			    }
     	    }

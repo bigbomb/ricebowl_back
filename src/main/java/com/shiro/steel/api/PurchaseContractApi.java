@@ -157,7 +157,7 @@ public class PurchaseContractApi extends BaseApi {
 	     }
  	 else
 	     {
-	    	 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "删除失败");
+	    	 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "禁止删除已审核单据");
 	     }
      }
     
@@ -238,6 +238,12 @@ public class PurchaseContractApi extends BaseApi {
 	     }
     }
     
+    /**
+     * @desc: 保存供应商
+     *
+     * @author: jwy
+     * @date: 2017/12/25
+     */
     @RequestMapping(value = "/saveSupplyer" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object saveSupplyer(Supplyer supplyer){
@@ -252,7 +258,7 @@ public class PurchaseContractApi extends BaseApi {
     }
     
     /**
-     * @desc: 删除合同
+     * @desc: 删除供应商
      *
      * @author: jwy
      * @date: 2017/12/25

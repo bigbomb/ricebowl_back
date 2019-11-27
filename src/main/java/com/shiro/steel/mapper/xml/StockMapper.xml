@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.shiro.steel.entity.Stock">
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="productId" jdbcType="VARCHAR" property="productid" />
     <result column="productName" jdbcType="VARCHAR" property="productname" />
     <result column="productSpec" jdbcType="VARCHAR" property="productspec" />
     <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
