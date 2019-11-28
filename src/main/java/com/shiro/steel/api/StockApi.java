@@ -1,18 +1,12 @@
 package com.shiro.steel.api;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -29,6 +23,7 @@ import com.shiro.steel.api.base.BaseApi;
 import com.shiro.steel.entity.ProcessOrderDetail;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.WarehouseInfo;
+import com.shiro.steel.exception.MyException;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.WarehouseInfoVo;
@@ -40,7 +35,7 @@ import com.shiro.steel.utils.ResultUtil;
 
 @RestController
 @RequestMapping(value = "WareHouseApi/v1")
-public class WareHouseApi extends BaseApi{
+public class StockApi extends BaseApi{
 	
 	
 	@Autowired
@@ -143,7 +138,7 @@ public class WareHouseApi extends BaseApi{
     
     @RequestMapping(value = "/lock" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object lock(String ids,String nums){
+    public Object lock(String ids,String nums,String productids){
     	List<Stock> successstocklist = new ArrayList<Stock>();
     	List<Stock> failstocklist = new ArrayList<Stock>();
     	UserInfoDto userInfoDto = new UserInfoDto();
@@ -151,6 +146,7 @@ public class WareHouseApi extends BaseApi{
 	    userInfoDto = (UserInfoDto) subject.getPrincipal();
     	String[] st = ids.split(",");
     	String[] num = nums.split(",");
+//    	String[] pd = productids.split(",");
     	 try {
     		 int i = 0;
     		 for (String id : st) {  
@@ -158,32 +154,33 @@ public class WareHouseApi extends BaseApi{
     			    if(lckBoolean)
     			    {
     			    	Stock stock  = new Stock();
-    			    	stock.setProductId(id);
+    			    	stock.setId(Integer.valueOf(id));
     			    	stock.setStatus(EnumStockStatus.INSTOCK.getText());
     			    	EntityWrapper<Stock> wrapper = new EntityWrapper<Stock>(stock);
     			    	stock = stockService.selectOne(wrapper);
     			    	Boolean status = false;
     			    	if(stock!=null)
     			    	{
-    			    		//如果判断是锁货的数量和库存数一致
     			    		EntityWrapper<Stock> newwrapper = new EntityWrapper<Stock>();
-    			    		if(stock.getNum()==Integer.valueOf(num[i]))
-    			    		{
-    	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
-    	        	    		stock.setLockman(userInfoDto.getUsername());
-    	        	    		newwrapper.eq("productId", id);
-    	        	    		status=stockService.update(stock, newwrapper);
-    			    		}
-    			    		//如果判断锁货的数量小于库存数
-    			    		else {
+//    			    		//如果判断是锁货的数量和库存数一致
+//    			    		if(stock.getNum()==Integer.valueOf(num[i]))
+//    			    		{
+//    	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+//    	        	    		stock.setLockman(userInfoDto.getUsername());
+//    	        	    		newwrapper.eq("productId", id);
+//    	        	    		status=stockService.update(stock, newwrapper);
+//    			    		}
+//    			    		//如果判断锁货的数量小于库存数
+//    			    		else {
+    			    		    
     	        	    		stock.setNum(stock.getNum()-Integer.valueOf(num[i]));
-    	        	    		newwrapper.eq("productId", id);
+    	        	    		newwrapper.eq("id", id);
     	        	    		status=stockService.update(stock, newwrapper);
     	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
     	        	    		stock.setLockman(userInfoDto.getUsername());
     	        	    		stock.setNum(Integer.valueOf(num[i]));
     	        	    		stockService.insert(stock);
-    			    		}
+//    			    		}
     			    	}
         	    		
         	    		if(status)
@@ -218,34 +215,16 @@ public class WareHouseApi extends BaseApi{
     
     @RequestMapping(value = "/unlock" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object unlock(String ids,String endTime){
-    	List<Stock> stocklist = new ArrayList<Stock>();
-    	 String[] st = ids.split(",");  
-    	 try {
-    		 for (String id : st) {  
-    			    {
-    			    	Stock stock  = new Stock();
-        	    		stock.setId(Integer.valueOf(id));
-        	    		stock.setStatus(EnumStockStatus.INSTOCK.getText());
-        	    		stock.setLockman("");
-        	    		stocklist.add(stock);
-    			    }
-    	    }
-    		Boolean status =stockService.updateBatchById(stocklist);
-    		if (status)
-    		{
-    			StringBuffer stocklockBuffer = new StringBuffer();
-    			stocklist.forEach(str-> stocklockBuffer.append(str.getId()+","));
-    			return ResultUtil.result(EnumCode.OK.getValue(),stocklockBuffer.toString()+ "解锁成功");  
-    		}
-    		else {
-    			return ResultUtil.result(EnumCode.OK.getValue(), stocklist.toString() +"解锁失败");  
-    		}
-    	 
-		} catch (Exception e) {
-			// TODO: handle exception
-			return ResultUtil.result(EnumCode.OK.getValue(), "解锁失败");  
-		}   
+    public Object unlock(String ids,String productids,String nums){
+    	try
+    	{
+    		stockService.batchUpdateBykey(ids, productids, nums);
+    		return ResultUtil.result(EnumCode.OK.getValue(),"解锁成功"); 
+    	}catch(MyException e)
+    	{
+    		return ResultUtil.result(EnumCode.OK.getValue(),"解锁失败"); 
+    	}
+    	
     }
     
    

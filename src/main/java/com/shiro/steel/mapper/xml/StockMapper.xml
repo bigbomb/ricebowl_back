@@ -102,4 +102,27 @@
     crt, upt, lockman
     from stock
   </select>
+  <update id="batchUpdateBykeys" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE stock
+            <set>
+                lockman = #{item.lockman},status = #{item.status},num = #{item.num}
+            </set>
+            <where>
+                productId = #{item.productid}
+            </where>
+        </foreach>
+    </update>
+
+    <update id="batchAddBykeys" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE stock
+            <set>
+                num = #{item.num}
+            </set>
+            <where>
+                productId = #{item.productid} and status = #{item.status}
+            </where>
+        </foreach>
+    </update>
 </mapper>

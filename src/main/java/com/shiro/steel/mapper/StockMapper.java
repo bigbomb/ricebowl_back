@@ -13,4 +13,8 @@ public interface StockMapper extends BaseMapper<Stock>{
     List<Stock> selectAll();
 
     int updateByPrimaryKey(Stock record);
+
+	int batchUpdateBykeys(List<Stock> stock);
+	
+    int batchAddBykeys(List<Stock> addstocklist);
 }
