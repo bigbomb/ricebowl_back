@@ -149,17 +149,17 @@ public class DeliveryOrderApi extends BaseApi{
     		 EntityWrapper<DeliveryOrderDetail> eWrapper = new EntityWrapper<DeliveryOrderDetail>(deliveryOrderDetail);
     		 List<DeliveryOrderDetail> deliveryOrderDetailList = deliveryOrderDetailService.selectList(eWrapper);
     		 
-    		 if(deliveryOrderDetailList.size()>0)
-    		 {
-    			 for (DeliveryOrderDetail pod:deliveryOrderDetailList)
-    			 {
-    				 saleDetailIdList.add(pod.getSaledetailid());
-    				 Stock stock = new Stock();
-    				 stock.setId(pod.getStockid());
-    				 stock.setStatus("在库");
-    				 stockList.add(stock);
-    			 }
-    		 }
+//    		 if(deliveryOrderDetailList.size()>0)
+//    		 {
+//    			 for (DeliveryOrderDetail pod:deliveryOrderDetailList)
+//    			 {
+//    				 saleDetailIdList.add(pod.getSaledetailid());
+//    				 Stock stock = new Stock();
+//    				 stock.setId(pod.getStockid());
+//    				 stock.setStatus("在库");
+//    				 stockList.add(stock);
+//    			 }
+//    		 }
     		 
     	 }
     	 stockService.updateBatchById(stockList);

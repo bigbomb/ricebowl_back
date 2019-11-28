@@ -261,10 +261,16 @@ public class SaleContractApi extends BaseApi {
     
     @RequestMapping(value = "/verifySaleContract" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object verifySaleContract(Integer id,String contractno){
+    public Object verifySaleContract(Integer id,String contractno,String contractType){
     	 SaleContract saleContract = new SaleContract();
     	 saleContract.setId(id);
-    	 saleContract.setContractstatus("正式临调合同");
+    	 if("现货合同".equals(contractType))
+    	 {
+    		 saleContract.setContractstatus("现货合同");
+    	 }else if("意向临调合同".equals(contractType))
+    	 {
+    		 saleContract.setContractstatus("正式临调合同");
+    	 }
     	 UserInfoDto userInfoDto = new UserInfoDto();
     	 Subject subject = SecurityUtils.getSubject();   
     	 userInfoDto = (UserInfoDto) subject.getPrincipal();

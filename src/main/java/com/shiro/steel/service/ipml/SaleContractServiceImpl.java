@@ -492,21 +492,21 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 				saleContractDetail.setContractno(contractno);
 				EntityWrapper<SaleContractDetail> wwrapper = new EntityWrapper<SaleContractDetail>(saleContractDetail);
 				List<SaleContractDetail> saleContractDetailList=  saleContractDetailService.selectList(wwrapper);
-				for(SaleContractDetail newsaleContractDetail:saleContractDetailList)
-				{
-					Stock stock = new Stock();
-					Integer stockid = newsaleContractDetail.getStockid();
-					stock.setId(stockid);
-					stock.setStatus("在库");
-					stock.setLockman("");
-					stockList.add(stock);
-				}
+//				for(SaleContractDetail newsaleContractDetail:saleContractDetailList)
+//				{
+//					Stock stock = new Stock();
+//					Integer stockid = newsaleContractDetail.getStockid();
+//					stock.setId(stockid);
+//					stock.setStatus("在库");
+//					stock.setLockman("");
+//					stockList.add(stock);
+//				}
 			}
 		}
-		if(stockList.size()>0)
-		{
-			stockService.updateBatchById(stockList);
-		}
+//		if(stockList.size()>0)
+//		{
+//			stockService.updateBatchById(stockList);
+//		}
 		saleContractDetailService.deleteBatchNos(contractnos);
 		Integer result = super.baseMapper.deleteBatchIds(ids);
 		return result;
