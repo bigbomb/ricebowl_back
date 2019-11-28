@@ -149,20 +149,20 @@ public class DeliveryOrderApi extends BaseApi{
     		 EntityWrapper<DeliveryOrderDetail> eWrapper = new EntityWrapper<DeliveryOrderDetail>(deliveryOrderDetail);
     		 List<DeliveryOrderDetail> deliveryOrderDetailList = deliveryOrderDetailService.selectList(eWrapper);
     		 
-//    		 if(deliveryOrderDetailList.size()>0)
-//    		 {
-//    			 for (DeliveryOrderDetail pod:deliveryOrderDetailList)
-//    			 {
-//    				 saleDetailIdList.add(pod.getSaledetailid());
+    		 if(deliveryOrderDetailList.size()>0)
+    		 {
+    			 for (DeliveryOrderDetail pod:deliveryOrderDetailList)
+    			 {
+    				 saleDetailIdList.add(pod.getSaledetailid());
 //    				 Stock stock = new Stock();
 //    				 stock.setId(pod.getStockid());
 //    				 stock.setStatus("在库");
 //    				 stockList.add(stock);
-//    			 }
-//    		 }
+    			 }
+    		 }
     		 
     	 }
-    	 stockService.updateBatchById(stockList);
+//    	 stockService.updateBatchById(stockList);
     	 deliveryOrderDetailService.deleteBatchDeliveryOrderNos(Arrays.asList(deliveryOrderNos));
     	 saleContractDetailService.batchDeliveryOrderUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
         return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", null);
