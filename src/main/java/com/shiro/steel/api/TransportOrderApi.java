@@ -3,8 +3,6 @@ package com.shiro.steel.api;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -22,13 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.shiro.steel.Enum.EnumCode;
 import com.shiro.steel.api.base.BaseApi;
 import com.shiro.steel.entity.SaleContractDetail;
-import com.shiro.steel.entity.Stock;
-import com.shiro.steel.entity.TransportOrderDetail;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.TransportOrderDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
@@ -80,7 +75,7 @@ public class TransportOrderApi extends BaseApi{
     	    	 return ResultUtil.result(EnumCode.OK.getValue(), "保存成功");
     	     }else
     	     {
-    	    	 return ResultUtil.result(EnumCode.OK.getValue(), "保存失败");
+    	    	 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "保存失败");
     	     }
     
     }
@@ -137,28 +132,14 @@ public class TransportOrderApi extends BaseApi{
     	 if (null == dto.getIds() || dto.getIds().length == 0) {
              return ResultUtil.result(EnumCode.BAD_REQUEST.getValue(), EnumCode.BAD_REQUEST.getText());
          }
-    	 transportOrderService.deleteBatchIds(Arrays.asList(dto.getIds()));
-    	 List<String> saleDetailIdList = new ArrayList<String>();
-    	 List<Stock> stockList = new ArrayList<Stock>();
-    	 for(String sd :Arrays.asList(transportOrderNos))
+    	 Boolean result = transportOrderService.delTransportOrder(dto,transportOrderNos,saleContractNos);
+    	 if(result)
     	 {
-    		 TransportOrderDetail  transportOrderDetail = new TransportOrderDetail();
-    		 transportOrderDetail.setTransportno(sd);
-    		 EntityWrapper<TransportOrderDetail> eWrapper = new EntityWrapper<TransportOrderDetail>(transportOrderDetail);
-    		 List<TransportOrderDetail> transportOrderDetailList = transportOrderDetailService.selectList(eWrapper);
-    		 
-    		 if(transportOrderDetailList.size()>0)
-    		 {
-    			 for (TransportOrderDetail pod:transportOrderDetailList)
-    			 {
-    				 saleDetailIdList.add(pod.getSaledetailid());
-    			 }
-    		 }
-    		 
+    		 return ResultUtil.result(EnumCode.OK.getValue(), "删除成功", null);
+    	 }else
+    	 {
+    		 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "删除失败", null);
     	 }
-    	 transportOrderDetailService.deleteBatchTransportOrderNos(Arrays.asList(transportOrderNos));
-    	 saleContractDetailService.batchTransportOrderUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
-        return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", null);
     }
     
     

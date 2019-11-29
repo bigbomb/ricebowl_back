@@ -13,5 +13,7 @@ public interface StockService extends IService<Stock>{
 	
 	@Transactional
 	Integer batchUpdateBykey(String ids, String productids, String nums);
+	@Transactional
+	Boolean lock(String ids, String nums, String productids);
 
 }

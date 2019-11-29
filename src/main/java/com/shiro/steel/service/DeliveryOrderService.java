@@ -20,6 +20,8 @@ public interface DeliveryOrderService extends IService<DeliveryOrder>{
 	List<DeliveryOrderVo> findByPage(Page<DeliveryOrderVo> page, ParamsDto dto, String memberId, String createby, String startTimeString, String endTimeString);
 
 	List<DeliveryOrderDetailVo> findDetailByPageList(ParamsDto dto, String memberId,String deliveryNo);
+	@Transactional
+	Boolean delDeliveryOrder(ParamsDto dto, String[] deliveryOrderNos, String[] saleContractNos);
 
 
 }

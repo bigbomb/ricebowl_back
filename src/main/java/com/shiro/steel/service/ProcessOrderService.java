@@ -16,6 +16,8 @@ public interface ProcessOrderService extends IService<ProcessOrder>{
 	Boolean addProcessOrder(ProcessOrderVo processOrderVo,Integer contractId);
 
 	List<ProcessOrderVo> findByPage(Page<ProcessOrderVo> page, ParamsDto dto, String memberId, String createby, String startTime, String endTime);
+	@Transactional
+	Boolean delProcessOrder(ParamsDto dto, String[] processNos, String[] saleContractNos);
 
 
 }

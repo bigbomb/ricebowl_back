@@ -67,7 +67,7 @@ public class StockApi extends BaseApi{
     		return ResultUtil.result(EnumCode.OK.getValue(), "保存成功");
     	}else
     	{
-    		return ResultUtil.result(EnumCode.OK.getValue(), "保存失败");
+    		return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "保存失败");
     	}
 
     
@@ -121,7 +121,7 @@ public class StockApi extends BaseApi{
      		return ResultUtil.result(EnumCode.OK.getValue(), "删除成功");
      	}else
      	{
-     		return ResultUtil.result(EnumCode.OK.getValue(), "删除失败");
+     		return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "删除失败");
      	}
     }
     
@@ -139,78 +139,15 @@ public class StockApi extends BaseApi{
     @RequestMapping(value = "/lock" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object lock(String ids,String nums,String productids){
-    	List<Stock> successstocklist = new ArrayList<Stock>();
-    	List<Stock> failstocklist = new ArrayList<Stock>();
-    	UserInfoDto userInfoDto = new UserInfoDto();
-        Subject subject = SecurityUtils.getSubject();   
-	    userInfoDto = (UserInfoDto) subject.getPrincipal();
-    	String[] st = ids.split(",");
-    	String[] num = nums.split(",");
-//    	String[] pd = productids.split(",");
-    	 try {
-    		 int i = 0;
-    		 for (String id : st) {  
-    			    Boolean lckBoolean = redisHelper.lock(id);
-    			    if(lckBoolean)
-    			    {
-    			    	Stock stock  = new Stock();
-    			    	stock.setId(Integer.valueOf(id));
-    			    	stock.setStatus(EnumStockStatus.INSTOCK.getText());
-    			    	EntityWrapper<Stock> wrapper = new EntityWrapper<Stock>(stock);
-    			    	stock = stockService.selectOne(wrapper);
-    			    	Boolean status = false;
-    			    	if(stock!=null)
-    			    	{
-    			    		EntityWrapper<Stock> newwrapper = new EntityWrapper<Stock>();
-//    			    		//如果判断是锁货的数量和库存数一致
-//    			    		if(stock.getNum()==Integer.valueOf(num[i]))
-//    			    		{
-//    	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
-//    	        	    		stock.setLockman(userInfoDto.getUsername());
-//    	        	    		newwrapper.eq("productId", id);
-//    	        	    		status=stockService.update(stock, newwrapper);
-//    			    		}
-//    			    		//如果判断锁货的数量小于库存数
-//    			    		else {
-    			    		    
-    	        	    		stock.setNum(stock.getNum()-Integer.valueOf(num[i]));
-    	        	    		newwrapper.eq("id", id);
-    	        	    		status=stockService.update(stock, newwrapper);
-    	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
-    	        	    		stock.setLockman(userInfoDto.getUsername());
-    	        	    		stock.setNum(Integer.valueOf(num[i]));
-    	        	    		stockService.insert(stock);
-//    			    		}
-    			    	}
-        	    		
-        	    		if(status)
-        	    		{
-        	    			successstocklist.add(stock);
-        	    		}
-        	    		else
-        	    		{
-        	    			failstocklist.add(stock);
-        	    		}
-        	    		i++	;
-        	    		
-    			    }
-    	    }
-    		if (successstocklist.size()>0)
-    		{
-    			StringBuffer stocklockBuffer = new StringBuffer();
-    			successstocklist.forEach(str-> stocklockBuffer.append(str.getId()+","));
-    			return ResultUtil.result(EnumCode.OK.getValue(),stocklockBuffer.toString()+ "锁货成功");  
-    		}
-    		else {
-    			StringBuffer stocklockBuffer = new StringBuffer();
-    			failstocklist.forEach(str-> stocklockBuffer.append(str.getId()+","));
-    			return ResultUtil.result(EnumCode.OK.getValue(), stocklockBuffer.toString() +"锁货失败");  
-    		}
-    	 
-		} catch (Exception e) {
-			// TODO: handle exception
-			return ResultUtil.result(EnumCode.OK.getValue(), "锁货失败");  
-		}   
+    	try {
+    		Boolean result = stockService.lock(ids,nums,productids);
+    		return ResultUtil.result(EnumCode.OK.getValue(),"锁货成功"); 
+    	}catch(MyException e)
+    	{
+    		return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(),"锁货失败"); 
+    	}
+    	
+    	
     }
     
     @RequestMapping(value = "/unlock" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -222,7 +159,7 @@ public class StockApi extends BaseApi{
     		return ResultUtil.result(EnumCode.OK.getValue(),"解锁成功"); 
     	}catch(MyException e)
     	{
-    		return ResultUtil.result(EnumCode.OK.getValue(),"解锁失败"); 
+    		return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(),"解锁失败"); 
     	}
     	
     }

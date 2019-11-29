@@ -272,7 +272,7 @@ public class PurchaseContractApi extends BaseApi {
     		return ResultUtil.result(EnumCode.OK.getValue(), "删除成功");
     	}else
     	{
-    		return ResultUtil.result(EnumCode.OK.getValue(), "删除失败");
+    		return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "删除失败");
     	}
      }
 }

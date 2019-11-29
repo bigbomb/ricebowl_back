@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.shiro.steel.Enum.EnumCode;
 import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.exception.MyException;
@@ -19,6 +20,7 @@ import com.shiro.steel.mapper.StockMapper;
 import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.service.StockService;
 import com.shiro.steel.utils.RedisHelper;
+import com.shiro.steel.utils.ResultUtil;
 
 @Service
 public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements StockService{
@@ -34,7 +36,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 		return stockMapper.updateByPrimaryKey(stock);
 	}
 	@Override
-	public Integer batchUpdateBykey(String ids,String productids,String nums) {
+	public Integer batchUpdateBykey(String ids,String productids,String nums) throws MyException{
 		// TODO Auto-generated method stub
 		ThreadLocal<Map<String,Integer>> localnum = new ThreadLocal<Map<String, Integer>>();
 		List<Stock> updatestocklist = new ArrayList<Stock>();
@@ -112,7 +114,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 	    			 stockMapper.batchAddBykeys(addstocklist);
 	    		 }
 	    		
-    	    }catch(Exception e)
+    	    }catch(MyException e)
 		    	 {
 		    	    	throw new MyException(e);
 		    	 }
@@ -121,6 +123,77 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
     	   }
 		return 1;
     }
+	@Override
+	public Boolean lock(String ids, String nums, String productids) throws MyException{
+		// TODO Auto-generated method stub
+		List<Stock> successstocklist = new ArrayList<Stock>();
+    	List<Stock> failstocklist = new ArrayList<Stock>();
+    	UserInfoDto userInfoDto = new UserInfoDto();
+        Subject subject = SecurityUtils.getSubject();   
+	    userInfoDto = (UserInfoDto) subject.getPrincipal();
+    	String[] st = ids.split(",");
+    	String[] num = nums.split(",");
+//    	String[] pd = productids.split(",");
+    	 try {
+    		 int i = 0;
+    		 for (String id : st) {  
+    			    Boolean lckBoolean = redisHelper.lock(id);
+    			    if(lckBoolean)
+    			    {
+    			    	Stock stock  = new Stock();
+    			    	stock.setId(Integer.valueOf(id));
+    			    	stock.setStatus(EnumStockStatus.INSTOCK.getText());
+    			    	stock = super.baseMapper.selectOne(stock);
+    			    	Boolean status = false;
+    			    	if(stock!=null)
+    			    	{
+    			    		EntityWrapper<Stock> newwrapper = new EntityWrapper<Stock>();
+//    			    		//如果判断是锁货的数量和库存数一致
+//    			    		if(stock.getNum()==Integer.valueOf(num[i]))
+//    			    		{
+//    	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+//    	        	    		stock.setLockman(userInfoDto.getUsername());
+//    	        	    		newwrapper.eq("productId", id);
+//    	        	    		status=stockService.update(stock, newwrapper);
+//    			    		}
+//    			    		//如果判断锁货的数量小于库存数
+//    			    		else {
+    			    		    
+    	        	    		stock.setNum(stock.getNum()-Integer.valueOf(num[i]));
+    	        	    		newwrapper.eq("id", id);
+    	        	    		super.baseMapper.update(stock, newwrapper);
+    	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+    	        	    		stock.setLockman(userInfoDto.getUsername());
+    	        	    		stock.setNum(Integer.valueOf(num[i]));
+    	        	    		super.baseMapper.insert(stock);
+//    			    		}
+    			    	}
+        	    		
+        	    		if(status)
+        	    		{
+        	    			successstocklist.add(stock);
+        	    		}
+        	    		else
+        	    		{
+        	    			failstocklist.add(stock);
+        	    		}
+        	    		i++	;
+        	    		
+    			    }
+    	    }
+    		if (successstocklist.size()>0)
+    		{
+    			return true;  
+    		}
+    		else {
+    			return false;
+    		}
+    	 
+		} catch (MyException e) {
+			// TODO: handle exception
+			return false;
+		}   
+	}
     	 
 
 }

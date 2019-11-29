@@ -14,6 +14,7 @@ import com.shiro.steel.entity.ProcessOrderDetail;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.mapper.ProcessOrderDetailMapper;
 import com.shiro.steel.mapper.ProcessOrderMapper;
+import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.vo.ProcessOrderVo;
 import com.shiro.steel.service.ProcessOrderDetailService;
 import com.shiro.steel.service.ProcessOrderService;
@@ -35,6 +36,7 @@ public class ProcessOrderDetailServiceImpl extends ServiceImpl<ProcessOrderDetai
 		// TODO Auto-generated method stub
 		super.baseMapper.deleteBatchProcessNos(asList);
 	}
+
 	
 
     

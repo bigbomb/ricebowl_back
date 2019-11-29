@@ -44,7 +44,7 @@ public class SaleContractTermApi extends BaseApi{
 	        }
 	        else
 	        {
-	        	return ResultUtil.result(EnumCode.OK.getValue(), "保存失败" );
+	        	return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "保存失败" );
 	        }
 		}
 		else

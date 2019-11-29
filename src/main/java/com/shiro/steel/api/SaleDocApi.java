@@ -60,7 +60,7 @@ public class SaleDocApi extends BaseApi{
     		return ResultUtil.result(EnumCode.OK.getValue(), "保存成功");
     	}else
     	{
-    		return ResultUtil.result(EnumCode.OK.getValue(), "保存失败");
+    		return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "保存失败");
     	}
         
     }

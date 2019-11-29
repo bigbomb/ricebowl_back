@@ -2,53 +2,35 @@ package com.shiro.steel.api;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import javax.validation.Valid;
-
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.shiro.steel.Enum.EnumCode;
 import com.shiro.steel.api.base.BaseApi;
-import com.shiro.steel.entity.CorpInfo;
-import com.shiro.steel.entity.CustomerInfo;
-import com.shiro.steel.entity.DeliveryOrderDetail;
-import com.shiro.steel.entity.ProcessOrder;
 import com.shiro.steel.entity.ProcessOrderDetail;
 import com.shiro.steel.entity.ProcessTemplate;
-import com.shiro.steel.entity.SaleContract;
-import com.shiro.steel.entity.SaleDoc;
 import com.shiro.steel.pojo.dto.ParamsDto;
-import com.shiro.steel.pojo.dto.SaleContractDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
-import com.shiro.steel.pojo.vo.ContractVo;
 import com.shiro.steel.pojo.vo.ProcessOrderVo;
-import com.shiro.steel.service.CorpInfoService;
 import com.shiro.steel.service.ProcessOrderDetailService;
 import com.shiro.steel.service.ProcessOrderService;
 import com.shiro.steel.service.ProcessTemplateService;
-import com.shiro.steel.service.SaleContractDetailService;
-import com.shiro.steel.service.SaleDocService;
 import com.shiro.steel.utils.ResultUtil;
 
 @RestController
@@ -60,9 +42,6 @@ public class ProcessOrderApi extends BaseApi{
 	
 	@Autowired
 	private ProcessOrderDetailService  processOrderDetailService;
-	
-    @Autowired
-    private SaleContractDetailService saleContractDetailService;
     
     @Autowired
     private ProcessTemplateService  processTemplateService;
@@ -85,7 +64,7 @@ public class ProcessOrderApi extends BaseApi{
     	    	 return ResultUtil.result(EnumCode.OK.getValue(), "保存成功");
     	     }else
     	     {
-    	    	 return ResultUtil.result(EnumCode.OK.getValue(), "保存失败");
+    	    	 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "保存失败");
     	     }
     
     }
@@ -142,27 +121,14 @@ public class ProcessOrderApi extends BaseApi{
     	 if (null == dto.getIds() || dto.getIds().length == 0) {
              return ResultUtil.result(EnumCode.BAD_REQUEST.getValue(), EnumCode.BAD_REQUEST.getText());
          }
-    	 processOrderService.deleteBatchIds(Arrays.asList(dto.getIds()));
-    	 List<String> saleDetailIdList = new ArrayList<String>();
-    	 for(String sd :Arrays.asList(processNos))
-    	 {
-    		 ProcessOrderDetail  processOrderDetail = new ProcessOrderDetail();
-    		 processOrderDetail.setProcessno(sd);
-    		 EntityWrapper<ProcessOrderDetail> eWrapper = new EntityWrapper<ProcessOrderDetail>(processOrderDetail);
-    		 List<ProcessOrderDetail> processOrderDetailList= processOrderDetailService.selectList(eWrapper);
-    		 if(processOrderDetailList.size()>0)
-    		 {
-    			 for (ProcessOrderDetail pod:processOrderDetailList)
-    			 {
-    				 saleDetailIdList.add(pod.getSaleDetailId());
-    			 }
-    		 }
-    		 
+    	 Boolean result =  processOrderService.delProcessOrder(dto,processNos,saleContractNos);
+    	 if(result) {
+    		 return ResultUtil.result(EnumCode.OK.getValue(), "删除成功", null);
     	 }
-    	 
-    	 processOrderDetailService.deleteBatchProcessNos(Arrays.asList(processNos));
-    	 saleContractDetailService.batchProcessUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
-        return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", null);
+    	 else {
+    		 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "删除失败", null);
+    	 }
+       
     }
     
     @RequestMapping(value = "/findByCustomerId" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

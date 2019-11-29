@@ -2,6 +2,7 @@ package com.shiro.steel.service.ipml;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.shiro.steel.entity.ProcessOrder;
@@ -111,6 +113,37 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 		// TODO Auto-generated method stub
 		List<ProcessOrderVo> list = super.baseMapper.findByPage(page,dto,memberId,createby,startTime,endTime);
         return list;
+	}
+	@Override
+	public Boolean delProcessOrder(ParamsDto dto, String[] processNos, String[] saleContractNos) {
+		// TODO Auto-generated method stub
+		try {
+			 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
+		   	 List<String> saleDetailIdList = new ArrayList<String>();
+		   	 for(String sd :Arrays.asList(processNos))
+		   	 {
+		   		 ProcessOrderDetail  processOrderDetail = new ProcessOrderDetail();
+		   		 processOrderDetail.setProcessno(sd);
+		   		 EntityWrapper<ProcessOrderDetail> eWrapper = new EntityWrapper<ProcessOrderDetail>(processOrderDetail);
+		   		 List<ProcessOrderDetail> processOrderDetailList= processOrderDetailService.selectList(eWrapper);
+		   		 if(processOrderDetailList.size()>0)
+		   		 {
+		   			 for (ProcessOrderDetail pod:processOrderDetailList)
+		   			 {
+		   				 saleDetailIdList.add(pod.getSaleDetailId());
+		   			 }
+		   		 }
+		   		 
+		   	 }
+	   	 
+	   	 processOrderDetailService.deleteBatchProcessNos(Arrays.asList(processNos));
+	   	 saleContractDetailService.batchProcessUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
+	   	 return true;
+		}catch(Exception e)
+		{
+			return false;
+		}
+		
 	}
 
 

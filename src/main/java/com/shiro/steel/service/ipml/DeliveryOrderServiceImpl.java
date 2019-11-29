@@ -2,6 +2,7 @@ package com.shiro.steel.service.ipml;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import com.shiro.steel.entity.SaleContract;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.WarehouseInfo;
+import com.shiro.steel.exception.MyException;
 import com.shiro.steel.mapper.DeliveryOrderMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
@@ -156,6 +158,42 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 		// TODO Auto-generated method stub
 		List<DeliveryOrderDetailVo> list = deliveryOrderDetailService.findDetailByPageList(dto,memberId,deliveryNo);
         return list;
+	}
+
+	@Override
+	public Boolean delDeliveryOrder(ParamsDto dto, String[] deliveryOrderNos, String[] saleContractNos) throws MyException {
+		// TODO Auto-generated method stub
+		try {
+		 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
+    	 List<String> saleDetailIdList = new ArrayList<String>();
+    	 List<Stock> stockList = new ArrayList<Stock>();
+    	 for(String sd :Arrays.asList(deliveryOrderNos))
+    	 {
+    		 DeliveryOrderDetail  deliveryOrderDetail = new DeliveryOrderDetail();
+    		 deliveryOrderDetail.setDeliveryno(sd);
+    		 EntityWrapper<DeliveryOrderDetail> eWrapper = new EntityWrapper<DeliveryOrderDetail>(deliveryOrderDetail);
+    		 List<DeliveryOrderDetail> deliveryOrderDetailList = deliveryOrderDetailService.selectList(eWrapper);
+    		 
+    		 if(deliveryOrderDetailList.size()>0)
+    		 {
+    			 for (DeliveryOrderDetail pod:deliveryOrderDetailList)
+    			 {
+    				 saleDetailIdList.add(pod.getSaledetailid());
+//    				 Stock stock = new Stock();
+//    				 stock.setId(pod.getStockid());
+//    				 stock.setStatus("在库");
+//    				 stockList.add(stock);
+    			 }
+    		 }
+    		 
+    	 }
+//    	 stockService.updateBatchById(stockList);
+    	 deliveryOrderDetailService.deleteBatchDeliveryOrderNos(Arrays.asList(deliveryOrderNos));
+    	 saleContractDetailService.batchDeliveryOrderUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
+    	 return true;
+		}catch(MyException e){
+			return false;
+		}
 	}
 	
 
