@@ -247,6 +247,10 @@ public class PurchaseContractApi extends BaseApi {
     @RequestMapping(value = "/saveSupplyer" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object saveSupplyer(Supplyer supplyer){
+    	if(supplyer.getId()!=null)
+    	{
+        	supplyer.setUpt(new Date());
+    	}
     	Boolean status  =  supplyerService.insertOrUpdate(supplyer);
     	 if (status)
 	     {
