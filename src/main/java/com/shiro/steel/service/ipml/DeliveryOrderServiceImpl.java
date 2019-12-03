@@ -61,9 +61,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 	
 	@Autowired
 	private DeliveryOrderDetailService deliveryOrderDetailService;
-	
-	@Autowired
-	private StockService stockService;
+
 	@Override
 	public Boolean addDeliveryOrder(DeliveryOrderVo deliveryOrderVo) {
 		// TODO Auto-generated method stub
@@ -92,11 +90,11 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    BigDecimal totalAmount = new BigDecimal(0);
  	    BigDecimal totalWeight = new BigDecimal(0);
  	    List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
- 	    List<Stock> stockList = new ArrayList<Stock>();
+// 	    List<Stock> stockList = new ArrayList<Stock>();
  	    for(SaleContractDetail s:collection){
- 	      Stock stock = new Stock();	
- 	      stock.setId(s.getStockid());
- 	      stock.setStatus("已出库");
+// 	      Stock stock = new Stock();	
+// 	      stock.setId(s.getStockid());
+// 	      stock.setStatus("EnumStockStatus.OUTSTOCK.getText()");
  		  BigDecimal amount = new BigDecimal(0);
   		  amount = s.getFinalweight().multiply(s.getPrice()).multiply(new BigDecimal(s.getNum())).setScale(3,BigDecimal.ROUND_HALF_UP);
   		  totalWeight = totalWeight.add(s.getFinalweight());
@@ -108,7 +106,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
   		  newsaleContractDetail.setDeliverystatus("提货中");
   		  newsaleContractDetail.setStockid(s.getStockid());
   		  saleContractDetailList.add(newsaleContractDetail);
-  		  stockList.add(stock);
+//  		  stockList.add(stock);
   	   }
  	    List<DeliveryOrderDetail>  deliveryOrderDetailList = JSONObject.parseArray(saleContractDetail, DeliveryOrderDetail.class);
  	    for(DeliveryOrderDetail s:deliveryOrderDetailList){
@@ -125,8 +123,8 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 
  		   s.setId(null);
  	   }
- 	    stockService.updateBatchById(stockList);
- 	    deliveryOrderDetailService.insertBatch(deliveryOrderDetailList);
+// 	    stockService.updateBatchById(stockList);
+ 	   
  	    saleContractDetailService.insertOrUpdateBatch(saleContractDetailList);
  	    SaleContract saleContract = new SaleContract();
  	    saleContract.setContractno(deliveryOrderVo.getContractno());
@@ -141,7 +139,8 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 // 	 	    saleContract.setContractstatus("正式临调合同");
 // 	    }
 
- 	    Boolean status = saleContractService.updateByContract(saleContract);
+ 	    saleContractService.updateByContract(saleContract);
+ 	    Boolean status = deliveryOrderDetailService.insertBatch(deliveryOrderDetailList);
 		return status;
 	}
 

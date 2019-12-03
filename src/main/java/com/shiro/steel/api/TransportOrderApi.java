@@ -64,7 +64,7 @@ public class TransportOrderApi extends BaseApi{
     	    {
     	    	SaleContractDetail saleContractDetail = new SaleContractDetail();
     	    	saleContractDetail = saleContractDetailService.selectById(Integer.parseInt(id));
-    	    	BigDecimal weight = saleContractDetail.getFinalweight();
+    	    	BigDecimal weight = saleContractDetail.getActualweight();
     	    	totalWeight = totalWeight.add(weight).setScale(2, BigDecimal.ROUND_HALF_UP);
     	    }
     	    transportOrderVo.setTransportweight(totalWeight);

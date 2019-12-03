@@ -1,6 +1,7 @@
 package com.shiro.steel.api;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.shiro.SecurityUtils;
@@ -50,7 +51,7 @@ public class StockApi extends BaseApi{
     @Autowired
     private RedisHelper redisHelper;
 	/**
-     * @desc: 新增报价单
+     * @desc: 新增或更新仓库
      *
      * @author: jwy
      * @date: 2017/12/26
@@ -61,6 +62,10 @@ public class StockApi extends BaseApi{
     	WarehouseInfo  warehouseInfo = new WarehouseInfo();
 		BeanCopier copier = BeanCopier.create(WarehouseInfoVo.class, WarehouseInfo.class, false);
 		copier.copy(warehouseInfoVo, warehouseInfo, null);
+		if(warehouseInfo.getId()!=null)
+		{
+			warehouseInfo.setUpt(new Date());
+		}
     	Boolean status = warehouseInfoService.insertOrUpdate(warehouseInfo);
     	if(status)
     	{

@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,29 +16,22 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.shiro.steel.Enum.EnumCode;
-import com.shiro.steel.entity.DeliveryOrder;
-import com.shiro.steel.entity.DeliveryOrderDetail;
-import com.shiro.steel.entity.SaleContract;
+import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.TransportOrder;
 import com.shiro.steel.entity.TransportOrderDetail;
-import com.shiro.steel.entity.WarehouseInfo;
 import com.shiro.steel.mapper.TransportOrderMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.TransportOrderDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
-import com.shiro.steel.pojo.vo.DeliveryOrderDetailVo;
-import com.shiro.steel.pojo.vo.DeliveryOrderVo;
 import com.shiro.steel.pojo.vo.TransportOrderDetailVo;
 import com.shiro.steel.pojo.vo.TransportOrderVo;
 import com.shiro.steel.service.SaleContractDetailService;
-import com.shiro.steel.service.SaleContractService;
+import com.shiro.steel.service.StockService;
 import com.shiro.steel.service.TransportOrderDetailService;
 import com.shiro.steel.service.TransportOrderService;
 import com.shiro.steel.utils.GeneratorUtil;
-import com.shiro.steel.utils.ResultUtil;
 
 @Service
 public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper, TransportOrder> implements TransportOrderService {
@@ -48,6 +40,10 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	
 	@Autowired
 	private SaleContractDetailService saleContractDetailService;
+	
+	
+	@Autowired
+	private StockService stockService;
 	
 	final static String preName = "YS";
 	@Override
@@ -70,14 +66,18 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
  	    List<SaleContractDetail>  collection = JSONObject.parseArray(transportOrderDetail, SaleContractDetail.class);
  	    BigDecimal totalWeight = new BigDecimal(0);
  	    List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
+ 	    List<Stock> stockList = new ArrayList<Stock>();
  	    for(SaleContractDetail s:collection){
+ 	      Stock stock = new Stock();	
+ 	      stock.setId(s.getStockid());
+ 	      stock.setStatus(EnumStockStatus.OUTSTOCK.getText());
  		  BigDecimal amount = new BigDecimal(0);
   		  totalWeight = totalWeight.add(s.getFinalweight());
   		  SaleContractDetail  newsaleContractDetail = new SaleContractDetail();
   		  newsaleContractDetail.setId(s.getId());
-  		  newsaleContractDetail.setTransportStatus("运输中");
+  		  newsaleContractDetail.setTransportStatus(EnumStockStatus.TRANSPORT.getText());
   		  saleContractDetailList.add(newsaleContractDetail);
-
+  		  stockList.add(stock);
   	   }
  	    List<TransportOrderDetail>  deliveryOrderDetailList = JSONObject.parseArray(transportOrderDetail, TransportOrderDetail.class);
  	    for(TransportOrderDetail s:deliveryOrderDetailList){
@@ -90,6 +90,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 
  		   s.setId(null);
  	   }
+ 	    stockService.updateBatchById(stockList);
  	    transportOrderDetailService.insertBatch(deliveryOrderDetailList);
  	    Boolean status =saleContractDetailService.insertOrUpdateBatch(saleContractDetailList);
 		return status;
