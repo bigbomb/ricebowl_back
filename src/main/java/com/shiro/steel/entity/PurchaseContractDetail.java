@@ -17,6 +17,8 @@ public class PurchaseContractDetail implements Serializable {
     private String productname;
 
     private String productspec;
+    
+    private String packingno;
 
     private String productfactory;
 
@@ -80,7 +82,16 @@ public class PurchaseContractDetail implements Serializable {
         this.productspec = productspec;
     }
 
-    public String getProductfactory() {
+    
+    public String getPackingno() {
+		return packingno;
+	}
+
+	public void setPackingno(String packingno) {
+		this.packingno = packingno;
+	}
+
+	public String getProductfactory() {
         return productfactory;
     }
 

@@ -450,7 +450,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
     		 BeanCopier copier = BeanCopier.create(PurchaseContractDetail.class, Stock.class, false);
     		 copier.copy(lpurchaseContractDetail, stock, null);
     		 String uuid = UUID.randomUUID().toString().replaceAll("-","");
-    		 stock.setProductId(uuid);
+    		 stock.setProductid(uuid);
     		 stock.setMemberid(memberId);
     		 stock.setStatus("在库");
     		 stock.setCrt(new Date());

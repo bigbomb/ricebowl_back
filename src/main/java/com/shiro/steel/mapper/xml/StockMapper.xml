@@ -22,6 +22,7 @@
     <result column="crt" jdbcType="TIMESTAMP" property="crt" />
     <result column="upt" jdbcType="TIMESTAMP" property="upt" />
     <result column="lockman" jdbcType="VARCHAR" property="lockman" />
+    <result column="packingNo" jdbcType="VARCHAR" property="packingno" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from stock

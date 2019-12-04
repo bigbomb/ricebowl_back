@@ -58,7 +58,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 	    			    if(lckBoolean)
 	    			    {
 	    			    	Stock stock  = new Stock();
-	    			    	stock.setProductId(pd[i]);
+	    			    	stock.setProductid(pd[i]);
 	    			    	stock.setStatus(EnumStockStatus.INSTOCK.getText());
 	    			    	stock = stockMapper.selectOne(stock);
 	    			    	//如果锁货全部锁完
@@ -78,7 +78,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 				    			
 				    	    	localnum.set(numMap);
 		        	    		stock.setNum(localnum.get().get(pd[i]));
-	    			    		stock.setProductId(pd[i]);
+	    			    		stock.setProductid(pd[i]);
 		    			    	stock.setStatus(EnumStockStatus.INSTOCK.getText());
 	    			    		stock.setLockman("");
 	    			    		updatestocklist.add(stock);
@@ -98,7 +98,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 				    			
 				    	    	localnum.set(numMap);
 		        	    		stock.setNum(localnum.get().get(pd[i])+stock.getNum());
-		        	    		stock.setProductId(pd[i]);
+		        	    		stock.setProductid(pd[i]);
 		        	    		stock.setStatus(EnumStockStatus.INSTOCK.getText());
 		        	    		addstocklist.add(stock);
 				    		}

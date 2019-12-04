@@ -51,6 +51,8 @@ public class Stock implements Serializable {
     private String lockman;
 
     private String purchaseno;
+    
+    private String packingno;
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -66,9 +68,6 @@ public class Stock implements Serializable {
 		return productid;
 	}
 
-	public void setProductId(String productid) {
-		this.productid = productid;
-	}
 
 	public String getMemberid() {
         return memberid;
@@ -240,6 +239,18 @@ public class Stock implements Serializable {
 
 	public void setPurchaseno(String purchaseno) {
 		this.purchaseno = purchaseno;
+	}
+
+	public String getPackingno() {
+		return packingno;
+	}
+
+	public void setPackingno(String packingno) {
+		this.packingno = packingno;
+	}
+
+	public void setProductid(String productid) {
+		this.productid = productid;
 	}
     
     
