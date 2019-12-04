@@ -23,6 +23,9 @@
     <result column="upt" jdbcType="TIMESTAMP" property="upt" />
     <result column="lockman" jdbcType="VARCHAR" property="lockman" />
     <result column="packingNo" jdbcType="VARCHAR" property="packingno" />
+     <result column="purchaseNo" jdbcType="VARCHAR" property="purchaseno" />
+     <result column="customerId" jdbcType="VARCHAR" property="customerid" />
+     <result column="customerName" jdbcType="VARCHAR" property="customername" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from stock
@@ -107,7 +110,7 @@
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             UPDATE stock
             <set>
-                lockman = #{item.lockman},status = #{item.status},num = #{item.num}
+                lockman = #{item.lockman},status = #{item.status},num = #{item.num},customerId = Null,customerName = Null
             </set>
             <where>
                 productId = #{item.productid}

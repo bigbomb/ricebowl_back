@@ -143,9 +143,9 @@ public class StockApi extends BaseApi{
     
     @RequestMapping(value = "/lock" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object lock(String ids,String nums,String productids){
+    public Object lock(String ids,String nums,String customerId,String customerName,String productids){
     	try {
-    		Boolean result = stockService.lock(ids,nums,productids);
+    		Boolean result = stockService.lock(ids,nums,customerId,customerName,productids);
     		return ResultUtil.result(EnumCode.OK.getValue(),"锁货成功"); 
     	}catch(MyException e)
     	{

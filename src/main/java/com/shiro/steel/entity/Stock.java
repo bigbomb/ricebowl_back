@@ -53,6 +53,10 @@ public class Stock implements Serializable {
     private String purchaseno;
     
     private String packingno;
+    
+    private String customerid;
+    
+    private String customername;
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -252,6 +256,24 @@ public class Stock implements Serializable {
 	public void setProductid(String productid) {
 		this.productid = productid;
 	}
+
+	public String getCustomerid() {
+		return customerid;
+	}
+
+	public void setCustomerid(String customerid) {
+		this.customerid = customerid;
+	}
+
+	public String getCustomername() {
+		return customername;
+	}
+
+	public void setCustomername(String customername) {
+		this.customername = customername;
+	}
+
+	
     
     
     

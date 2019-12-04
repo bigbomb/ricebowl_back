@@ -124,7 +124,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 		return 1;
     }
 	@Override
-	public Boolean lock(String ids, String nums, String productids) throws MyException{
+	public Boolean lock(String ids, String nums,String customerId,String customerName, String productids) throws MyException{
 		// TODO Auto-generated method stub
 		List<Stock> successstocklist = new ArrayList<Stock>();
     	List<Stock> failstocklist = new ArrayList<Stock>();
@@ -165,6 +165,8 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
     	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
     	        	    		stock.setLockman(userInfoDto.getUsername());
     	        	    		stock.setNum(Integer.valueOf(num[i]));
+    	        	    		stock.setCustomerid(customerId);
+    	        	    		stock.setCustomername(customerName);
     	        	    		super.baseMapper.insert(stock);
 //    			    		}
     			    	}

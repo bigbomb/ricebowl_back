@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.service.IService;
 import com.shiro.steel.entity.Stock;
+import com.shiro.steel.exception.MyException;
 
 public interface StockService extends IService<Stock>{
 	@Transactional
@@ -13,7 +14,9 @@ public interface StockService extends IService<Stock>{
 	
 	@Transactional
 	Integer batchUpdateBykey(String ids, String productids, String nums);
+//	@Transactional
+//	Boolean lock(String ids, String nums, String productids);
 	@Transactional
-	Boolean lock(String ids, String nums, String productids);
+	Boolean lock(String ids, String nums, String customerId, String customerName, String productids) throws MyException;
 
 }

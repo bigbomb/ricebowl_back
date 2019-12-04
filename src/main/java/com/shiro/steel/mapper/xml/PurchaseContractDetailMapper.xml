@@ -19,6 +19,7 @@
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="crt" jdbcType="TIMESTAMP" property="crt" />
     <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+    <result column="packingNo" jdbcType="VARCHAR" property="packingno" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from purchase_contract_detail
