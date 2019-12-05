@@ -17,6 +17,7 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.shiro.steel.Enum.EnumStockStatus;
+import com.shiro.steel.Enum.EnumTransportFee;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.TransportOrder;
@@ -62,6 +63,16 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	    transportOrder.setTransportno(transportOrderNo);
 	    transportOrder.setCrt(new Date());
 	    transportOrder.setCreateby(userInfoDto.getUsername());
+
+	    if(EnumTransportFee.TAXFREE.getValue()==(transportOrderVo.getFeeoption())|| EnumTransportFee.TAXINCLUDED.getValue()==(transportOrderVo.getFeeoption()) )
+	    {
+	    	
+	    	transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee().multiply(transportOrderVo.getTransportweight()));
+	    }
+	    else
+	    {
+	    	transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee());
+	    }
  	    super.baseMapper.insert(transportOrder);
  	    List<SaleContractDetail>  collection = JSONObject.parseArray(transportOrderDetail, SaleContractDetail.class);
  	    BigDecimal totalWeight = new BigDecimal(0);

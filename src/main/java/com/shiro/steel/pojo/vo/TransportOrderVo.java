@@ -39,6 +39,12 @@ public class TransportOrderVo implements Serializable {
     private String carrier;
     
     private String transportOrderDetail;
+    
+    private Integer feeoption;
+    
+    private String remark;
+    
+    
 
     private static final long serialVersionUID = 1L;
 
@@ -161,5 +167,25 @@ public class TransportOrderVo implements Serializable {
 	public void setTransportOrderDetail(String transportOrderDetail) {
 		this.transportOrderDetail = transportOrderDetail;
 	}
+
+
+	public Integer getFeeoption() {
+		return feeoption;
+	}
+
+	public void setFeeoption(Integer feeoption) {
+		this.feeoption = feeoption;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+
     
+	
 }

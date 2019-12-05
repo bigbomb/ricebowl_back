@@ -16,6 +16,9 @@
     <result column="warehouse" jdbcType="VARCHAR" property="warehouse" />
     <result column="vehicleNumber" jdbcType="VARCHAR" property="vehiclenumber" />
     <result column="carrier" jdbcType="VARCHAR" property="carrier" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="feeOption" jdbcType="INTEGER" property="feeoption" />
+    <result column="transportTotalFee" jdbcType="VARCHAR" property="transporttotalfee" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from transport_order
@@ -53,7 +56,7 @@
   
   <select id="findTransportOrderByPage" resultType="com.shiro.steel.pojo.dto.TransportOrderDto">
 	 select id, verifyBy, createBy, upt, transportNo, contractNo, memberId, crt, transportFee, 
-    transportWeight, transportAddress, warehouse, vehicleNumber, carrier
+    transportWeight, transportAddress, warehouse, vehicleNumber, carrier,remark,feeOption,transportTotalFee
     from transport_order
 		WHERE 1=1
 		<if test="''!= dto.keyword and dto.keyword!=null">

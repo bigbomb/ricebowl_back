@@ -37,7 +37,13 @@ public class TransportOrder implements Serializable {
     private String vehiclenumber;
 
     private String carrier;
+    
+    private Integer feeoption;
+    
+    private String remark;
 
+    private BigDecimal transporttotalfee;
+    
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -151,4 +157,30 @@ public class TransportOrder implements Serializable {
     public void setCarrier(String carrier) {
         this.carrier = carrier;
     }
+
+	public Integer getFeeoption() {
+		return feeoption;
+	}
+
+	public void setFeeoption(Integer feeoption) {
+		this.feeoption = feeoption;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public BigDecimal getTransporttotalfee() {
+		return transporttotalfee;
+	}
+
+	public void setTransporttotalfee(BigDecimal transporttotalfee) {
+		this.transporttotalfee = transporttotalfee;
+	}
+    
+    
 }
