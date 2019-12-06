@@ -40,6 +40,8 @@ public class TransportOrderDto implements Serializable {
     
     private String remark;
     
+    private BigDecimal transporttotalfee;
+    
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -160,6 +162,14 @@ public class TransportOrderDto implements Serializable {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public BigDecimal getTransporttotalfee() {
+		return transporttotalfee;
+	}
+
+	public void setTransporttotalfee(BigDecimal transporttotalfee) {
+		this.transporttotalfee = transporttotalfee;
 	}
 
 
