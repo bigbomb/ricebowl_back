@@ -38,6 +38,8 @@ public class TransportOrderDto implements Serializable {
 
     private String carrier;
     
+    private String remark;
+    
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -151,6 +153,14 @@ public class TransportOrderDto implements Serializable {
     public void setCarrier(String carrier) {
         this.carrier = carrier;
     }
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 
 
     
