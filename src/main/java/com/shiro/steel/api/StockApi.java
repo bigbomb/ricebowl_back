@@ -137,6 +137,7 @@ public class StockApi extends BaseApi{
     	 
     	 stock.setStatus(stockstatus);
      	 EntityWrapper<Stock> wrapper = new EntityWrapper<Stock>(stock);
+     	 wrapper.gt("num", 0);
          Page<Stock> list = stockService.selectPage(page,wrapper);
          return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list.getRecords(), page.getTotal(),page.getPages());
     }

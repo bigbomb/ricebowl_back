@@ -22,4 +22,7 @@ public interface SaleContractDetailService extends IService<SaleContractDetail>{
 	void updateByContractno(SaleContractDetail saleContractDetail);
 	 @Transactional
 	void batchTransportOrderUpdate(List<String> asList, List<String> saleDetailIdList);
+
+	 List selectByStockIdList(List<String> stockIdList);
+
 }

@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.shiro.steel.entity.CustomerInfo;
+import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.entity.DeliveryOrder;
 import com.shiro.steel.entity.DeliveryOrderDetail;
 import com.shiro.steel.entity.SaleContract;
@@ -27,16 +26,17 @@ import com.shiro.steel.entity.WarehouseInfo;
 import com.shiro.steel.exception.MyException;
 import com.shiro.steel.mapper.DeliveryOrderMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
+import com.shiro.steel.pojo.dto.SaleContractDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.DeliveryOrderDetailVo;
 import com.shiro.steel.pojo.vo.DeliveryOrderVo;
-import com.shiro.steel.pojo.vo.ProcessOrderVo;
 import com.shiro.steel.service.DeliveryOrderDetailService;
 import com.shiro.steel.service.DeliveryOrderService;
 import com.shiro.steel.service.SaleContractDetailService;
 import com.shiro.steel.service.SaleContractService;
 import com.shiro.steel.service.StockService;
-import com.shiro.steel.service.WarehouseInfoService;import com.shiro.steel.utils.GeneratorUtil;
+import com.shiro.steel.service.WarehouseInfoService;
+import com.shiro.steel.utils.GeneratorUtil;
 
 /**
  * <p>
@@ -52,6 +52,8 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 	@Autowired
 	private WarehouseInfoService warehouseInfoService;
 	
+	@Autowired
+	private StockService stockService;
 	
 	@Autowired
 	private SaleContractService saleContractService;
@@ -90,11 +92,11 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    BigDecimal totalAmount = new BigDecimal(0);
  	    BigDecimal totalWeight = new BigDecimal(0);
  	    List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
-// 	    List<Stock> stockList = new ArrayList<Stock>();
+ 	    List<Stock> stockList = new ArrayList<Stock>();
  	    for(SaleContractDetail s:collection){
-// 	      Stock stock = new Stock();	
-// 	      stock.setId(s.getStockid());
-// 	      stock.setStatus("EnumStockStatus.OUTSTOCK.getText()");
+ 	      Stock stock = new Stock();	
+ 	      stock.setId(s.getStockid());
+ 	      stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
  		  BigDecimal amount = new BigDecimal(0);
   		  amount = s.getFinalweight().multiply(s.getPrice()).multiply(new BigDecimal(s.getNum())).setScale(3,BigDecimal.ROUND_HALF_UP);
   		  totalWeight = totalWeight.add(s.getFinalweight());
@@ -106,7 +108,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
   		  newsaleContractDetail.setDeliverystatus("提货中");
   		  newsaleContractDetail.setStockid(s.getStockid());
   		  saleContractDetailList.add(newsaleContractDetail);
-//  		  stockList.add(stock);
+  		  stockList.add(stock);
   	   }
  	    List<DeliveryOrderDetail>  deliveryOrderDetailList = JSONObject.parseArray(saleContractDetail, DeliveryOrderDetail.class);
  	    for(DeliveryOrderDetail s:deliveryOrderDetailList){
@@ -123,7 +125,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 
  		   s.setId(null);
  	   }
-// 	    stockService.updateBatchById(stockList);
+  	    stockService.updateBatchById(stockList);
  	   
  	    saleContractDetailService.insertOrUpdateBatch(saleContractDetailList);
  	    SaleContract saleContract = new SaleContract();
@@ -165,6 +167,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 		try {
 		 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
     	 List<String> saleDetailIdList = new ArrayList<String>();
+    	 List<String> stockIdList = new ArrayList<String>();
     	 List<Stock> stockList = new ArrayList<Stock>();
     	 for(String sd :Arrays.asList(deliveryOrderNos))
     	 {
@@ -178,6 +181,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
     			 for (DeliveryOrderDetail pod:deliveryOrderDetailList)
     			 {
     				 saleDetailIdList.add(pod.getSaledetailid());
+    				 stockIdList.add(pod.getStockid().toString());
 //    				 Stock stock = new Stock();
 //    				 stock.setId(pod.getStockid());
 //    				 stock.setStatus("在库");
@@ -189,6 +193,8 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 //    	 stockService.updateBatchById(stockList);
     	 deliveryOrderDetailService.deleteBatchDeliveryOrderNos(Arrays.asList(deliveryOrderNos));
     	 saleContractDetailService.batchDeliveryOrderUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
+    	 List<SaleContractDto> finaList = saleContractDetailService.selectByStockIdList(stockIdList);
+    	 Integer status = saleContractService.batchWeigtAmountUpdate(finaList);
     	 return true;
 		}catch(MyException e){
 			return false;

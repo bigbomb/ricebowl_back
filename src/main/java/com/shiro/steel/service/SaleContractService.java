@@ -37,5 +37,7 @@ public interface SaleContractService extends IService<SaleContract>{
 	  Boolean update(SaleContract saleContract, String contractno);
 	  @Transactional
 	  Boolean updateByContract(SaleContract saleContract);
+	  @Transactional
+	 Integer batchWeigtAmountUpdate(List<SaleContractDto> finaList);
 
 }

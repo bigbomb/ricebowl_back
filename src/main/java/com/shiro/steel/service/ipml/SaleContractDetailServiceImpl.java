@@ -9,6 +9,7 @@ import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.mapper.SaleContractDetailMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.SaleContractDetailDto;
+import com.shiro.steel.pojo.dto.SaleContractDto;
 import com.shiro.steel.service.SaleContractDetailService;
 @Service
 public class SaleContractDetailServiceImpl extends ServiceImpl<SaleContractDetailMapper, SaleContractDetail> implements SaleContractDetailService{
@@ -53,5 +54,9 @@ public class SaleContractDetailServiceImpl extends ServiceImpl<SaleContractDetai
 		super.baseMapper.batchTransportOrderUpdate(asList,saleDetailIdList);
 	}
 
-	
+	@Override
+	public List<SaleContractDto> selectByStockIdList(List<String> stockIdList) {
+		// TODO Auto-generated method stub
+		return super.baseMapper.selectByStockIdList(stockIdList);
+	}
 }

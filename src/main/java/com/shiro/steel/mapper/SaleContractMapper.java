@@ -38,4 +38,8 @@ public interface SaleContractMapper extends BaseMapper<SaleContract> {
 			@Param("statusTab")String statusTab, @Param("createby") String createby,@Param("contracttype") String contracttype,@Param("invoicestatus") String invoiceStatus, @Param("startTime")String startTimeString,@Param("endTime") String endTimeString, @Param("verifyBy") String verifyBy);
 
 	Boolean updateByContract(SaleContract saleContract);
+
+	Integer batchWeigtAmountUpdate(@Param("finaList") List<SaleContractDto> finaList);
+
+
 }

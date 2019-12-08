@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.SaleContractDetailDto;
+import com.shiro.steel.pojo.dto.SaleContractDto;
 
 public interface SaleContractDetailMapper extends BaseMapper<SaleContractDetail>{
     int deleteByPrimaryKey(Integer id);
@@ -33,4 +34,6 @@ public interface SaleContractDetailMapper extends BaseMapper<SaleContractDetail>
 
 
 	void batchTransportOrderUpdate(@Param("list")List<String> asList, @Param("sdlist")List<String> saleDetailIdList);
+	
+	List<SaleContractDto> selectByStockIdList(@Param("stockIdList") List<String> stockIdList);
 }

@@ -142,9 +142,24 @@
   <update id="updateByContract" parameterType="com.shiro.steel.entity.SaleContract">
     update sale_contract
     set 
-      actualWeight = #{actualweight,jdbcType=DECIMAL},
-      actualAmount = #{actualamount,jdbcType=DECIMAL}
+      actualWeight = actualWeight + #{actualweight,jdbcType=DECIMAL},
+      actualAmount = actualAmount + #{actualamount,jdbcType=DECIMAL}
     where contractNo = #{contractno,jdbcType=VARCHAR}
   </update>
  
+ <update id="batchWeigtAmountUpdate" parameterType="java.util.List">
+    <foreach collection="finaList" item="bean" index="index" open="" close="" separator=";">
+            UPDATE sale_contract
+            <set>
+                actualWeight = actualWeight - #{bean.actualweight},
+                actualAmount = actualAmount - #{bean.actualamount}
+                
+            </set>
+            <where>
+                 contractNo = #{bean.contractno,jdbcType=VARCHAR}
+            </where>
+        </foreach>
+
+  
+  </update>
 </mapper>
