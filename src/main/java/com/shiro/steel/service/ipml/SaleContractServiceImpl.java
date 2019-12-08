@@ -591,5 +591,14 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 		return super.baseMapper.updateByContract(saleContract);
 	}
 
+	@Override
+	public Integer batchWeigtAmountUpdate(List<SaleContractDto> finaList) {
+		// TODO Auto-generated method stub
+		return super.baseMapper.batchWeigtAmountUpdate(finaList);
+		
+	}
+
+	
+
 
 }
