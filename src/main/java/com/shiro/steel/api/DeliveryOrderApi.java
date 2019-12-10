@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.shiro.steel.Enum.EnumCode;
 import com.shiro.steel.api.base.BaseApi;
+import com.shiro.steel.entity.DeliveryOrderDetail;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
-import com.shiro.steel.pojo.vo.DeliveryOrderDetailVo;
 import com.shiro.steel.pojo.vo.DeliveryOrderVo;
 import com.shiro.steel.service.DeliveryOrderService;
 import com.shiro.steel.utils.ResultUtil;
@@ -66,7 +66,7 @@ public class DeliveryOrderApi extends BaseApi{
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object findDetailByPageList(ParamsDto dto,String memberId,String deliveryNo){
 //        Page<DeliveryOrderDetailVo> page = new Page<>(dto.getStartPage(),dto.getPageSize());
-         List<DeliveryOrderDetailVo> list = deliveryOrderService.findDetailByPageList(dto,memberId,deliveryNo);
+         List<DeliveryOrderDetail> list = deliveryOrderService.findDetailByPageList(dto,memberId,deliveryNo);
         return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list);
     }
     

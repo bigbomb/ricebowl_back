@@ -30,6 +30,10 @@ public class DeliveryOrderDetail implements Serializable {
     
     private BigDecimal finalweight;
     
+    private String quality;
+    
+    private String warehousename;
+    
     private Integer stockid;
 
     private String unit;
@@ -127,6 +131,23 @@ public class DeliveryOrderDetail implements Serializable {
 
 	public void setFinalweight(BigDecimal finalweight) {
 		this.finalweight = finalweight;
+	}
+
+	
+	public String getQuality() {
+		return quality;
+	}
+
+	public void setQuality(String quality) {
+		this.quality = quality;
+	}
+
+	public String getWarehousename() {
+		return warehousename;
+	}
+
+	public void setWarehousename(String warehousename) {
+		this.warehousename = warehousename;
 	}
 
 	public Integer getStockid() {

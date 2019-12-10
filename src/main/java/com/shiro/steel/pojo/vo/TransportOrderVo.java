@@ -21,6 +21,8 @@ public class TransportOrderVo implements Serializable {
     private String transportno;
 
     private String contractno;
+    
+    private String deliveryno;
 
     private String memberid;
 
@@ -44,7 +46,9 @@ public class TransportOrderVo implements Serializable {
     
     private String remark;
     
+    private String customerid;
     
+    private String status;
 
     private static final long serialVersionUID = 1L;
 
@@ -96,7 +100,15 @@ public class TransportOrderVo implements Serializable {
         this.contractno = contractno;
     }
 
-    public String getMemberid() {
+    public String getDeliveryno() {
+		return deliveryno;
+	}
+
+	public void setDeliveryno(String deliveryno) {
+		this.deliveryno = deliveryno;
+	}
+
+	public String getMemberid() {
         return memberid;
     }
 
@@ -183,6 +195,22 @@ public class TransportOrderVo implements Serializable {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public String getCustomerid() {
+		return customerid;
+	}
+
+	public void setCustomerid(String customerid) {
+		this.customerid = customerid;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 

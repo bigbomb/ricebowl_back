@@ -16,6 +16,6 @@ public interface DeliveryOrderDetailService extends IService<DeliveryOrderDetail
 	void deleteBatchDeliveryOrderNos(List<String> asList);
 
 	List<DeliveryOrderDetailVo> findDetailByPageList(ParamsDto dto, String memberId,
-			String deliveryNo);
+			String[] deliveryNos);
 
 }

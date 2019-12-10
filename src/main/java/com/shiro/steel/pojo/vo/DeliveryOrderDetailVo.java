@@ -39,6 +39,10 @@ public class DeliveryOrderDetailVo implements Serializable {
     private Date crt;
 
     private Date upt;
+    
+    private String warehousename;
+    
+    private String quality;
 
     private static final long serialVersionUID = 1L;
 
@@ -165,4 +169,21 @@ public class DeliveryOrderDetailVo implements Serializable {
     public void setUpt(Date upt) {
         this.upt = upt;
     }
+
+	public String getWarehousename() {
+		return warehousename;
+	}
+
+	public void setWarehousename(String warehousename) {
+		this.warehousename = warehousename;
+	}
+
+	public String getQuality() {
+		return quality;
+	}
+
+	public void setQuality(String quality) {
+		this.quality = quality;
+	}
+    
 }

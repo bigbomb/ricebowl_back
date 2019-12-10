@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.Enum.EnumTransportFee;
+import com.shiro.steel.entity.DeliveryOrder;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.TransportOrder;
@@ -26,8 +28,10 @@ import com.shiro.steel.mapper.TransportOrderMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.TransportOrderDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
+import com.shiro.steel.pojo.vo.SaleContractDetailVo;
 import com.shiro.steel.pojo.vo.TransportOrderDetailVo;
 import com.shiro.steel.pojo.vo.TransportOrderVo;
+import com.shiro.steel.service.DeliveryOrderService;
 import com.shiro.steel.service.SaleContractDetailService;
 import com.shiro.steel.service.StockService;
 import com.shiro.steel.service.TransportOrderDetailService;
@@ -42,6 +46,8 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	@Autowired
 	private SaleContractDetailService saleContractDetailService;
 	
+	@Autowired
+	private DeliveryOrderService deliveryOrderService;
 	
 	@Autowired
 	private StockService stockService;
@@ -64,46 +70,60 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	    transportOrder.setCrt(new Date());
 	    transportOrder.setCreateby(userInfoDto.getUsername());
 
-	    if(EnumTransportFee.TAXFREE.getValue()==(transportOrderVo.getFeeoption())|| EnumTransportFee.TAXINCLUDED.getValue()==(transportOrderVo.getFeeoption()) )
-	    {
-	    	
-	    	transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee().multiply(transportOrderVo.getTransportweight()));
-	    }
-	    else
-	    {
-	    	transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee());
-	    }
- 	    super.baseMapper.insert(transportOrder);
- 	    List<SaleContractDetail>  collection = JSONObject.parseArray(transportOrderDetail, SaleContractDetail.class);
+ 	    List<SaleContractDetailVo>  collection = JSONObject.parseArray(transportOrderDetail, SaleContractDetailVo.class);
  	    BigDecimal totalWeight = new BigDecimal(0);
+ 	    BigDecimal actualWeight = new BigDecimal(0);
  	    List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
  	    List<Stock> stockList = new ArrayList<Stock>();
- 	    for(SaleContractDetail s:collection){
+ 	    for(SaleContractDetailVo s:collection){
  	      Stock stock = new Stock();	
  	      stock.setId(s.getStockid());
  	      stock.setStatus(EnumStockStatus.OUTSTOCK.getText());
  		  BigDecimal amount = new BigDecimal(0);
   		  totalWeight = totalWeight.add(s.getFinalweight());
+  		  actualWeight = actualWeight.add(s.getActualweight());
   		  SaleContractDetail  newsaleContractDetail = new SaleContractDetail();
-  		  newsaleContractDetail.setId(s.getId());
+  		  newsaleContractDetail.setId(Integer.valueOf(s.getSaledetailid()));
   		  newsaleContractDetail.setTransportStatus(EnumStockStatus.TRANSPORT.getText());
   		  saleContractDetailList.add(newsaleContractDetail);
   		  stockList.add(stock);
   	   }
- 	    List<TransportOrderDetail>  deliveryOrderDetailList = JSONObject.parseArray(transportOrderDetail, TransportOrderDetail.class);
- 	    for(TransportOrderDetail s:deliveryOrderDetailList){
+ 	    List<TransportOrderDetail>  transportOrderDetailList = JSONObject.parseArray(transportOrderDetail, TransportOrderDetail.class);
+ 	    for(TransportOrderDetail s:transportOrderDetailList){
  		   s.setTransportno(transportOrderNo);
  		   s.setCrt(new Date());
  		   if(s.getId()!=null)
  		   {
- 	 		   s.setSaledetailid(s.getId().toString());
+ 	 		   s.setSaledetailid(s.getSaledetailid());
  		   }
 
  		   s.setId(null);
  	   }
+ 	   transportOrder.setTransportweight(actualWeight);
+ 	   transportOrder.setDeliveryno(transportOrderVo.getDeliveryno());
+	    if(EnumTransportFee.TAXFREE.getValue()==(transportOrderVo.getFeeoption())|| EnumTransportFee.TAXINCLUDED.getValue()==(transportOrderVo.getFeeoption()) )
+	    {
+	    	
+	    	transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee().multiply(actualWeight));
+	    }
+	    else
+	    {
+	    	transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee());
+	    }
+	    String[] deliveryOrderString = transportOrderVo.getDeliveryno().split(",");
+	    List<DeliveryOrder> deliveryOrderList = new ArrayList<DeliveryOrder>();
+	    for(String deliverOrder:deliveryOrderString)
+	    {
+	    	DeliveryOrder deliveryOrder = new DeliveryOrder();
+	    	deliveryOrder.setDeliveryno(deliverOrder);
+	    	deliveryOrder.setStatus(EnumStockStatus.OUTSTOCK.getText());
+	    	deliveryOrderList.add(deliveryOrder);
+	    }
+	    deliveryOrderService.updateBatchByDeliveryOrder(deliveryOrderList);
+ 	    super.baseMapper.insert(transportOrder);
  	    stockService.updateBatchById(stockList);
- 	    transportOrderDetailService.insertBatch(deliveryOrderDetailList);
- 	    Boolean status =saleContractDetailService.insertOrUpdateBatch(saleContractDetailList);
+ 	    transportOrderDetailService.insertBatch(transportOrderDetailList);
+ 	    Boolean status =saleContractDetailService.updateBatchById(saleContractDetailList);
 		return status;
 	}
 	@Override
@@ -119,13 +139,13 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 		return super.baseMapper.findTransportOrderByPage(page, dto,createby,memberId,carrier,startTimeString,endTimeString);
 	}
 	@Override
-	public Boolean delTransportOrder(ParamsDto dto, String[] transportOrderNos, String[] saleContractNos) {
+	public Boolean delTransportOrder(ParamsDto dto, String[] transportOrderIds, String[] saleContractNos,String[] deliveryOrderNos) {
 		// TODO Auto-generated method stub
 		try {
 			 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
 		   	 List<String> saleDetailIdList = new ArrayList<String>();
 		   	 List<Stock> stockList = new ArrayList<Stock>();
-		   	 for(String sd :Arrays.asList(transportOrderNos))
+		   	 for(String sd :Arrays.asList(transportOrderIds))
 		   	 {
 		   		 TransportOrderDetail  transportOrderDetail = new TransportOrderDetail();
 		   		 transportOrderDetail.setTransportno(sd);
@@ -141,7 +161,13 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 		   		 }
 		   		 
 		   	 }
-		   	 transportOrderDetailService.deleteBatchTransportOrderNos(Arrays.asList(transportOrderNos));
+		   	 EntityWrapper<DeliveryOrder> deliveryOrderWrapper = new EntityWrapper<DeliveryOrder>();
+		   	 String deliveryOrderNosString= StringUtils.join(deliveryOrderNos,",");
+		     deliveryOrderWrapper.in("deliveryNo", deliveryOrderNosString);
+		     DeliveryOrder deliveryOrderEntity = new DeliveryOrder();
+		     deliveryOrderEntity.setStatus("");
+		     deliveryOrderService.update(deliveryOrderEntity, deliveryOrderWrapper);
+		   	 transportOrderDetailService.deleteBatchTransportOrderNos(Arrays.asList(transportOrderIds));
 		   	 saleContractDetailService.batchTransportOrderUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
 		    return true;
 		}catch(Exception e)

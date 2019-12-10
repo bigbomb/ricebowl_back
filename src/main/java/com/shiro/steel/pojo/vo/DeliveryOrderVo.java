@@ -18,6 +18,8 @@ public class DeliveryOrderVo implements Serializable {
     private Date endTime;
     
     private String customername;
+    
+    private String customerid;
 
     private String deliverymethod;
     
@@ -49,6 +51,8 @@ public class DeliveryOrderVo implements Serializable {
     private String deliveryOrderDetail;
 
     private Integer isItemRight;
+    
+    private String status;
     
     private static final long serialVersionUID = 1L;
 
@@ -109,8 +113,15 @@ public class DeliveryOrderVo implements Serializable {
         this.customername = customername;
     }
 
-    
-    public String getDeliverymethod() {
+    public String getCustomerid() {
+		return customerid;
+	}
+
+	public void setCustomerid(String customerid) {
+		this.customerid = customerid;
+	}
+
+	public String getDeliverymethod() {
 		return deliverymethod;
 	}
 
@@ -239,6 +250,14 @@ public class DeliveryOrderVo implements Serializable {
 
 	public void setIsItemRight(Integer isItemRight) {
 		this.isItemRight = isItemRight;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
     
     

@@ -15,6 +15,6 @@ public interface DeliveryOrderDetailMapper extends BaseMapper<DeliveryOrderDetai
 	void deleteBatchDeliveryOrderNos(List<String> asList);
 
 	List<DeliveryOrderDetailVo> findDetailByPageList(@Param("memberId")String memberId,
-			@Param("deliveryNo")String deliveryNo);
+			@Param("deliveryNos")String[] deliveryNos);
   
 }

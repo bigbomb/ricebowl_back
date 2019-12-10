@@ -14,6 +14,8 @@ public class TransportOrderDetail implements Serializable {
 
     private String transportno;
 
+    private String deliveryno;
+    
     private String saledetailid;
 
     private String productname;
@@ -60,7 +62,16 @@ public class TransportOrderDetail implements Serializable {
         this.transportno = transportno;
     }
 
-    public String getSaledetailid() {
+    
+    public String getDeliveryno() {
+		return deliveryno;
+	}
+
+	public void setDeliveryno(String deliveryno) {
+		this.deliveryno = deliveryno;
+	}
+
+	public String getSaledetailid() {
         return saledetailid;
     }
 

@@ -21,6 +21,8 @@ public class TransportOrder implements Serializable {
     private String transportno;
 
     private String contractno;
+    
+    private String deliveryno;
 
     private String memberid;
 
@@ -94,7 +96,15 @@ public class TransportOrder implements Serializable {
         this.contractno = contractno;
     }
 
-    public String getMemberid() {
+    public String getDeliveryno() {
+		return deliveryno;
+	}
+
+	public void setDeliveryno(String deliveryno) {
+		this.deliveryno = deliveryno;
+	}
+
+	public String getMemberid() {
         return memberid;
     }
 

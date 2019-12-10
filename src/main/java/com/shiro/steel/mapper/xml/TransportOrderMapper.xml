@@ -7,6 +7,7 @@
     <result column="createBy" jdbcType="VARCHAR" property="createby" />
     <result column="upt" jdbcType="TIMESTAMP" property="upt" />
     <result column="transportNo" jdbcType="VARCHAR" property="transportno" />
+    <result column="deliveryNo" jdbcType="VARCHAR" property="deliveryno" />
     <result column="contractNo" jdbcType="VARCHAR" property="contractno" />
     <result column="memberId" jdbcType="VARCHAR" property="memberid" />
     <result column="crt" jdbcType="TIMESTAMP" property="crt" />
@@ -55,7 +56,7 @@
   </select>
   
   <select id="findTransportOrderByPage" resultType="com.shiro.steel.pojo.dto.TransportOrderDto">
-	 select id, verifyBy, createBy, upt, transportNo, contractNo, memberId, crt, transportFee, 
+	 select id, verifyBy, createBy, upt, transportNo,deliveryNo, contractNo, memberId, crt, transportFee, 
     transportWeight, transportAddress, warehouse, vehicleNumber, carrier,remark,feeOption,transportTotalFee
     from transport_order
 		WHERE 1=1

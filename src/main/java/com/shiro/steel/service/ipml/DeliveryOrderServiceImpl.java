@@ -63,6 +63,9 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 	
 	@Autowired
 	private DeliveryOrderDetailService deliveryOrderDetailService;
+	
+	@Autowired
+	private DeliveryOrderMapper deliveryOrderMapper;
 
 	@Override
 	public Boolean addDeliveryOrder(DeliveryOrderVo deliveryOrderVo) {
@@ -154,10 +157,15 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 	}
 
 	@Override
-	public List<DeliveryOrderDetailVo> findDetailByPageList( ParamsDto dto,
-			String memberId, String deliveryNo) {
+	public List<DeliveryOrderDetail> findDetailByPageList( ParamsDto dto,
+			String memberId, String deliveryNos) {
 		// TODO Auto-generated method stub
-		List<DeliveryOrderDetailVo> list = deliveryOrderDetailService.findDetailByPageList(dto,memberId,deliveryNo);
+		EntityWrapper<DeliveryOrderDetail> wrapper = new EntityWrapper<DeliveryOrderDetail>();
+
+		wrapper.in("deliveryNo", deliveryNos);
+
+		List<DeliveryOrderDetail> list = deliveryOrderDetailService.selectList(wrapper);
+//		List<DeliveryOrderDetailVo> list = deliveryOrderDetailService.findDetailByPageList(dto,memberId,deliveryNos);
         return list;
 	}
 
@@ -199,6 +207,14 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 		}catch(MyException e){
 			return false;
 		}
+	}
+
+
+
+	@Override
+	public Integer updateBatchByDeliveryOrder(List<DeliveryOrder> deliveryOrderList) {
+		// TODO Auto-generated method stub
+		return deliveryOrderMapper.updateBatchByDeliveryOrder(deliveryOrderList);
 	}
 	
 

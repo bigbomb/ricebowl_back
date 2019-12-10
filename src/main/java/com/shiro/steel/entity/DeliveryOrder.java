@@ -28,6 +28,8 @@ public class DeliveryOrder implements Serializable {
 
     private String customername;
     
+    private String customerid;
+    
     private String deliverymethod;
 
     private String warehouseid;
@@ -55,6 +57,8 @@ public class DeliveryOrder implements Serializable {
     private BigDecimal overtimefee;
 
     private Integer isItemRight;
+    
+    private String status;
     
     private static final long serialVersionUID = 1L;
 
@@ -125,8 +129,15 @@ public class DeliveryOrder implements Serializable {
         this.customername = customername;
     }
 
-    
-    public String getDeliverymethod() {
+    public String getCustomerid() {
+		return customerid;
+	}
+
+	public void setCustomerid(String customerid) {
+		this.customerid = customerid;
+	}
+
+	public String getDeliverymethod() {
 		return deliverymethod;
 	}
 
@@ -247,6 +258,14 @@ public class DeliveryOrder implements Serializable {
 
 	public void setFinalweight(BigDecimal finalweight) {
 		this.finalweight = finalweight;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
     
     

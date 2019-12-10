@@ -21,6 +21,6 @@ public interface TransportOrderService extends IService<TransportOrder>{
 	List<TransportOrderDto> findTransportOrderByPage(Page<TransportOrderDto> page, ParamsDto dto, String createby,
 			 String memberId,String carrier, String startTimeString, String endTimeString);
 	@Transactional
-	Boolean delTransportOrder(ParamsDto dto, String[] transportOrderNos, String[] saleContractNos);
+	Boolean delTransportOrder(ParamsDto dto, String[] transportOrderNos, String[] saleContractNos, String[] deliveryOrderNos);
 
 }

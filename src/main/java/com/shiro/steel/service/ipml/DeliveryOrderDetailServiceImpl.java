@@ -44,11 +44,13 @@ public class DeliveryOrderDetailServiceImpl extends ServiceImpl<DeliveryOrderDet
 
 	@Override
 	public List<DeliveryOrderDetailVo> findDetailByPageList(ParamsDto dto,
-			String memberId, String deliveryNo) {
+			String memberId, String[] deliveryNos) {
 		// TODO Auto-generated method stub
-		List<DeliveryOrderDetailVo> list = super.baseMapper.findDetailByPageList(memberId,deliveryNo);
+		List<DeliveryOrderDetailVo> list = super.baseMapper.findDetailByPageList(memberId,deliveryNos);
         return list;
 	}
+
+
 	
 
     

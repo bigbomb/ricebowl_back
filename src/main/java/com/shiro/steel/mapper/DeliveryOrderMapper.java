@@ -16,4 +16,6 @@ public interface DeliveryOrderMapper extends BaseMapper<DeliveryOrder>{
 	List<DeliveryOrderVo> findByPage(Page<DeliveryOrderVo> page, @Param("dto")ParamsDto dto, @Param("memberId")String memberId,
 			@Param("createby") String createby, @Param("startTime")String startTime, @Param("endTime")String endTime);
 
+	Integer updateBatchByDeliveryOrder( List<DeliveryOrder> deliveryOrderList);
+
 }

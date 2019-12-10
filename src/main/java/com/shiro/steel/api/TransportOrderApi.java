@@ -54,20 +54,20 @@ public class TransportOrderApi extends BaseApi{
      */
     @RequestMapping(value = "/addTransportOrder" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object addDeliveryOrder(@Validated TransportOrderVo transportOrderVo,BindingResult bindingResult,String[] ids) {
+    public Object addDeliveryOrder(@Validated TransportOrderVo transportOrderVo,BindingResult bindingResult,String actualWeight) {
     	if (bindingResult.hasErrors()){
             List<ObjectError> errorList = bindingResult.getAllErrors();
             return ResultUtil.result(EnumCode.OK.getValue(), errorList.toString());
         	}
-    	    BigDecimal totalWeight = new BigDecimal(0);
-    	    for(String id:ids)
-    	    {
-    	    	SaleContractDetail saleContractDetail = new SaleContractDetail();
-    	    	saleContractDetail = saleContractDetailService.selectById(Integer.parseInt(id));
-    	    	BigDecimal weight = saleContractDetail.getActualweight();
-    	    	totalWeight = totalWeight.add(weight).setScale(2, BigDecimal.ROUND_HALF_UP);
-    	    }
-    	    transportOrderVo.setTransportweight(totalWeight);
+//    	    BigDecimal totalWeight = new BigDecimal(0);
+//    	    for(String id:ids)
+//    	    {
+//    	    	SaleContractDetail saleContractDetail = new SaleContractDetail();
+//    	    	saleContractDetail = saleContractDetailService.selectById(Integer.parseInt(id));
+//    	    	BigDecimal weight = saleContractDetail.getActualweight();
+//    	    	totalWeight = totalWeight.add(weight).setScale(2, BigDecimal.ROUND_HALF_UP);
+//    	    }
+//    	    transportOrderVo.setTransportweight(totalWeight);
     	    Boolean status =  transportOrderService.addTransportOrder(transportOrderVo);
     	   
     	    if (status)
@@ -128,11 +128,11 @@ public class TransportOrderApi extends BaseApi{
     
     @RequestMapping(value = "/delTransportOrder" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object delTransportOrder(ParamsDto dto,String[] transportOrderNos,String[] saleContractNos){
+    public Object delTransportOrder(ParamsDto dto,String[] transportOrderIds,String[] saleContractNos,String[] deliveryOrderNos){
     	 if (null == dto.getIds() || dto.getIds().length == 0) {
              return ResultUtil.result(EnumCode.BAD_REQUEST.getValue(), EnumCode.BAD_REQUEST.getText());
          }
-    	 Boolean result = transportOrderService.delTransportOrder(dto,transportOrderNos,saleContractNos);
+    	 Boolean result = transportOrderService.delTransportOrder(dto,transportOrderIds,saleContractNos,deliveryOrderNos);
     	 if(result)
     	 {
     		 return ResultUtil.result(EnumCode.OK.getValue(), "删除成功", null);

@@ -10,6 +10,7 @@
     <result column="startTime" jdbcType="TIMESTAMP" property="startTime" />
     <result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
     <result column="customerName" jdbcType="VARCHAR" property="customername" />
+    <result column="customerId" jdbcType="VARCHAR" property="customerid" />
     <result column="warehouseId" jdbcType="VARCHAR" property="warehouseid" />
     <result column="warehouseName" jdbcType="VARCHAR" property="warehousename" />
     <result column="warehouseAddress" jdbcType="VARCHAR" property="warehouseaddress" />
@@ -20,11 +21,12 @@
     <result column="deliveryMethod" jdbcType="VARCHAR" property="deliverymethod" />
     <result column="crt" jdbcType="TIMESTAMP" property="crt" />
     <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+    <result column="status" jdbcType="TIMESTAMP" property="status" />
   </resultMap>
   <select id="findByPage" resultType="com.shiro.steel.pojo.vo.DeliveryOrderVo">
 		SELECT
-		id,memberId,deliveryNo,contractNo, weight,finalWeight,startTime, endTime,customerName,warehouseName,warehouseAddress,warehousePhone,warehouseFax,vehicleNumber,
-		deliveryMethod,remark,crt,upt,createBy,overtimefee,isItemRight
+		id,memberId,deliveryNo,contractNo, weight,finalWeight,startTime, endTime,customerName,customerId,warehouseName,warehouseAddress,warehousePhone,warehouseFax,vehicleNumber,
+		deliveryMethod,remark,crt,upt,createBy,overtimefee,isItemRight,status
 		FROM
 		delivery_order
 		WHERE 1=1
@@ -45,4 +47,19 @@
 	 	</if>
 		order by crt desc
 	</select>
+	
+	
+	<update id="updateBatchByDeliveryOrder" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE delivery_order
+            <set>
+                status = #{item.status}
+            </set>
+            <where>
+                deliveryNo = #{item.deliveryno}
+            </where>
+        </foreach>
+    </update>
+    
+    
 </mapper>

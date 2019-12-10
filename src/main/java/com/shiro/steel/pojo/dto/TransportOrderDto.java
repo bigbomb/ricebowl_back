@@ -19,6 +19,8 @@ public class TransportOrderDto implements Serializable {
     private Date upt;
 
     private String transportno;
+    
+    private String deliveryno;
 
     private String contractno;
 
@@ -84,7 +86,15 @@ public class TransportOrderDto implements Serializable {
         this.transportno = transportno;
     }
 
-    public String getContractno() {
+    public String getDeliveryno() {
+		return deliveryno;
+	}
+
+	public void setDeliveryno(String deliveryno) {
+		this.deliveryno = deliveryno;
+	}
+
+	public String getContractno() {
         return contractno;
     }
 
