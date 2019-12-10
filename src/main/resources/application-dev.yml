@@ -1,0 +1,38 @@
+server:
+  port: 8089
+  uri-encoding: UTF-8
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://192.168.25.98:3306/steel?characterEncoding=utf8&useAffectedRows=true&allowMultiQueries=true
+    #url: jdbc:mysql://localhost:3306/plustest?characterEncoding=utf8
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
+  redis:
+    host: 192.168.25.98
+    port: 6379
+    password:
+#mybatis 配置
+mybatis:
+  mapper-locations: classpath:com/shiro/steel/mapper/xml/*.xml
+  type-aliases-package: com.shiro.steel.entity
+
+logging:
+  config: classpath:log4j2.xml
+  level:
+    com.shiro.steel.mapper: debug
