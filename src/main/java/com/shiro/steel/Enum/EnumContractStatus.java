@@ -12,7 +12,7 @@ public enum EnumContractStatus {
 	
 	DELIVERY(1004,"提货中"),
 	
-	TRANSPORT(1005,"提货中"),
+	TRANSPORT(1005,"发货中"),
 	
 	DONE(1006,"已完成");
 	

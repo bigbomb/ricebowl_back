@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.shiro.steel.Enum.EnumContractStatus;
 import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.Enum.EnumTransportFee;
 import com.shiro.steel.entity.DeliveryOrder;
@@ -116,7 +117,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	    {
 	    	DeliveryOrder deliveryOrder = new DeliveryOrder();
 	    	deliveryOrder.setDeliveryno(deliverOrder);
-	    	deliveryOrder.setStatus(EnumStockStatus.OUTSTOCK.getText());
+	    	deliveryOrder.setStatus(EnumContractStatus.DELIVERY.getText());
 	    	deliveryOrderList.add(deliveryOrder);
 	    }
 	    deliveryOrderService.updateBatchByDeliveryOrder(deliveryOrderList);
