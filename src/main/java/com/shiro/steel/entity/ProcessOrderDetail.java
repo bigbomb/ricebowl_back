@@ -24,9 +24,15 @@ public class ProcessOrderDetail implements Serializable {
 
     private String productmark;
 
+    private String warehousename;
+    
     private Integer num;
 
     private BigDecimal weight;
+    
+    private BigDecimal actualweight;
+    
+    private Integer stockid;
 
     private String unit;
 
@@ -97,7 +103,16 @@ public class ProcessOrderDetail implements Serializable {
         this.productmark = productmark;
     }
 
-    public Integer getNum() {
+    
+    public String getWarehousename() {
+		return warehousename;
+	}
+
+	public void setWarehousename(String warehousename) {
+		this.warehousename = warehousename;
+	}
+
+	public Integer getNum() {
         return num;
     }
 
@@ -113,7 +128,23 @@ public class ProcessOrderDetail implements Serializable {
         this.weight = weight;
     }
 
-    public String getUnit() {
+	public BigDecimal getActualweight() {
+		return actualweight;
+	}
+
+	public void setActualweight(BigDecimal actualweight) {
+		this.actualweight = actualweight;
+	}
+
+	public Integer getStockid() {
+		return stockid;
+	}
+
+	public void setStockid(Integer stockid) {
+		this.stockid = stockid;
+	}
+
+	public String getUnit() {
         return unit;
     }
 

@@ -101,7 +101,8 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	      stock.setId(s.getStockid());
  	      stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
  		  BigDecimal amount = new BigDecimal(0);
-  		  amount = s.getFinalweight().multiply(s.getPrice()).multiply(new BigDecimal(s.getNum())).setScale(3,BigDecimal.ROUND_HALF_UP);
+  		  amount = s.getFinalweight().multiply(s.getPrice()).setScale(3,BigDecimal.ROUND_HALF_UP);
+          //amount = s.getFinalweight().multiply(s.getPrice()).multiply(new BigDecimal(s.getNum())).setScale(3,BigDecimal.ROUND_HALF_UP);
   		  totalWeight = totalWeight.add(s.getFinalweight());
   		  totalAmount = totalAmount.add(amount);
   		  SaleContractDetail  newsaleContractDetail = new SaleContractDetail();

@@ -1,5 +1,6 @@
 package com.shiro.steel.service.ipml;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,12 +16,15 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.entity.ProcessOrder;
 import com.shiro.steel.entity.ProcessOrderDetail;
 import com.shiro.steel.entity.ProcessTemplate;
 import com.shiro.steel.entity.SaleContractDetail;
+import com.shiro.steel.entity.Stock;
 import com.shiro.steel.mapper.ProcessOrderMapper;
 import com.shiro.steel.mapper.ProcessTemplateMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
@@ -29,6 +33,7 @@ import com.shiro.steel.pojo.vo.ProcessOrderVo;
 import com.shiro.steel.service.ProcessOrderDetailService;
 import com.shiro.steel.service.ProcessOrderService;
 import com.shiro.steel.service.SaleContractDetailService;
+import com.shiro.steel.service.StockService;
 import com.shiro.steel.utils.GeneratorUtil;
 
 /**
@@ -48,6 +53,8 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 	private SaleContractDetailService saleContractDetailService;
 	@Autowired
 	private ProcessTemplateMapper processTemplateMapper;
+    @Autowired
+    private StockService stockService;
 	@Override
 	public Boolean addProcessOrder(ProcessOrderVo processOrderVo,Integer contractId) {
 		// TODO Auto-generated method stub
@@ -63,7 +70,7 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
  	    Subject subject = SecurityUtils.getSubject();   
 	    userInfoDto = (UserInfoDto) subject.getPrincipal();
 	    processOrder.setCreateBy(userInfoDto.getUsername());
- 	    super.baseMapper.insert(processOrder);
+ 	   
  	    //对加工模板进行操作
  	    ProcessTemplate processTemplate = new ProcessTemplate();
  	    processTemplate.setCustomerid(processOrderVo.getCustomerId());
@@ -89,16 +96,30 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
  	    }
  	    String processOrderDetail = processOrderVo.getProcessOrderDetail();
     	List<ProcessOrderDetail>  collection = JSONObject.parseArray(processOrderDetail, ProcessOrderDetail.class);
+    	BigDecimal processweight = new BigDecimal(0);
+    	List<Integer> stockidList = new ArrayList<>();
     	for(ProcessOrderDetail s:collection){
+    		   processweight = processweight.add(s.getActualweight());
 	  		   s.setProcessno(processNo);
 	  		   s.setSaleDetailId(s.getId().toString());
 	  		   s.setCrt(new Date());
 	  		   SaleContractDetail scd = new SaleContractDetail();
 	  		   scd.setId(s.getId());
-	  		   scd.setProcessstatus("加工中");
+	  		   scd.setStockid(s.getStockid());
+	  		   stockidList.add(s.getStockid());
+	  		   scd.setActualweight(s.getActualweight());
+	  		   scd.setWarehousename(s.getWarehousename());
+	  		   scd.setProcessstatus(EnumStockStatus.PROCESS.getText());
 	  		   scd.setRemark(s.getRemark());
 	  		   saleContractDetailList.add(scd);
 	  	   }
+    	 processOrder.setProcessweight(processweight);
+    	 super.baseMapper.insert(processOrder);
+    	 Stock stock = new Stock();
+    	 stock.setStatus(EnumStockStatus.PROCESS.getText());
+    	 EntityWrapper<Stock> stockWrapper = new EntityWrapper<Stock>();
+    	 stockWrapper.in("id", stockidList);
+    	 stockService.update(stock, stockWrapper);
     	 processOrderDetailService.insertBatch(collection);
 //    	 SaleContract saleContract = new SaleContract();
 //    	 saleContract.setId(contractId);
@@ -120,6 +141,7 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 		try {
 			 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
 		   	 List<String> saleDetailIdList = new ArrayList<String>();
+		   	 List<Integer> stockidList = new ArrayList<Integer>();
 		   	 for(String sd :Arrays.asList(processNos))
 		   	 {
 		   		 ProcessOrderDetail  processOrderDetail = new ProcessOrderDetail();
@@ -131,11 +153,16 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 		   			 for (ProcessOrderDetail pod:processOrderDetailList)
 		   			 {
 		   				 saleDetailIdList.add(pod.getSaleDetailId());
+		   				 stockidList.add(pod.getStockid());
 		   			 }
 		   		 }
 		   		 
 		   	 }
-	   	 
+	   	 Stock stock = new Stock();
+    	 stock.setStatus(EnumStockStatus.INSTOCK.getText());
+    	 EntityWrapper<Stock> stockWrapper = new EntityWrapper<Stock>();
+    	 stockWrapper.in("id", stockidList);
+    	 stockService.update(stock, stockWrapper);
 	   	 processOrderDetailService.deleteBatchProcessNos(Arrays.asList(processNos));
 	   	 saleContractDetailService.batchProcessUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
 	   	 return true;

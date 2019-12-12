@@ -10,6 +10,8 @@
     <result column="productMark" jdbcType="VARCHAR" property="productmark" />
     <result column="num" jdbcType="INTEGER" property="num" />
     <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="actualWeight" jdbcType="DECIMAL" property="actualweight" />
+    <result column="stockid" jdbcType="INTEGER" property="stockid" />
     <result column="unit" jdbcType="VARCHAR" property="unit" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="status" jdbcType="VARCHAR" property="status" />

@@ -18,6 +18,8 @@ public class PurchaseContract implements Serializable {
     
     private String invoicestatus;
 
+    private Integer supplyerid;
+    
     private String supplyername;
 
     private String purchaseno;
@@ -77,6 +79,14 @@ public class PurchaseContract implements Serializable {
 
 	public void setInvoicestatus(String invoicestatus) {
 		this.invoicestatus = invoicestatus;
+	}
+
+	public Integer getSupplyerid() {
+		return supplyerid;
+	}
+
+	public void setSupplyerid(Integer supplyerid) {
+		this.supplyerid = supplyerid;
 	}
 
 	public String getSupplyername() {
