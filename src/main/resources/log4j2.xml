@@ -44,7 +44,7 @@
                 <!--<SizeBasedTriggeringPolicy size="1 KB"/>-->
             </Policies>
         </RollingFile>
-        <File name="file" fileName="/home/steel">
+        <File name="file" fileName="/Users/luwangchao/Downloads/workspace/ricebowl/back">
             <!--&lt;!&ndash;控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch）&ndash;&gt;-->
             <ThresholdFilter level="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>

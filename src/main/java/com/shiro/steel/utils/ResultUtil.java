@@ -1,6 +1,7 @@
 package com.shiro.steel.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 
 
 /**
@@ -11,29 +12,29 @@ import com.alibaba.fastjson.JSONObject;
  */
 public class ResultUtil {
 
-    public static String result(final Integer status,final String msg,final Object data,final Integer total) {
+    public static String result(final Integer status,final String msg,final Object data,final long l) {
         JSONObject jsonObject = new JSONObject() {
             {
                 put("status", status);
                 put("msg", msg);
                 put("data", data);
-                put("total", total);
+                put("total", l);
             }
         };
-        return jsonObject.toString();
+        return JSONObject.toJSONString(jsonObject, SerializerFeature.WriteMapNullValue);
     }
 
-    public static String result(final Integer status,final String msg,final Object data,final Integer total,final Integer pages) {
+    public static String result(final Integer status,final String msg,final Object data,final long l,final long m) {
         JSONObject jsonObject = new JSONObject() {
             {
                 put("status", status);
                 put("msg", msg);
                 put("data", data);
-                put("total", total);
-                put("pages", pages);
+                put("total", l);
+                put("pages", m);
             }
         };
-        return jsonObject.toString();
+        return JSONObject.toJSONString(jsonObject, SerializerFeature.WriteMapNullValue);
     }
     
     public static String result(final Integer status,final String msg,final Object data) {
@@ -44,7 +45,7 @@ public class ResultUtil {
                 put("data", data);
             }
         };
-        return jsonObject.toString();
+        return JSONObject.toJSONString(jsonObject, SerializerFeature.WriteMapNullValue);
     }
 
     public static String result(final Integer status,final String msg) {
@@ -54,7 +55,7 @@ public class ResultUtil {
                 put("msg", msg);
             }
         };
-        return jsonObject.toString();
+        return JSONObject.toJSONString(jsonObject, SerializerFeature.WriteMapNullValue);
     }
 
 }
