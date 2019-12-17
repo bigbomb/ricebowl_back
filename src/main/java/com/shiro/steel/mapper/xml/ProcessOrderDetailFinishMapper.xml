@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.ProcessOrderDetailFinishMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.ProcessOrderDetailFinish">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="processNo" jdbcType="VARCHAR" property="processno" />
+    <result column="saleDetailId" jdbcType="VARCHAR" property="saledetailid" />
+    <result column="productName" jdbcType="VARCHAR" property="productname" />
+    <result column="productSpec" jdbcType="VARCHAR" property="productspec" />
+    <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
+    <result column="productMark" jdbcType="VARCHAR" property="productmark" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+    <result column="stockid" jdbcType="INTEGER" property="stockid" />
+    <result column="actualWeight" jdbcType="DECIMAL" property="actualweight" />
+    <result column="warehousename" jdbcType="VARCHAR" property="warehousename" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from process_order_detail_finish
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.shiro.steel.entity.ProcessOrderDetailFinish">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into process_order_detail_finish (processNo, saleDetailId, productName, 
+      productSpec, productFactory, productMark, 
+      num, weight, unit, 
+      remark, status, crt, 
+      upt, stockid, actualWeight, 
+      warehousename)
+    values (#{processno,jdbcType=VARCHAR}, #{saledetailid,jdbcType=VARCHAR}, #{productname,jdbcType=VARCHAR}, 
+      #{productspec,jdbcType=VARCHAR}, #{productfactory,jdbcType=VARCHAR}, #{productmark,jdbcType=VARCHAR}, 
+      #{num,jdbcType=INTEGER}, #{weight,jdbcType=DECIMAL}, #{unit,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{crt,jdbcType=TIMESTAMP}, 
+      #{upt,jdbcType=TIMESTAMP}, #{stockid,jdbcType=INTEGER}, #{actualweight,jdbcType=DECIMAL}, 
+      #{warehousename,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.ProcessOrderDetailFinish">
+    update process_order_detail_finish
+    set processNo = #{processno,jdbcType=VARCHAR},
+      saleDetailId = #{saledetailid,jdbcType=VARCHAR},
+      productName = #{productname,jdbcType=VARCHAR},
+      productSpec = #{productspec,jdbcType=VARCHAR},
+      productFactory = #{productfactory,jdbcType=VARCHAR},
+      productMark = #{productmark,jdbcType=VARCHAR},
+      num = #{num,jdbcType=INTEGER},
+      weight = #{weight,jdbcType=DECIMAL},
+      unit = #{unit,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP},
+      stockid = #{stockid,jdbcType=INTEGER},
+      actualWeight = #{actualweight,jdbcType=DECIMAL},
+      warehousename = #{warehousename,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, processNo, saleDetailId, productName, productSpec, productFactory, productMark, 
+    num, weight, unit, remark, status, crt, upt, stockid, actualWeight, warehousename
+    from process_order_detail_finish
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, processNo, saleDetailId, productName, productSpec, productFactory, productMark, 
+    num, weight, unit, remark, status, crt, upt, stockid, actualWeight, warehousename
+    from process_order_detail_finish
+  </select>
+</mapper>

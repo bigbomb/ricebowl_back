@@ -22,6 +22,7 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.entity.ProcessOrder;
 import com.shiro.steel.entity.ProcessOrderDetail;
+import com.shiro.steel.entity.ProcessOrderDetailFinish;
 import com.shiro.steel.entity.ProcessTemplate;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.entity.Stock;
@@ -29,7 +30,9 @@ import com.shiro.steel.mapper.ProcessOrderMapper;
 import com.shiro.steel.mapper.ProcessTemplateMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
+import com.shiro.steel.pojo.vo.ProcessDetailFinishVo;
 import com.shiro.steel.pojo.vo.ProcessOrderVo;
+import com.shiro.steel.service.ProcessOrderDetailFinishService;
 import com.shiro.steel.service.ProcessOrderDetailService;
 import com.shiro.steel.service.ProcessOrderService;
 import com.shiro.steel.service.SaleContractDetailService;
@@ -55,6 +58,8 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 	private ProcessTemplateMapper processTemplateMapper;
     @Autowired
     private StockService stockService;
+    @Autowired
+    private ProcessOrderDetailFinishService processOrderDetailFinishService;
 	@Override
 	public Boolean addProcessOrder(ProcessOrderVo processOrderVo,Integer contractId) {
 		// TODO Auto-generated method stub
@@ -172,7 +177,7 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 		}
 		
 	}
-
+	
 
     
 }

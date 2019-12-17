@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.service.IService;
 import com.shiro.steel.entity.ProcessOrder;
 import com.shiro.steel.entity.ProcessOrderDetail;
 import com.shiro.steel.pojo.dto.ParamsDto;
+import com.shiro.steel.pojo.vo.ProcessDetailFinishVo;
 import com.shiro.steel.pojo.vo.ProcessOrderVo;
 
 public interface ProcessOrderService extends IService<ProcessOrder>{
@@ -18,6 +19,6 @@ public interface ProcessOrderService extends IService<ProcessOrder>{
 	List<ProcessOrderVo> findByPage(Page<ProcessOrderVo> page, ParamsDto dto, String memberId, String createby, String startTime, String endTime);
 	@Transactional
 	Boolean delProcessOrder(ParamsDto dto, String[] processNos, String[] saleContractNos);
-
+	
 
 }

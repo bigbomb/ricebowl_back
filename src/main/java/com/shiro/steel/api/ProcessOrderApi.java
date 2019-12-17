@@ -24,10 +24,13 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.shiro.steel.Enum.EnumCode;
 import com.shiro.steel.api.base.BaseApi;
 import com.shiro.steel.entity.ProcessOrderDetail;
+import com.shiro.steel.entity.ProcessOrderDetailFinish;
 import com.shiro.steel.entity.ProcessTemplate;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
+import com.shiro.steel.pojo.vo.ProcessDetailFinishVo;
 import com.shiro.steel.pojo.vo.ProcessOrderVo;
+import com.shiro.steel.service.ProcessOrderDetailFinishService;
 import com.shiro.steel.service.ProcessOrderDetailService;
 import com.shiro.steel.service.ProcessOrderService;
 import com.shiro.steel.service.ProcessTemplateService;
@@ -45,6 +48,9 @@ public class ProcessOrderApi extends BaseApi{
     
     @Autowired
     private ProcessTemplateService  processTemplateService;
+    
+    @Autowired
+    private ProcessOrderDetailFinishService processOrderDetailFinishService;
 	/**
      * @desc: 新增报价单
      *
@@ -65,6 +71,38 @@ public class ProcessOrderApi extends BaseApi{
     	     }else
     	     {
     	    	 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "保存失败");
+    	     }
+    
+    }
+    
+    @RequestMapping(value = "/addProcessOrderFinish" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
+    public Object addProcessOrderFinish(@Validated ProcessDetailFinishVo processDetailFinishVo, BindingResult bindingResult) {
+    	if (bindingResult.hasErrors()){
+            List<ObjectError> errorList = bindingResult.getAllErrors();
+            return ResultUtil.result(EnumCode.OK.getValue(), errorList.toString());
+        	}
+    	    Boolean status = processOrderDetailFinishService.addProcessOrderFinish(processDetailFinishVo);
+    	    if (status)
+    	     {
+    	    	 return ResultUtil.result(EnumCode.OK.getValue(), "保存成功");
+    	     }else
+    	     {
+    	    	 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "保存失败");
+    	     }
+    
+    }
+    
+    @RequestMapping(value = "/getProcessOrderFinish" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
+    public Object getProcessOrderFinish(String processNo) {
+    	    List<ProcessOrderDetailFinish> processDetailFinishList = processOrderDetailFinishService.getProcessOrderFinish(processNo);
+    	    if (processDetailFinishList.size()>0)
+    	     {
+    	    	 return ResultUtil.result(EnumCode.OK.getValue(), "读取成功",processDetailFinishList);
+    	     }else
+    	     {
+    	    	 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "读取失败");
     	     }
     
     }
