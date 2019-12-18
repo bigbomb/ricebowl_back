@@ -1,16 +1,14 @@
 package com.shiro.steel.mapper;
 
-import com.baomidou.mybatisplus.mapper.BaseMapper;
-import com.baomidou.mybatisplus.plugins.Page;
-import com.baomidou.mybatisplus.plugins.pagination.Pagination;
-import com.shiro.steel.entity.Attribute;
-import com.shiro.steel.entity.AttributeDetail;
-import com.shiro.steel.pojo.dto.AttributeDetailDto;
-import com.shiro.steel.pojo.dto.ParamsDto;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.baomidou.mybatisplus.mapper.BaseMapper;
+import com.baomidou.mybatisplus.plugins.pagination.Pagination;
+import com.shiro.steel.entity.AttributeDetail;
+import com.shiro.steel.pojo.dto.AttributeDetailDto;
+import com.shiro.steel.pojo.dto.ParamsDto;
 
 /**
  * <p>

@@ -85,7 +85,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
   		  actualWeight = actualWeight.add(s.getActualweight());
   		  SaleContractDetail  newsaleContractDetail = new SaleContractDetail();
   		  newsaleContractDetail.setId(Integer.valueOf(s.getSaledetailid()));
-  		  newsaleContractDetail.setTransportStatus(EnumStockStatus.TRANSPORT.getText());
+  		  newsaleContractDetail.setTransportstatus(EnumStockStatus.TRANSPORT.getText());
   		  saleContractDetailList.add(newsaleContractDetail);
   		  stockList.add(stock);
   	   }

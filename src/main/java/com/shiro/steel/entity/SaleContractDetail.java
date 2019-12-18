@@ -78,7 +78,7 @@ public class SaleContractDetail implements Serializable {
 	
 	private String deliverystatus;
 	
-	private String transportStatus;
+	private String transportstatus;
 	
 	private String remark;
 	
@@ -219,14 +219,12 @@ public class SaleContractDetail implements Serializable {
 		this.deliverystatus = deliverystatus;
 	}
 	
-	
-
-	public String getTransportStatus() {
-		return transportStatus;
+	public String getTransportstatus() {
+		return transportstatus;
 	}
 
-	public void setTransportStatus(String transportStatus) {
-		this.transportStatus = transportStatus;
+	public void setTransportstatus(String transportstatus) {
+		this.transportstatus = transportstatus;
 	}
 
 	public String getRemark() {

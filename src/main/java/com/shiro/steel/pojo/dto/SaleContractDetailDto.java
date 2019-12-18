@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.enums.IdType;
 
 public class SaleContractDetailDto implements Serializable {
-	@TableId(type = IdType.AUTO)
     private Integer id;
 
 	private String stockid;
@@ -52,6 +51,10 @@ public class SaleContractDetailDto implements Serializable {
     private String transportstatus;
     
     private String quality;
+    
+    private Date crt;
+	   
+	private Date upt;
     
     public String getRemark() {
 		return remark;
@@ -262,19 +265,19 @@ public class SaleContractDetailDto implements Serializable {
 
   
 
-//    public Date getCrt() {
-//        return crt;
-//    }
-//
-//    public void setCrt(Date crt) {
-//        this.crt = crt;
-//    }
-//
-//    public Date getUpt() {
-//        return upt;
-//    }
-//
-//    public void setUpt(Date upt) {
-//        this.upt = upt;
-//    }
+    public Date getCrt() {
+        return crt;
+    }
+
+    public void setCrt(Date crt) {
+        this.crt = crt;
+    }
+
+    public Date getUpt() {
+        return upt;
+    }
+
+    public void setUpt(Date upt) {
+        this.upt = upt;
+    }
 }

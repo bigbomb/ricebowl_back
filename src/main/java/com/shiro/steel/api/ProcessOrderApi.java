@@ -95,15 +95,9 @@ public class ProcessOrderApi extends BaseApi{
     
     @RequestMapping(value = "/getProcessOrderFinish" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object getProcessOrderFinish(String processNo) {
-    	    List<ProcessOrderDetailFinish> processDetailFinishList = processOrderDetailFinishService.getProcessOrderFinish(processNo);
-    	    if (processDetailFinishList.size()>0)
-    	     {
-    	    	 return ResultUtil.result(EnumCode.OK.getValue(), "读取成功",processDetailFinishList);
-    	     }else
-    	     {
-    	    	 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "读取失败");
-    	     }
+    public Object getProcessOrderFinish(String stockid) {
+    	    List<ProcessOrderDetailFinish> processDetailFinishList = processOrderDetailFinishService.getProcessOrderFinish(stockid);
+    	    return ResultUtil.result(EnumCode.OK.getValue(), "读取成功",processDetailFinishList);
     
     }
     

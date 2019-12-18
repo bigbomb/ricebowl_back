@@ -117,6 +117,7 @@ public class MybatisConfig {
 	@Bean
 	public MybatisSqlSessionFactoryBean mybatisSqlSessionFactoryBean() {
 		MybatisSqlSessionFactoryBean mybatisPlus = new MybatisSqlSessionFactoryBean();
+
 		mybatisPlus.setDataSource(dataSource);
 		mybatisPlus.setVfs(SpringBootVFS.class);
 		if (StringUtils.hasText(this.properties.getConfigLocation())) {
@@ -134,6 +135,7 @@ public class MybatisConfig {
 		globalConfig.setIdType(3);
 		mybatisPlus.setGlobalConfig(globalConfig);
 		MybatisConfiguration mc = new MybatisConfiguration();
+		mc.setCallSettersOnNulls(true);
 		mc.setDefaultScriptingLanguage(MybatisXMLLanguageDriver.class);
 		mc.setMapUnderscoreToCamelCase(false);
 		mc.setUseColumnLabel(true);

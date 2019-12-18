@@ -68,10 +68,10 @@ public class ProcessOrderDetailFinishServiceImpl extends ServiceImpl<ProcessOrde
 	}
 
 	@Override
-	public List<ProcessOrderDetailFinish> getProcessOrderFinish(String processNo) {
+	public List<ProcessOrderDetailFinish> getProcessOrderFinish(String stockid) {
 		// TODO Auto-generated method stub
 		EntityWrapper<ProcessOrderDetailFinish> entityWrapper = new EntityWrapper<ProcessOrderDetailFinish>();
-		entityWrapper.eq("processNo", processNo);
+		entityWrapper.eq("stockid", stockid);
 		return super.baseMapper.selectList(entityWrapper);
 		
 	}
