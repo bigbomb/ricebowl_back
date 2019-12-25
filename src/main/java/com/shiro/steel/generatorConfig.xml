@@ -19,15 +19,15 @@
             <property name="suppressDate" value="true" />
             <property name="suppressAllComments" value="true" />
         </commentGenerator>
-    <jdbcConnection driverClass="com.mysql.jdbc.Driver"  connectionURL="jdbc:mysql://192.168.25.98:3306/steel?characterEncoding=utf8&amp;useSSL=no"   userId="root"   password="123456"> </jdbcConnection>
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver"  connectionURL="jdbc:mysql://localhost:3306/steel?characterEncoding=utf8&amp;useSSL=no"   userId="root"   password="123456"> </jdbcConnection>
 
-    <javaModelGenerator targetPackage="com.shiro.steel.entity" targetProject="/Users/ethan/Downloads/steelback/src/main/java"/>
+    <javaModelGenerator targetPackage="com.shiro.steel.entity" targetProject="/Users/luwangchao/Downloads/workspace/ricebowl/back/src/main/java"/>
 
-    <sqlMapGenerator targetPackage="com.shiro.steel.mapper.xml"  targetProject="/Users/ethan/Downloads/steelback/src/main/java"/>
+    <sqlMapGenerator targetPackage="com.shiro.steel.mapper.xml"  targetProject="/Users/luwangchao/Downloads/workspace/ricebowl/back/src/main/java"/>
 
-    <javaClientGenerator targetPackage="com.shiro.steel.mapper" targetProject="/Users/ethan/Downloads/steelback/src/main/java" type="XMLMAPPER" />
+    <javaClientGenerator targetPackage="com.shiro.steel.mapper" targetProject="/Users/luwangchao/Downloads/workspace/ricebowl/back/src/main/java" type="XMLMAPPER" />
 
-    <table tableName="process_template" >
+    <table tableName="process_order_detail_finish" >
       <generatedKey column="id" sqlStatement="Mysql" identity="true"/>
     </table>
     <!-- <table tableName="transport_order" >

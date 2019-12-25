@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.service.IService;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.SaleContractDetailDto;
+import com.shiro.steel.pojo.dto.SaleContractDto;
 
 
 public interface SaleContractDetailService extends IService<SaleContractDetail>{
@@ -23,6 +24,6 @@ public interface SaleContractDetailService extends IService<SaleContractDetail>{
 	 @Transactional
 	void batchTransportOrderUpdate(List<String> asList, List<String> saleDetailIdList);
 
-	 List selectByStockIdList(List<String> stockIdList);
+	 List<SaleContractDto> selectByStockIdList(List<String> stockIdList);
 
 }

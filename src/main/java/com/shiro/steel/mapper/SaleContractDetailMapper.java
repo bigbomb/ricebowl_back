@@ -35,5 +35,5 @@ public interface SaleContractDetailMapper extends BaseMapper<SaleContractDetail>
 
 	void batchTransportOrderUpdate(@Param("list")List<String> asList, @Param("sdlist")List<String> saleDetailIdList);
 	
-	List<SaleContractDto> selectByStockIdList(@Param("stockIdList") List<String> stockIdList);
+	List<SaleContractDto> selectByStockIdList(List<String> stockIdList);
 }

@@ -1,11 +1,8 @@
 package com.shiro.steel.api;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.http.MediaType;
@@ -26,7 +23,6 @@ import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.WarehouseInfo;
 import com.shiro.steel.exception.MyException;
 import com.shiro.steel.pojo.dto.ParamsDto;
-import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.WarehouseInfoVo;
 import com.shiro.steel.service.ProcessOrderDetailService;
 import com.shiro.steel.service.StockService;
@@ -135,9 +131,19 @@ public class StockApi extends BaseApi{
     public Object findItemByPage(@ModelAttribute ParamsDto dto,@ModelAttribute Stock stock,String stockstatus){
     	 Page<Stock> page = new Page<>(dto.getStartPage(),dto.getPageSize());
     	 
-    	 stock.setStatus(stockstatus);
+    	
      	 EntityWrapper<Stock> wrapper = new EntityWrapper<Stock>(stock);
      	 wrapper.gt("num", 0);
+     	 if("jg".equals(stockstatus))
+     	 {
+     		wrapper.eq("status", EnumStockStatus.LOCKSTOCK.getText()).and().eq("customerId", stock.getCustomerid());
+     	 }else if("td".equals(stockstatus))
+     	 {
+         	 wrapper.eq("status",EnumStockStatus.LOCKSTOCK.getText()).or().eq("status",EnumStockStatus.PROCESS.getText());
+     	 }else {
+     		 wrapper.eq("status",stockstatus);
+		}
+
          Page<Stock> list = stockService.selectPage(page,wrapper);
          return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list.getRecords(), page.getTotal(),page.getPages());
     }

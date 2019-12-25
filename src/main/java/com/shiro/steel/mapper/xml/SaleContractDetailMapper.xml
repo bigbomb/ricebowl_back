@@ -20,6 +20,29 @@
     <result column="crt" jdbcType="TIMESTAMP" property="crt" />
     <result column="upt" jdbcType="TIMESTAMP" property="upt" />
   </resultMap>
+  
+  <resultMap id="BaseResultMapDto" type="com.shiro.steel.pojo.dto.SaleContractDto">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="contractNo" jdbcType="VARCHAR" property="contractno" />
+    <result column="productName" jdbcType="VARCHAR" property="productname" />
+    <result column="productSpec" jdbcType="VARCHAR" property="productspec" />
+    <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
+    <result column="productMark" jdbcType="VARCHAR" property="productmark" />
+    <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="total" jdbcType="DECIMAL" property="total" />
+    <result column="stockOutType" jdbcType="VARCHAR" property="stockouttype" />
+    <result column="warehouseName" jdbcType="VARCHAR" property="warehousename" />
+    <result column="quality" jdbcType="VARCHAR" property="quality" />
+    <result column="processStatus" jdbcType="VARCHAR" property="processstatus" />
+    <result column="deliveryStatus" jdbcType="VARCHAR" property="deliverystatus" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+  </resultMap>
+  
+  
+  
    <delete id="deleteByMap" parameterType="java.util.Map">
      delete from sale_contract_detail
     where contractNo = #{cm.contractNo,jdbcType=VARCHAR}
@@ -91,7 +114,7 @@
     
     <update id = "batchProcessUpdate" parameterType = "java.util.List">    
         <![CDATA[    
-           update sale_contract_detail set processStatus = null where contractNo in    
+           update sale_contract_detail set processStatus = null,finalWeight = null, actualWeight = null,stockid = null , warehouseName = null where contractNo in    
         ]]>    
         <foreach collection="list" item = "items" open="(" separator="," close=")">
         #{items}    
@@ -106,7 +129,7 @@
     
      <update id = "batchDeliveryOrderUpdate" parameterType = "java.util.List">    
         <![CDATA[    
-           update sale_contract_detail set deliveryStatus = null where contractNo in    
+           update sale_contract_detail set deliveryStatus = null ,actualWeight = null,stockid = null , warehouseName = null where contractNo in    
         ]]>    
         <foreach collection="list" item = "items" open="(" separator="," close=")">
         #{items}    
@@ -132,10 +155,11 @@
         
         </foreach>    
     </update> 
-   <select id="selectByStockIdList" resultType="com.shiro.steel.pojo.dto.SaleContractDto">
-    select sum(finalWeight) as actualWeight,CONVERT(sum(num*finalWeight*price),DECIMAL(10,2)) as actualAmount,contractNo from sale_contract_detail where stockid in 
-    <foreach collection="stockIdList" index="index" item="id" open="(" separator="," close=")">
-		#{id}
+   <select id="selectByStockIdList" resultType="com.shiro.steel.pojo.dto.SaleContractDto" parameterType="java.util.List">
+    select sum(finalWeight) as actualWeight,CONVERT(sum(num*finalWeight*price),DECIMAL(10,2)) as actualAmount,contractNo from sale_contract_detail where 
+    1=1 and stockid in 
+    <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+		#{item}
 	</foreach> GROUP BY contractNo
   </select>
 </mapper>

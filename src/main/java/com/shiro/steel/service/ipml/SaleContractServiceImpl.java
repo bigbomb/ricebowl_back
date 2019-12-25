@@ -521,6 +521,8 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
     	 String newcontractno = preName+GeneratorUtil.getTimeStamp();
     	 saleContract.setContractno(newcontractno);
     	 saleContract.setContractstatus("意向临调合同");
+    	 saleContract.setVerifyBy(null);
+    	 saleContract.setUpt(null);
     	 saleContract.setCrt(new Date());
     	 super.baseMapper.insert(saleContract);
     	 SaleContractDetail saleContractDetail = new SaleContractDetail();

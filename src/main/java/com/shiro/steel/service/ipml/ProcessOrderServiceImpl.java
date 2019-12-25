@@ -164,7 +164,7 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 		   		 
 		   	 }
 	   	 Stock stock = new Stock();
-    	 stock.setStatus(EnumStockStatus.INSTOCK.getText());
+    	 stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
     	 EntityWrapper<Stock> stockWrapper = new EntityWrapper<Stock>();
     	 stockWrapper.in("id", stockidList);
     	 stockService.update(stock, stockWrapper);

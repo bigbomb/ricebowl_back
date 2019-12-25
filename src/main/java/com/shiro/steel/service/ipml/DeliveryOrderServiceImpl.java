@@ -28,7 +28,6 @@ import com.shiro.steel.mapper.DeliveryOrderMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.SaleContractDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
-import com.shiro.steel.pojo.vo.DeliveryOrderDetailVo;
 import com.shiro.steel.pojo.vo.DeliveryOrderVo;
 import com.shiro.steel.service.DeliveryOrderDetailService;
 import com.shiro.steel.service.DeliveryOrderService;
@@ -201,9 +200,10 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
     	 }
 //    	 stockService.updateBatchById(stockList);
     	 deliveryOrderDetailService.deleteBatchDeliveryOrderNos(Arrays.asList(deliveryOrderNos));
-    	 saleContractDetailService.batchDeliveryOrderUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
     	 List<SaleContractDto> finaList = saleContractDetailService.selectByStockIdList(stockIdList);
-    	 Integer status = saleContractService.batchWeigtAmountUpdate(finaList);
+    	  saleContractService.batchWeigtAmountUpdate(finaList);
+    	 saleContractDetailService.batchDeliveryOrderUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
+    	
     	 return true;
 		}catch(MyException e){
 			return false;
