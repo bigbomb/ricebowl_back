@@ -169,6 +169,9 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
     	 stockWrapper.in("id", stockidList);
     	 stockService.update(stock, stockWrapper);
 	   	 processOrderDetailService.deleteBatchProcessNos(Arrays.asList(processNos));
+	   	 EntityWrapper<ProcessOrderDetailFinish> podf = new EntityWrapper<ProcessOrderDetailFinish>();
+	   	 podf.in("processNo", Arrays.asList(processNos));
+	   	 processOrderDetailFinishService.delete(podf);
 	   	 saleContractDetailService.batchProcessUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
 	   	 return true;
 		}catch(Exception e)
