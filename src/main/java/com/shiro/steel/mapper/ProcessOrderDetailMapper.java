@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.shiro.steel.entity.ProcessOrderDetail;
+import com.shiro.steel.pojo.dto.ProcessOrderDetailDto;
 
 public interface ProcessOrderDetailMapper extends BaseMapper<ProcessOrderDetail>{
     int deleteByPrimaryKey(Integer id);
@@ -17,4 +18,6 @@ public interface ProcessOrderDetailMapper extends BaseMapper<ProcessOrderDetail>
     int updateByPrimaryKey(ProcessOrderDetail record);
 
 	void deleteBatchProcessNos(@Param("list")List<String> asList);
+
+	List<ProcessOrderDetailDto> selectList(@Param("processNo") String processNo);
 }

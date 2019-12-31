@@ -27,6 +27,7 @@ import com.shiro.steel.entity.ProcessOrderDetail;
 import com.shiro.steel.entity.ProcessOrderDetailFinish;
 import com.shiro.steel.entity.ProcessTemplate;
 import com.shiro.steel.pojo.dto.ParamsDto;
+import com.shiro.steel.pojo.dto.ProcessOrderDetailDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.ProcessDetailFinishVo;
 import com.shiro.steel.pojo.vo.ProcessOrderVo;
@@ -147,10 +148,7 @@ public class ProcessOrderApi extends BaseApi{
     @RequestMapping(value = "/findByPageList" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object findByPageList(String processNo){
-    	ProcessOrderDetail processOrderDetail = new ProcessOrderDetail();
-    	processOrderDetail.setProcessno(processNo);
-     	 EntityWrapper<ProcessOrderDetail> wrapper = new EntityWrapper<ProcessOrderDetail>(processOrderDetail);
-         List<ProcessOrderDetail> list = processOrderDetailService.selectList(wrapper);
+    	List<ProcessOrderDetailDto> list = processOrderDetailService.selectList(processNo);
         return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list);
     }
     

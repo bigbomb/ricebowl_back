@@ -1,21 +1,24 @@
-package com.shiro.steel.entity;
+package com.shiro.steel.pojo.dto;
+/** 
+
+* @author 作者 lujunjie: 
+
+* @version 创建时间：Dec 27, 2019 4:45:18 PM 
+
+* 类说明 
+
+*/
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.enums.IdType;
-@TableName("process_order_detail_finish")
-public class ProcessOrderDetailFinish implements Serializable {
-	@TableId(type = IdType.AUTO)
+public class ProcessOrderDetailDto implements Serializable {
     private Integer id;
 
     private String processno;
 
-    private String saledetailid;
-
+    private String saleDetailId;
+    
     private String productname;
 
     private String productspec;
@@ -24,9 +27,17 @@ public class ProcessOrderDetailFinish implements Serializable {
 
     private String productmark;
 
+    private String warehousename;
+    
     private Integer num;
 
     private BigDecimal weight;
+    
+    private BigDecimal actualweight;
+    
+    private BigDecimal price;
+    
+    private Integer stockid;
 
     private String unit;
 
@@ -37,14 +48,6 @@ public class ProcessOrderDetailFinish implements Serializable {
     private Date crt;
 
     private Date upt;
-
-    private Integer stockid;
-
-    private BigDecimal actualweight;
-    
-    private BigDecimal price;
-
-    private String warehousename;
 
     private static final long serialVersionUID = 1L;
 
@@ -64,15 +67,16 @@ public class ProcessOrderDetailFinish implements Serializable {
         this.processno = processno;
     }
 
-    public String getSaledetailid() {
-        return saledetailid;
-    }
+    
+    public String getSaleDetailId() {
+		return saleDetailId;
+	}
 
-    public void setSaledetailid(String saledetailid) {
-        this.saledetailid = saledetailid;
-    }
+	public void setSaleDetailId(String saleDetailId) {
+		this.saleDetailId = saleDetailId;
+	}
 
-    public String getProductname() {
+	public String getProductname() {
         return productname;
     }
 
@@ -104,7 +108,16 @@ public class ProcessOrderDetailFinish implements Serializable {
         this.productmark = productmark;
     }
 
-    public Integer getNum() {
+    
+    public String getWarehousename() {
+		return warehousename;
+	}
+
+	public void setWarehousename(String warehousename) {
+		this.warehousename = warehousename;
+	}
+
+	public Integer getNum() {
         return num;
     }
 
@@ -120,7 +133,31 @@ public class ProcessOrderDetailFinish implements Serializable {
         this.weight = weight;
     }
 
-    public String getUnit() {
+	public BigDecimal getActualweight() {
+		return actualweight;
+	}
+
+	public void setActualweight(BigDecimal actualweight) {
+		this.actualweight = actualweight;
+	}
+
+	public BigDecimal getPrice() {
+		return price;
+	}
+
+	public void setPrice(BigDecimal price) {
+		this.price = price;
+	}
+
+	public Integer getStockid() {
+		return stockid;
+	}
+
+	public void setStockid(Integer stockid) {
+		this.stockid = stockid;
+	}
+
+	public String getUnit() {
         return unit;
     }
 
@@ -158,38 +195,5 @@ public class ProcessOrderDetailFinish implements Serializable {
 
     public void setUpt(Date upt) {
         this.upt = upt;
-    }
-
-    public Integer getStockid() {
-        return stockid;
-    }
-
-    public void setStockid(Integer stockid) {
-        this.stockid = stockid;
-    }
-
-    public BigDecimal getActualweight() {
-        return actualweight;
-    }
-
-    public void setActualweight(BigDecimal actualweight) {
-        this.actualweight = actualweight;
-    }
-
-    
-    public BigDecimal getPrice() {
-		return price;
-	}
-
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
-
-	public String getWarehousename() {
-        return warehousename;
-    }
-
-    public void setWarehousename(String warehousename) {
-        this.warehousename = warehousename;
     }
 }
