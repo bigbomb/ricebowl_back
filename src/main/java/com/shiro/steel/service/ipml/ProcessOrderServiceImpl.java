@@ -16,21 +16,23 @@ import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
-import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.shiro.steel.Enum.EnumCode;
 import com.shiro.steel.Enum.EnumStockStatus;
+import com.shiro.steel.entity.DeliveryOrderDetail;
 import com.shiro.steel.entity.ProcessOrder;
 import com.shiro.steel.entity.ProcessOrderDetail;
 import com.shiro.steel.entity.ProcessOrderDetailFinish;
 import com.shiro.steel.entity.ProcessTemplate;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.entity.Stock;
+import com.shiro.steel.exception.MyException;
+import com.shiro.steel.mapper.DeliveryOrderDetailMapper;
 import com.shiro.steel.mapper.ProcessOrderMapper;
 import com.shiro.steel.mapper.ProcessTemplateMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
-import com.shiro.steel.pojo.vo.ProcessDetailFinishVo;
 import com.shiro.steel.pojo.vo.ProcessOrderVo;
 import com.shiro.steel.service.ProcessOrderDetailFinishService;
 import com.shiro.steel.service.ProcessOrderDetailService;
@@ -38,6 +40,7 @@ import com.shiro.steel.service.ProcessOrderService;
 import com.shiro.steel.service.SaleContractDetailService;
 import com.shiro.steel.service.StockService;
 import com.shiro.steel.utils.GeneratorUtil;
+import com.shiro.steel.utils.ResultUtil;
 
 /**
  * <p>
@@ -60,6 +63,8 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
     private StockService stockService;
     @Autowired
     private ProcessOrderDetailFinishService processOrderDetailFinishService;
+    @Autowired
+    private DeliveryOrderDetailMapper deliveryOrderDetailMapper;
 	@Override
 	public Boolean addProcessOrder(ProcessOrderVo processOrderVo,Integer contractId) {
 		// TODO Auto-generated method stub
@@ -141,9 +146,8 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
         return list;
 	}
 	@Override
-	public Boolean delProcessOrder(ParamsDto dto, String[] processNos, String[] saleContractNos) {
+	public Boolean delProcessOrder(ParamsDto dto, String[] processNos, String[] saleContractNos)  throws MyException{
 		// TODO Auto-generated method stub
-		try {
 			 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
 		   	 List<String> saleDetailIdList = new ArrayList<String>();
 		   	 List<Integer> stockidList = new ArrayList<Integer>();
@@ -163,24 +167,30 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 		   		 }
 		   		 
 		   	 }
-	   	 Stock stock = new Stock();
-    	 stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
-    	 EntityWrapper<Stock> stockWrapper = new EntityWrapper<Stock>();
-    	 stockWrapper.in("id", stockidList);
-    	 stockService.update(stock, stockWrapper);
-	   	 processOrderDetailService.deleteBatchProcessNos(Arrays.asList(processNos));
-	   	 EntityWrapper<ProcessOrderDetailFinish> podf = new EntityWrapper<ProcessOrderDetailFinish>();
-	   	 podf.in("processNo", Arrays.asList(processNos));
-	   	 processOrderDetailFinishService.delete(podf);
-	   	 saleContractDetailService.batchProcessUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
-	   	 return true;
-		}catch(Exception e)
-		{
-			return false;
+		   	EntityWrapper<DeliveryOrderDetail> dodWrapper = new EntityWrapper<DeliveryOrderDetail>();
+		   	dodWrapper.in("stockId", stockidList);
+		   	List<DeliveryOrderDetail> dodList = deliveryOrderDetailMapper.selectList(dodWrapper);
+		   	if (dodList.size()>0)
+		   	{
+		   		throw new MyException(ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "关联提单已存在，删除失败！"));
+		   	}
+		   	 Stock stock = new Stock();
+	    	 stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+	    	 EntityWrapper<Stock> stockWrapper = new EntityWrapper<Stock>();
+	    	 stockWrapper.in("id", stockidList);
+	    	 stockService.update(stock, stockWrapper);
+		   	 processOrderDetailService.deleteBatchProcessNos(Arrays.asList(processNos));
+		   	 EntityWrapper<ProcessOrderDetailFinish> podf = new EntityWrapper<ProcessOrderDetailFinish>();
+		   	 podf.in("processNo", Arrays.asList(processNos));
+		   	 processOrderDetailFinishService.delete(podf);
+		   	 saleContractDetailService.batchProcessUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
+		   	 return true;
 		}
+//		{
+//			throw new MyException(ResultUtil.result(EnumCode.INTERNAL_SERVER_ERROR.getValue(), "服务器端异常！"));
+//		}
 		
 	}
 	
 
-    
-}
+

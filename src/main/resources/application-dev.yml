@@ -5,7 +5,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.25.98:3306/steel?characterEncoding=utf8&useAffectedRows=true&allowMultiQueries=true
+    url: jdbc:mysql://127.0.0.1:3306/steel?characterEncoding=utf8&useAffectedRows=true&allowMultiQueries=true
     #url: jdbc:mysql://localhost:3306/plustest?characterEncoding=utf8
     username: root
     password: 123456
@@ -24,7 +24,7 @@ spring:
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
   redis:
-    host: 192.168.25.98
+    host: 127.0.0.1
     port: 6379
     password:
 #mybatis 配置

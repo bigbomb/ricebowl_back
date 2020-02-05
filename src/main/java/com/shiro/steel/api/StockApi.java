@@ -23,6 +23,7 @@ import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.WarehouseInfo;
 import com.shiro.steel.exception.MyException;
 import com.shiro.steel.pojo.dto.ParamsDto;
+import com.shiro.steel.pojo.vo.StockVo;
 import com.shiro.steel.pojo.vo.WarehouseInfoVo;
 import com.shiro.steel.service.ProcessOrderDetailService;
 import com.shiro.steel.service.StockService;
@@ -128,10 +129,11 @@ public class StockApi extends BaseApi{
     
     @RequestMapping(value = "/findItemByPage" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object findItemByPage(@ModelAttribute ParamsDto dto,@ModelAttribute Stock stock,String stockstatus){
+    public Object findItemByPage(@ModelAttribute ParamsDto dto,@ModelAttribute StockVo stockVo,String stockstatus){
     	 Page<Stock> page = new Page<>(dto.getStartPage(),dto.getPageSize());
-    	 
-    	
+    	 BeanCopier copier = BeanCopier.create(StockVo.class, Stock.class, false);
+    	 Stock stock = new Stock();
+    	copier.copy(stockVo, stock, null);
      	 EntityWrapper<Stock> wrapper = new EntityWrapper<Stock>(stock);
      	 wrapper.gt("num", 0);
      	 if("jg".equals(stockstatus))
@@ -139,7 +141,7 @@ public class StockApi extends BaseApi{
      		wrapper.eq("status", EnumStockStatus.LOCKSTOCK.getText()).and().eq("customerId", stock.getCustomerid());
      	 }else if("td".equals(stockstatus))
      	 {
-         	 wrapper.eq("status",EnumStockStatus.LOCKSTOCK.getText()).or().eq("status",EnumStockStatus.PROCESS.getText());
+         	 wrapper.eq("status",EnumStockStatus.LOCKSTOCK.getText()).or().eq("status",EnumStockStatus.PROCESSFINISH.getText());
      	 }else {
      		 wrapper.eq("status",stockstatus);
 		}

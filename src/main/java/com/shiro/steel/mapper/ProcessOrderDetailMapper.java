@@ -19,5 +19,5 @@ public interface ProcessOrderDetailMapper extends BaseMapper<ProcessOrderDetail>
 
 	void deleteBatchProcessNos(@Param("list")List<String> asList);
 
-	List<ProcessOrderDetailDto> selectList(@Param("processNo") String processNo);
+	List<ProcessOrderDetailDto> selectPodList(@Param("processNo") String processNo);
 }

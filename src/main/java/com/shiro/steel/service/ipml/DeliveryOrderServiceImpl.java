@@ -19,16 +19,20 @@ import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.entity.DeliveryOrder;
 import com.shiro.steel.entity.DeliveryOrderDetail;
+import com.shiro.steel.entity.ProcessOrderDetailFinish;
 import com.shiro.steel.entity.SaleContract;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.WarehouseInfo;
 import com.shiro.steel.exception.MyException;
 import com.shiro.steel.mapper.DeliveryOrderMapper;
+import com.shiro.steel.mapper.ProcessOrderDetailFinishMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.SaleContractDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.DeliveryOrderVo;
+import com.shiro.steel.pojo.vo.SaleContractDetailVo;
+import com.shiro.steel.pojo.vo.WarehouseInfoVo;
 import com.shiro.steel.service.DeliveryOrderDetailService;
 import com.shiro.steel.service.DeliveryOrderService;
 import com.shiro.steel.service.SaleContractDetailService;
@@ -66,11 +70,14 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 	@Autowired
 	private DeliveryOrderMapper deliveryOrderMapper;
 
+	@Autowired 
+	private ProcessOrderDetailFinishMapper processOrderDetailFinishMapper;
 	@Override
 	public Boolean addDeliveryOrder(DeliveryOrderVo deliveryOrderVo) {
 		// TODO Auto-generated method stub
 		Boolean isstock = false;
 		String deliveryno = "";
+		StringBuffer selectedIdss = new StringBuffer();
 		String saleContractDetail = deliveryOrderVo.getDeliveryOrderDetail();
 		DeliveryOrder deliveryOrder = new DeliveryOrder();
  	    BeanCopier copier = BeanCopier.create(DeliveryOrderVo.class, DeliveryOrder.class, false);
@@ -90,15 +97,23 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    deliveryOrder.setWarehousefax(warehouseInfo.getWarehousefax());
  	    deliveryOrder.setCreateBy(userInfoDto.getUsername());
  	    super.baseMapper.insert(deliveryOrder);
- 	    List<SaleContractDetail>  collection = JSONObject.parseArray(saleContractDetail, SaleContractDetail.class);
+ 	    List<SaleContractDetailVo>  collection = JSONObject.parseArray(saleContractDetail, SaleContractDetailVo.class);
  	    BigDecimal totalAmount = new BigDecimal(0);
  	    BigDecimal totalWeight = new BigDecimal(0);
  	    List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
  	    List<Stock> stockList = new ArrayList<Stock>();
- 	    for(SaleContractDetail s:collection){
+ 	    for(SaleContractDetailVo s:collection){
  	      Stock stock = new Stock();	
  	      stock.setId(s.getStockid());
- 	      stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+ 	      if(EnumStockStatus.PROCESSFINISH.getText().equals(s.getProcessstatus()))
+ 	      {
+ 	    	 selectedIdss.append(s.getSelectedIdss()).append(",");
+ 	    	 stock.setStatus(EnumStockStatus.OUTSTOCKING.getText());
+ 	      }
+ 	      else {
+ 	    	 stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+		}
+ 	     
  		  BigDecimal amount = new BigDecimal(0);
   		  amount = s.getFinalweight().multiply(s.getPrice()).setScale(3,BigDecimal.ROUND_HALF_UP);
           //amount = s.getFinalweight().multiply(s.getPrice()).multiply(new BigDecimal(s.getNum())).setScale(3,BigDecimal.ROUND_HALF_UP);
@@ -108,7 +123,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
   		  newsaleContractDetail.setActualweight(s.getActualweight());
   		  newsaleContractDetail.setFinalweight(s.getFinalweight());
   		  newsaleContractDetail.setId(s.getId());
-  		  newsaleContractDetail.setDeliverystatus("提货中");
+  		  newsaleContractDetail.setDeliverystatus(EnumStockStatus.OUTSTOCKING.getText());
   		  newsaleContractDetail.setStockid(s.getStockid());
   		  saleContractDetailList.add(newsaleContractDetail);
   		  stockList.add(stock);
@@ -135,16 +150,14 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    saleContract.setContractno(deliveryOrderVo.getContractno());
  	    saleContract.setActualamount(totalAmount);
  	    saleContract.setActualweight(totalWeight);
-// 	    if(isstock)
-// 	    {
-// 	 	    saleContract.setContractstatus("现货合同");
-// 	    }
-// 	    else
-// 	    {
-// 	 	    saleContract.setContractstatus("正式临调合同");
-// 	    }
-
  	    saleContractService.updateByContract(saleContract);
+ 	   ProcessOrderDetailFinish processOrderDetailFinish = new ProcessOrderDetailFinish();
+ 	    EntityWrapper<ProcessOrderDetailFinish> processOrderDetailFinishEntityWrapper = new EntityWrapper<ProcessOrderDetailFinish>();
+ 	   processOrderDetailFinishEntityWrapper.in("id", selectedIdss.toString());
+ 	   processOrderDetailFinish.setDeliveryno(deliveryno);
+ 	   processOrderDetailFinish.setDeliverystatus(EnumStockStatus.OUTSTOCKING.getText());
+ 	   processOrderDetailFinishMapper.update(processOrderDetailFinish, processOrderDetailFinishEntityWrapper);
+ 	    
  	    Boolean status = deliveryOrderDetailService.insertBatch(deliveryOrderDetailList);
 		return status;
 	}
@@ -161,12 +174,32 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 			String memberId, String deliveryNos) {
 		// TODO Auto-generated method stub
 		EntityWrapper<DeliveryOrderDetail> wrapper = new EntityWrapper<DeliveryOrderDetail>();
-
-		wrapper.in("deliveryNo", deliveryNos);
-
+		
+		wrapper.eq("deliveryNo", deliveryNos);
 		List<DeliveryOrderDetail> list = deliveryOrderDetailService.selectList(wrapper);
+		List<DeliveryOrderDetail> listcopy = new ArrayList<DeliveryOrderDetail>();
+
+		for(DeliveryOrderDetail deliveryOrderDetail:list)
+		{
+			EntityWrapper<ProcessOrderDetailFinish> podfwrapper = new EntityWrapper<ProcessOrderDetailFinish>();
+			listcopy.add(deliveryOrderDetail);
+			podfwrapper.eq("deliveryNo",deliveryOrderDetail.getDeliveryno()).eq("stockId", deliveryOrderDetail.getStockid());
+			List<ProcessOrderDetailFinish> pList = processOrderDetailFinishMapper.selectList(podfwrapper);
+			if(pList.size()>0)
+			{
+				listcopy.remove(deliveryOrderDetail);
+				for(ProcessOrderDetailFinish processOrderDetailFinish : pList)
+				{
+					DeliveryOrderDetail deliveryOrderDetailCopy = new DeliveryOrderDetail();
+					BeanCopier copier = BeanCopier.create(ProcessOrderDetailFinish.class, DeliveryOrderDetail.class, false);
+					copier.copy(processOrderDetailFinish, deliveryOrderDetailCopy, null);
+					listcopy.add(deliveryOrderDetailCopy);
+				}
+			}
+		}
+		
 //		List<DeliveryOrderDetailVo> list = deliveryOrderDetailService.findDetailByPageList(dto,memberId,deliveryNos);
-        return list;
+        return listcopy;
 	}
 
 	@Override
@@ -189,21 +222,33 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
     			 for (DeliveryOrderDetail pod:deliveryOrderDetailList)
     			 {
     				 saleDetailIdList.add(pod.getSaledetailid());
+    				 SaleContractDetail saleContractDetail =  saleContractDetailService.selectById(pod.getSaledetailid());
+    				 if(EnumStockStatus.PROCESSFINISH.getText().equals(saleContractDetail.getProcessstatus()))
+    				 {
+    					 Stock stock = new Stock();
+        				 stock.setId(pod.getStockid());
+         				 stock.setStatus(EnumStockStatus.PROCESSFINISH.getText());
+         				 stockList.add(stock);
+    				 }
     				 stockIdList.add(pod.getStockid().toString());
-//    				 Stock stock = new Stock();
-//    				 stock.setId(pod.getStockid());
-//    				 stock.setStatus("在库");
-//    				 stockList.add(stock);
+//    				
     			 }
     		 }
     		 
     	 }
-//    	 stockService.updateBatchById(stockList);
+    	 if(stockIdList.size()>0)
+    	 {
+    		 stockService.updateBatchById(stockList);
+    	 }
     	 deliveryOrderDetailService.deleteBatchDeliveryOrderNos(Arrays.asList(deliveryOrderNos));
     	 List<SaleContractDto> finaList = saleContractDetailService.selectByStockIdList(stockIdList);
-    	  saleContractService.batchWeigtAmountUpdate(finaList);
+    	 saleContractService.batchWeigtAmountUpdate(finaList);
     	 saleContractDetailService.batchDeliveryOrderUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
-    	
+    	 ProcessOrderDetailFinish processOrderDetailFinish = new ProcessOrderDetailFinish();
+  	     EntityWrapper<ProcessOrderDetailFinish> processOrderDetailFinishEntityWrapper = new EntityWrapper<ProcessOrderDetailFinish>();
+  	     processOrderDetailFinishEntityWrapper.in("deliveryNo", deliveryOrderNos);
+  	     processOrderDetailFinish.setDeliverystatus("");
+  	     processOrderDetailFinishMapper.update(processOrderDetailFinish, processOrderDetailFinishEntityWrapper);
     	 return true;
 		}catch(MyException e){
 			return false;

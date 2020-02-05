@@ -12,6 +12,10 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
  */
 public class ResultUtil {
 
+	public static String result(String result)
+	{
+		return result;
+	}
     public static String result(final Integer status,final String msg,final Object data,final long l) {
         JSONObject jsonObject = new JSONObject() {
             {

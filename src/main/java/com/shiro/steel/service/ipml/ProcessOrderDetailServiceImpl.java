@@ -41,7 +41,7 @@ public class ProcessOrderDetailServiceImpl extends ServiceImpl<ProcessOrderDetai
 	@Override
 	public List<ProcessOrderDetailDto> selectList(String processNo) {
 		// TODO Auto-generated method stub
-		return super.baseMapper.selectList(processNo);
+		return super.baseMapper.selectPodList(processNo);
 		
 	}
 

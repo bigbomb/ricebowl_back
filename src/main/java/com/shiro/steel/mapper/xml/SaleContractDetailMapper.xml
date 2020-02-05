@@ -129,7 +129,7 @@
     
      <update id = "batchDeliveryOrderUpdate" parameterType = "java.util.List">    
         <![CDATA[    
-           update sale_contract_detail set deliveryStatus = null ,actualWeight = null,stockid = null , warehouseName = null where contractNo in    
+           update sale_contract_detail set deliveryStatus = null ,actualWeight = null,finalWeight = null, stockid = null , warehouseName = null where contractNo in    
         ]]>    
         <foreach collection="list" item = "items" open="(" separator="," close=")">
         #{items}    

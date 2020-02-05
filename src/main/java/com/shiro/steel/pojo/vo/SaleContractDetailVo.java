@@ -26,8 +26,18 @@ public class SaleContractDetailVo implements Serializable {
     
     private Integer num;
   
+    private String selectedIdss;
+    
+    
+    public String getSelectedIdss() {
+		return selectedIdss;
+	}
 
-    public Integer getNum() {
+	public void setSelectedIdss(String selectedIdss) {
+		this.selectedIdss = selectedIdss;
+	}
+
+	public Integer getNum() {
 		return num;
 	}
 

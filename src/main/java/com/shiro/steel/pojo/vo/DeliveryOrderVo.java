@@ -244,6 +244,7 @@ public class DeliveryOrderVo implements Serializable {
 		this.deliveryOrderDetail = deliveryOrderDetail;
 	}
 
+
 	public Integer getIsItemRight() {
 		return isItemRight;
 	}

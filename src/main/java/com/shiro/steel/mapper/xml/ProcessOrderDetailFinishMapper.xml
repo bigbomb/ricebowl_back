@@ -10,7 +10,7 @@
     <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
     <result column="productMark" jdbcType="VARCHAR" property="productmark" />
     <result column="num" jdbcType="INTEGER" property="num" />
-    <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="finalWeight" jdbcType="DECIMAL" property="finalweight" />
     <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="unit" jdbcType="VARCHAR" property="unit" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -31,13 +31,13 @@
     </selectKey>
     insert into process_order_detail_finish (processNo, saleDetailId, productName, 
       productSpec, productFactory, productMark, 
-      num, weight, unit, price,
+      num, finalWeight, unit, price,
       remark, status, crt, 
       upt, stockid, actualWeight, 
       warehousename)
     values (#{processno,jdbcType=VARCHAR}, #{saledetailid,jdbcType=VARCHAR}, #{productname,jdbcType=VARCHAR}, 
       #{productspec,jdbcType=VARCHAR}, #{productfactory,jdbcType=VARCHAR}, #{productmark,jdbcType=VARCHAR}, 
-      #{num,jdbcType=INTEGER}, #{weight,jdbcType=DECIMAL}, #{unit,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL},
+      #{num,jdbcType=INTEGER}, #{finalweight,jdbcType=DECIMAL}, #{unit,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL},
       #{remark,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, #{crt,jdbcType=TIMESTAMP}, 
       #{upt,jdbcType=TIMESTAMP}, #{stockid,jdbcType=INTEGER}, #{actualweight,jdbcType=DECIMAL}, 
       #{warehousename,jdbcType=VARCHAR})
@@ -51,7 +51,7 @@
       productFactory = #{productfactory,jdbcType=VARCHAR},
       productMark = #{productmark,jdbcType=VARCHAR},
       num = #{num,jdbcType=INTEGER},
-      weight = #{weight,jdbcType=DECIMAL},
+      finalWeight = #{finalweight,jdbcType=DECIMAL},
       unit = #{unit,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
       status = #{status,jdbcType=VARCHAR},
@@ -64,13 +64,13 @@
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select id, processNo, saleDetailId, productName, productSpec, productFactory, productMark, 
-    num, weight, unit, remark, status, crt, upt, stockid, actualWeight, warehousename
+    num, finalWeight, unit, remark, status, crt, upt, stockid, actualWeight, warehousename
     from process_order_detail_finish
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, processNo, saleDetailId, productName, productSpec, productFactory, productMark, 
-    num, weight, unit, remark, status, crt, upt, stockid, actualWeight, warehousename
+    num, finalWeight, unit, remark, status, crt, upt, stockid, actualWeight, warehousename
     from process_order_detail_finish
   </select>
 </mapper>

@@ -26,9 +26,9 @@ public class ProcessOrderDetailFinish implements Serializable {
 
     private Integer num;
 
-    private BigDecimal weight;
+    private BigDecimal finalweight;
 
-    private String unit;
+	private String unit;
 
     private String remark;
 
@@ -46,6 +46,9 @@ public class ProcessOrderDetailFinish implements Serializable {
 
     private String warehousename;
 
+    private String deliverystatus;
+    
+    private String deliveryno;
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -112,13 +115,6 @@ public class ProcessOrderDetailFinish implements Serializable {
         this.num = num;
     }
 
-    public BigDecimal getWeight() {
-        return weight;
-    }
-
-    public void setWeight(BigDecimal weight) {
-        this.weight = weight;
-    }
 
     public String getUnit() {
         return unit;
@@ -177,7 +173,15 @@ public class ProcessOrderDetailFinish implements Serializable {
     }
 
     
-    public BigDecimal getPrice() {
+    public BigDecimal getFinalweight() {
+		return finalweight;
+	}
+
+	public void setFinalweight(BigDecimal finalweight) {
+		this.finalweight = finalweight;
+	}
+
+	public BigDecimal getPrice() {
 		return price;
 	}
 
@@ -192,4 +196,22 @@ public class ProcessOrderDetailFinish implements Serializable {
     public void setWarehousename(String warehousename) {
         this.warehousename = warehousename;
     }
+
+	public String getDeliverystatus() {
+		return deliverystatus;
+	}
+
+	public void setDeliverystatus(String deliverystatus) {
+		this.deliverystatus = deliverystatus;
+	}
+
+	public String getDeliveryno() {
+		return deliveryno;
+	}
+
+	public void setDeliveryno(String deliveryno) {
+		this.deliveryno = deliveryno;
+	}
+    
+    
 }

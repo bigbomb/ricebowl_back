@@ -26,6 +26,7 @@ import com.shiro.steel.api.base.BaseApi;
 import com.shiro.steel.entity.ProcessOrderDetail;
 import com.shiro.steel.entity.ProcessOrderDetailFinish;
 import com.shiro.steel.entity.ProcessTemplate;
+import com.shiro.steel.exception.MyException;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.ProcessOrderDetailDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
@@ -155,16 +156,22 @@ public class ProcessOrderApi extends BaseApi{
     @RequestMapping(value = "/delProcessOrder" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object delProcessOrder(ParamsDto dto,String[] processNos,String[] saleContractNos){
+    	Boolean status = false;
     	 if (null == dto.getIds() || dto.getIds().length == 0) {
              return ResultUtil.result(EnumCode.BAD_REQUEST.getValue(), EnumCode.BAD_REQUEST.getText());
          }
-    	 Boolean result =  processOrderService.delProcessOrder(dto,processNos,saleContractNos);
-    	 if(result) {
-    		 return ResultUtil.result(EnumCode.OK.getValue(), "删除成功", null);
-    	 }
-    	 else {
-    		 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "删除失败", null);
-    	 }
+    	 try {
+    		 status =  processOrderService.delProcessOrder(dto,processNos,saleContractNos);
+		} catch (MyException e) {
+			// TODO: handle exception
+			return ResultUtil.result(e.getResult().toString());
+		}
+    	 if(status)
+		 {
+			 return ResultUtil.result(EnumCode.OK.getValue(), "删除成功", null);
+		 }else {
+			 return ResultUtil.result(EnumCode.INTERNAL_SERVER_ERROR.getValue(), "服务器端异常！");
+		}
        
     }
     

@@ -31,7 +31,7 @@
         
         </foreach>    
     </delete> 
-  <select id="selectList" resultType="com.shiro.steel.pojo.dto.ProcessOrderDetailDto">
+  <select id="selectPodList" resultType="com.shiro.steel.pojo.dto.ProcessOrderDetailDto">
 		SELECT
 		pod.id,pod.processNo,pod.saleDetailId,pod.productName, pod.productSpec, pod.productFactory, pod.productMark, pod.num, pod.weight, pod.unit, pod.remark, pod.status , pod.crt, pod.upt, scd.price,pod.stockid,
 		pod.actualWeight, pod.warehousename
