@@ -19,7 +19,7 @@ import com.shiro.steel.pojo.dto.ProcessOrderDetailDto;
 import com.shiro.steel.pojo.vo.ProcessOrderVo;
 import com.shiro.steel.service.ProcessOrderDetailService;
 import com.shiro.steel.service.ProcessOrderService;
-import com.shiro.steel.utils.GeneratorUtil;
+import com.shiro.steel.utils.CommonUtil;
 
 /**
  * <p>

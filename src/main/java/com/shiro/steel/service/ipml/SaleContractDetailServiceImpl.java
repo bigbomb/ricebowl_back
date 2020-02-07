@@ -59,4 +59,11 @@ public class SaleContractDetailServiceImpl extends ServiceImpl<SaleContractDetai
 		// TODO Auto-generated method stub
 		return super.baseMapper.selectByStockIdList(stockIdList);
 	}
+
+	@Override
+	public Boolean updateBatchByEntity(List<SaleContractDetail> saleContractDetailList) {
+		// TODO Auto-generated method stub
+		return super.baseMapper.updateBatchByEntity(saleContractDetailList);
+		
+	}
 }

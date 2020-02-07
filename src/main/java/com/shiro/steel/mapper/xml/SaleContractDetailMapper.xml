@@ -155,6 +155,7 @@
         
         </foreach>    
     </update> 
+    
    <select id="selectByStockIdList" resultType="com.shiro.steel.pojo.dto.SaleContractDto" parameterType="java.util.List">
     select sum(finalWeight) as actualWeight,CONVERT(sum(num*finalWeight*price),DECIMAL(10,2)) as actualAmount,contractNo from sale_contract_detail where 
     1=1 and stockid in 
@@ -162,4 +163,17 @@
 		#{item}
 	</foreach> GROUP BY contractNo
   </select>
+  
+  <update id="updateBatchByEntity" parameterType="java.util.List">
+        <foreach collection="list" item="bean" index="index" open="" close="" separator=";">
+            UPDATE sale_contract_detail
+            <set>
+                deliveryStatus=#{bean.deliverystatus},transportStatus=#{bean.transportstatus}
+            </set>
+            <where>
+                stockid = #{bean.stockid}
+            </where>
+        </foreach>
+    </update>
+
 </mapper>

@@ -45,7 +45,7 @@ import com.shiro.steel.service.PurchaseContractDetailService;
 import com.shiro.steel.service.PurchaseContractService;
 import com.shiro.steel.service.SaleContractWarehouseService;
 import com.shiro.steel.service.StockService;
-import com.shiro.steel.utils.GeneratorUtil;
+import com.shiro.steel.utils.CommonUtil;
 import com.shiro.steel.utils.ResultUtil;
 @Service
 public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMapper, PurchaseContract> implements PurchaseContractService{
@@ -101,7 +101,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 		try {
 			if(StringUtils.isEmpty(purchaseContractVo.getPurchaseno()))
 			{
-				contractno = preName+GeneratorUtil.getTimeStamp();
+				contractno = preName+CommonUtil.getTimeStamp();
 				purchaseContract.setPurchaseno(contractno);
 				List<Product> productList = new ArrayList<Product>();
 				List<Productfactory> productfactoryList = new ArrayList<Productfactory>();
@@ -471,7 +471,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 		 PurchaseContract purchaseContract = new PurchaseContract();
 		 purchaseContract.setPurchaseno(contractno);
 		 purchaseContract = super.baseMapper.selectOne(purchaseContract);
-	   	 String newpurchaseno = preName+GeneratorUtil.getTimeStamp();
+	   	 String newpurchaseno = preName+CommonUtil.getTimeStamp();
 	   	 purchaseContract.setPurchaseno(newpurchaseno);
 	   	 purchaseContract.setPurchasestatus("待审核");
 	   	 purchaseContract.setCrt(new Date());

@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.shiro.steel.Enum.EnumCode;
 import com.shiro.steel.api.base.BaseApi;
 import com.shiro.steel.entity.DeliveryOrderDetail;
+import com.shiro.steel.exception.MyException;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.DeliveryOrderVo;
@@ -112,10 +113,17 @@ public class DeliveryOrderApi extends BaseApi{
     @RequestMapping(value = "/delDeliveryOrder" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object delDeliveryOrder(ParamsDto dto,String[] deliveryOrderNos,String[] saleContractNos){
+    	Boolean result = false;
     	 if (null == dto.getIds() || dto.getIds().length == 0) {
              return ResultUtil.result(EnumCode.BAD_REQUEST.getValue(), EnumCode.BAD_REQUEST.getText());
          }
-    	Boolean result =  deliveryOrderService.delDeliveryOrder(dto,deliveryOrderNos,saleContractNos);
+    	 try {
+    			result =  deliveryOrderService.delDeliveryOrder(dto,deliveryOrderNos,saleContractNos);
+		} catch (MyException e) {
+			// TODO: handle exception
+			return ResultUtil.result(e.getResult().toString());
+		}
+    
     	if(result)
     	{
     		 return ResultUtil.result(EnumCode.OK.getValue(), "删除成功", null);

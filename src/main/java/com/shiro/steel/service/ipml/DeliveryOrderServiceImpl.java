@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
+import com.shiro.steel.Enum.EnumCode;
 import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.entity.DeliveryOrder;
 import com.shiro.steel.entity.DeliveryOrderDetail;
@@ -23,23 +25,25 @@ import com.shiro.steel.entity.ProcessOrderDetailFinish;
 import com.shiro.steel.entity.SaleContract;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.entity.Stock;
+import com.shiro.steel.entity.TransportOrder;
 import com.shiro.steel.entity.WarehouseInfo;
 import com.shiro.steel.exception.MyException;
 import com.shiro.steel.mapper.DeliveryOrderMapper;
 import com.shiro.steel.mapper.ProcessOrderDetailFinishMapper;
+import com.shiro.steel.mapper.TransportOrderMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.SaleContractDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.DeliveryOrderVo;
 import com.shiro.steel.pojo.vo.SaleContractDetailVo;
-import com.shiro.steel.pojo.vo.WarehouseInfoVo;
 import com.shiro.steel.service.DeliveryOrderDetailService;
 import com.shiro.steel.service.DeliveryOrderService;
 import com.shiro.steel.service.SaleContractDetailService;
 import com.shiro.steel.service.SaleContractService;
 import com.shiro.steel.service.StockService;
 import com.shiro.steel.service.WarehouseInfoService;
-import com.shiro.steel.utils.GeneratorUtil;
+import com.shiro.steel.utils.CommonUtil;
+import com.shiro.steel.utils.ResultUtil;
 
 /**
  * <p>
@@ -72,6 +76,9 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 
 	@Autowired 
 	private ProcessOrderDetailFinishMapper processOrderDetailFinishMapper;
+	
+	@Autowired
+	private TransportOrderMapper transportOrderMapper;
 	@Override
 	public Boolean addDeliveryOrder(DeliveryOrderVo deliveryOrderVo) {
 		// TODO Auto-generated method stub
@@ -88,7 +95,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    Subject subject = SecurityUtils.getSubject();   
 	    userInfoDto = (UserInfoDto) subject.getPrincipal();
  	    WarehouseInfo warehouseInfo = warehouseInfoService.selectById(warehouseId);
- 	    deliveryno = preName+GeneratorUtil.getTimeStamp();
+ 	    deliveryno = preName+CommonUtil.getTimeStamp();
  	    deliveryOrder.setDeliveryno(deliveryno);
  	    deliveryOrder.setWarehouseid(warehouseId.toString());
  	    deliveryOrder.setWarehousename(warehouseInfo.getWarehousename());
@@ -107,13 +114,20 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	      stock.setId(s.getStockid());
  	      if(EnumStockStatus.PROCESSFINISH.getText().equals(s.getProcessstatus()))
  	      {
- 	    	 selectedIdss.append(s.getSelectedIdss()).append(",");
- 	    	 stock.setStatus(EnumStockStatus.OUTSTOCKING.getText());
+ 	    	  
+ 	    	  String ids=s.getSelectedIdss();
+ 	    	  if(selectedIdss.length()==0)
+ 	    	  {
+ 	    		 selectedIdss.append(ids);
+ 	    	  }
+ 	    	  else {
+				selectedIdss.append(",");
+				selectedIdss.append(ids);
+			}
+ 	    	 
+ 	    	 
  	      }
- 	      else {
- 	    	 stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
-		}
- 	     
+ 	     stock.setStatus(EnumStockStatus.OUTSTOCKING.getText());
  		  BigDecimal amount = new BigDecimal(0);
   		  amount = s.getFinalweight().multiply(s.getPrice()).setScale(3,BigDecimal.ROUND_HALF_UP);
           //amount = s.getFinalweight().multiply(s.getPrice()).multiply(new BigDecimal(s.getNum())).setScale(3,BigDecimal.ROUND_HALF_UP);
@@ -151,12 +165,16 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    saleContract.setActualamount(totalAmount);
  	    saleContract.setActualweight(totalWeight);
  	    saleContractService.updateByContract(saleContract);
- 	   ProcessOrderDetailFinish processOrderDetailFinish = new ProcessOrderDetailFinish();
- 	    EntityWrapper<ProcessOrderDetailFinish> processOrderDetailFinishEntityWrapper = new EntityWrapper<ProcessOrderDetailFinish>();
- 	   processOrderDetailFinishEntityWrapper.in("id", selectedIdss.toString());
- 	   processOrderDetailFinish.setDeliveryno(deliveryno);
- 	   processOrderDetailFinish.setDeliverystatus(EnumStockStatus.OUTSTOCKING.getText());
- 	   processOrderDetailFinishMapper.update(processOrderDetailFinish, processOrderDetailFinishEntityWrapper);
+ 	    if(selectedIdss.length()>0)
+ 	    {
+ 	    	ProcessOrderDetailFinish processOrderDetailFinish = new ProcessOrderDetailFinish();
+ 	 	    EntityWrapper<ProcessOrderDetailFinish> processOrderDetailFinishEntityWrapper = new EntityWrapper<ProcessOrderDetailFinish>();
+ 	 	   processOrderDetailFinishEntityWrapper.in("id", selectedIdss.toString());
+ 	 	   processOrderDetailFinish.setDeliveryno(deliveryno);
+ 	 	   processOrderDetailFinish.setDeliverystatus(EnumStockStatus.OUTSTOCKING.getText());
+ 	 	   processOrderDetailFinishMapper.update(processOrderDetailFinish, processOrderDetailFinishEntityWrapper);
+ 	    }
+ 	   
  	    
  	    Boolean status = deliveryOrderDetailService.insertBatch(deliveryOrderDetailList);
 		return status;
@@ -175,7 +193,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 		// TODO Auto-generated method stub
 		EntityWrapper<DeliveryOrderDetail> wrapper = new EntityWrapper<DeliveryOrderDetail>();
 		
-		wrapper.eq("deliveryNo", deliveryNos);
+		wrapper.in("deliveryNo", deliveryNos);
 		List<DeliveryOrderDetail> list = deliveryOrderDetailService.selectList(wrapper);
 		List<DeliveryOrderDetail> listcopy = new ArrayList<DeliveryOrderDetail>();
 
@@ -205,7 +223,13 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 	@Override
 	public Boolean delDeliveryOrder(ParamsDto dto, String[] deliveryOrderNos, String[] saleContractNos) throws MyException {
 		// TODO Auto-generated method stub
-		try {
+		EntityWrapper<TransportOrder> tWrapper = new EntityWrapper<TransportOrder>();
+		tWrapper.in("deliveryNo", deliveryOrderNos);
+		List<TransportOrder> transportOrderList = transportOrderMapper.selectList(tWrapper);
+		if(transportOrderList.size()>0)
+		{
+			throw new MyException(ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "关联送货单已存在，删除失败！如要删除，请先删除关联送货单"));
+		}
 		 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
     	 List<String> saleDetailIdList = new ArrayList<String>();
     	 List<String> stockIdList = new ArrayList<String>();
@@ -230,13 +254,19 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
          				 stock.setStatus(EnumStockStatus.PROCESSFINISH.getText());
          				 stockList.add(stock);
     				 }
+    				 else if(saleContractDetail.getProcessstatus() ==null){
+    					 Stock stock = new Stock();
+        				 stock.setId(pod.getStockid());
+         				 stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
+         				 stockList.add(stock);
+					}
     				 stockIdList.add(pod.getStockid().toString());
 //    				
     			 }
     		 }
     		 
     	 }
-    	 if(stockIdList.size()>0)
+    	 if(stockIdList.size()>0&&stockList.size()>0)
     	 {
     		 stockService.updateBatchById(stockList);
     	 }
@@ -248,11 +278,9 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
   	     EntityWrapper<ProcessOrderDetailFinish> processOrderDetailFinishEntityWrapper = new EntityWrapper<ProcessOrderDetailFinish>();
   	     processOrderDetailFinishEntityWrapper.in("deliveryNo", deliveryOrderNos);
   	     processOrderDetailFinish.setDeliverystatus("");
+  	     processOrderDetailFinish.setDeliveryno("");
   	     processOrderDetailFinishMapper.update(processOrderDetailFinish, processOrderDetailFinishEntityWrapper);
     	 return true;
-		}catch(MyException e){
-			return false;
-		}
 	}
 
 

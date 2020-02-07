@@ -51,7 +51,7 @@ import com.shiro.steel.service.SaleContractDetailService;
 import com.shiro.steel.service.SaleContractService;
 import com.shiro.steel.service.SaleContractWarehouseService;
 import com.shiro.steel.service.StockService;
-import com.shiro.steel.utils.GeneratorUtil;
+import com.shiro.steel.utils.CommonUtil;
 import com.shiro.steel.utils.ResultUtil;
 @Service
 public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, SaleContract> implements SaleContractService{
@@ -114,7 +114,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 		try {
 			if(StringUtils.isEmpty(contractVo.getContractno()))
 			{
-				contractno = preName+GeneratorUtil.getTimeStamp();
+				contractno = preName+CommonUtil.getTimeStamp();
 				saleContract.setContractno(contractno);
 				List<Product> productList = new ArrayList<Product>();
 				List<Productfactory> productfactoryList = new ArrayList<Productfactory>();
@@ -518,7 +518,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 		 SaleContract saleContract = new SaleContract();
     	 saleContract.setContractno(contractno);
     	 saleContract = super.baseMapper.selectOne(saleContract);
-    	 String newcontractno = preName+GeneratorUtil.getTimeStamp();
+    	 String newcontractno = preName+CommonUtil.getTimeStamp();
     	 saleContract.setContractno(newcontractno);
     	 saleContract.setContractstatus("意向临调合同");
     	 saleContract.setVerifyBy(null);

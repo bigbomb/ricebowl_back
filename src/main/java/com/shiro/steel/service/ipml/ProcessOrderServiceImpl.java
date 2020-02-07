@@ -39,7 +39,7 @@ import com.shiro.steel.service.ProcessOrderDetailService;
 import com.shiro.steel.service.ProcessOrderService;
 import com.shiro.steel.service.SaleContractDetailService;
 import com.shiro.steel.service.StockService;
-import com.shiro.steel.utils.GeneratorUtil;
+import com.shiro.steel.utils.CommonUtil;
 import com.shiro.steel.utils.ResultUtil;
 
 /**
@@ -73,7 +73,7 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 		ProcessOrder processOrder = new ProcessOrder();		
 		BeanCopier copier = BeanCopier.create(ProcessOrderVo.class, ProcessOrder.class, false);		
 		copier.copy(processOrderVo, processOrder, null);		
-		processNo = preName+GeneratorUtil.getTimeStamp();
+		processNo = preName+CommonUtil.getTimeStamp();
 		processOrder.setProcessno(processNo);
 		processOrder.setCrt(new Date());
 		UserInfoDto userInfoDto = new UserInfoDto();
@@ -119,14 +119,14 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 	  		   stockidList.add(s.getStockid());
 	  		   scd.setActualweight(s.getActualweight());
 	  		   scd.setWarehousename(s.getWarehousename());
-	  		   scd.setProcessstatus(EnumStockStatus.PROCESS.getText());
+	  		   scd.setProcessstatus(EnumStockStatus.PROCESSING.getText());
 	  		   scd.setRemark(s.getRemark());
 	  		   saleContractDetailList.add(scd);
 	  	   }
     	 processOrder.setProcessweight(processweight);
     	 super.baseMapper.insert(processOrder);
     	 Stock stock = new Stock();
-    	 stock.setStatus(EnumStockStatus.PROCESS.getText());
+    	 stock.setStatus(EnumStockStatus.PROCESSING.getText());
     	 EntityWrapper<Stock> stockWrapper = new EntityWrapper<Stock>();
     	 stockWrapper.in("id", stockidList);
     	 stockService.update(stock, stockWrapper);

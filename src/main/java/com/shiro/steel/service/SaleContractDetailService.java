@@ -25,5 +25,7 @@ public interface SaleContractDetailService extends IService<SaleContractDetail>{
 	void batchTransportOrderUpdate(List<String> asList, List<String> saleDetailIdList);
 
 	 List<SaleContractDto> selectByStockIdList(List<String> stockIdList);
+	 @Transactional
+	Boolean updateBatchByEntity(List<SaleContractDetail> saleContractDetailList);
 
 }

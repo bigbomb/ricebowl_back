@@ -24,6 +24,7 @@ import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.entity.TransportOrder;
 import com.shiro.steel.entity.TransportOrderDetail;
+import com.shiro.steel.exception.MyException;
 import com.shiro.steel.mapper.TransportOrderMapper;
 import com.shiro.steel.pojo.dto.ParamsDto;
 import com.shiro.steel.pojo.dto.TransportOrderDto;
@@ -36,7 +37,7 @@ import com.shiro.steel.service.SaleContractDetailService;
 import com.shiro.steel.service.StockService;
 import com.shiro.steel.service.TransportOrderDetailService;
 import com.shiro.steel.service.TransportOrderService;
-import com.shiro.steel.utils.GeneratorUtil;
+import com.shiro.steel.utils.CommonUtil;
 
 @Service
 public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper, TransportOrder> implements TransportOrderService {
@@ -57,6 +58,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	public Boolean addTransportOrder(TransportOrderVo transportOrderVo) {
 		// TODO Auto-generated method stub
 		String transportOrderNo = "";
+		StringBuffer stockidBuffer = new StringBuffer();
 		String transportOrderDetail = transportOrderVo.getTransportOrderDetail();
 		TransportOrder transportOrder = new TransportOrder();
  	    BeanCopier copier = BeanCopier.create(TransportOrderVo.class, TransportOrder.class, false);
@@ -65,7 +67,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
  	    UserInfoDto userInfoDto = new UserInfoDto();
  	    Subject subject = SecurityUtils.getSubject();   
 	    userInfoDto = (UserInfoDto) subject.getPrincipal();
-	    transportOrderNo = preName+GeneratorUtil.getTimeStamp();
+	    transportOrderNo = preName+CommonUtil.getTimeStamp();
 	    transportOrder.setTransportno(transportOrderNo);
 	    transportOrder.setCrt(new Date());
 	    transportOrder.setCreateby(userInfoDto.getUsername());
@@ -78,13 +80,17 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
  	    for(SaleContractDetailVo s:collection){
  	      Stock stock = new Stock();	
  	      stock.setId(s.getStockid());
- 	      stock.setStatus(EnumStockStatus.OUTSTOCK.getText());
+ 	      stock.setStatus(EnumStockStatus.OUTSTOCKFINISH.getText());
  		  BigDecimal amount = new BigDecimal(0);
   		  totalWeight = totalWeight.add(s.getFinalweight());
   		  actualWeight = actualWeight.add(s.getActualweight());
   		  SaleContractDetail  newsaleContractDetail = new SaleContractDetail();
-  		  newsaleContractDetail.setId(Integer.valueOf(s.getSaledetailid()));
-  		  newsaleContractDetail.setTransportstatus(EnumStockStatus.TRANSPORT.getText());
+//  		  newsaleContractDetail.setId(Integer.valueOf(s.getSaledetailid()));
+		  newsaleContractDetail.setStockid(s.getStockid());
+  		  
+  		
+  		  newsaleContractDetail.setDeliverystatus(EnumStockStatus.OUTSTOCKFINISH.getText());
+  		  newsaleContractDetail.setTransportstatus(EnumStockStatus.TRANSPORTING.getText());
   		  saleContractDetailList.add(newsaleContractDetail);
   		  stockList.add(stock);
   	   }
@@ -116,14 +122,14 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	    {
 	    	DeliveryOrder deliveryOrder = new DeliveryOrder();
 	    	deliveryOrder.setDeliveryno(deliverOrder);
-	    	deliveryOrder.setStatus(EnumStockStatus.TRANSPORT.getText());
+	    	deliveryOrder.setStatus(EnumStockStatus.OUTSTOCKFINISH.getText());
 	    	deliveryOrderList.add(deliveryOrder);
 	    }
 	    deliveryOrderService.updateBatchByDeliveryOrder(deliveryOrderList);
  	    super.baseMapper.insert(transportOrder);
  	    stockService.updateBatchById(stockList);
  	    transportOrderDetailService.insertBatch(transportOrderDetailList);
- 	    Boolean status =saleContractDetailService.updateBatchById(saleContractDetailList);
+ 	    Boolean status =saleContractDetailService.updateBatchByEntity(saleContractDetailList);
 		return status;
 	}
 	@Override
@@ -139,12 +145,11 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 		return super.baseMapper.findTransportOrderByPage(page, dto,createby,memberId,carrier,startTimeString,endTimeString);
 	}
 	@Override
-	public Boolean delTransportOrder(ParamsDto dto, String[] transportOrderIds, String[] saleContractNos,String[] deliveryOrderNos) {
+	public Boolean delTransportOrder(ParamsDto dto, String[] transportOrderIds, String[] saleContractNos,String[] deliveryOrderNos) throws MyException{
 		// TODO Auto-generated method stub
-		try {
 			 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
-		   	 List<String> saleDetailIdList = new ArrayList<String>();
-		   	 List<Stock> stockList = new ArrayList<Stock>();
+//		   	 List<String> saleDetailIdList = new ArrayList<String>();
+		   	 List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
 		   	 for(String sd :Arrays.asList(transportOrderIds))
 		   	 {
 		   		 TransportOrderDetail  transportOrderDetail = new TransportOrderDetail();
@@ -156,7 +161,14 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 		   		 {
 		   			 for (TransportOrderDetail pod:transportOrderDetailList)
 		   			 {
-		   				 saleDetailIdList.add(pod.getSaledetailid());
+		   			  SaleContractDetail  newsaleContractDetail = new SaleContractDetail();
+		  		      newsaleContractDetail.setStockid(pod.getStockid());
+		    		  
+		    		
+		    		  newsaleContractDetail.setDeliverystatus(EnumStockStatus.OUTSTOCKING.getText());
+		    		  newsaleContractDetail.setTransportstatus("");
+//		   				 saleDetailIdList.add(pod.getSaledetailid());
+		    		  saleContractDetailList.add(newsaleContractDetail);
 		   			 }
 		   		 }
 		   		 
@@ -165,20 +177,11 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 		   	 String deliveryOrderNosString= StringUtils.join(deliveryOrderNos,",");
 		     deliveryOrderWrapper.in("deliveryNo", deliveryOrderNosString);
 		     DeliveryOrder deliveryOrderEntity = new DeliveryOrder();
-		     deliveryOrderEntity.setStatus("");
+		     deliveryOrderEntity.setStatus(EnumStockStatus.OUTSTOCKING.getText());
 		     deliveryOrderService.update(deliveryOrderEntity, deliveryOrderWrapper);
 		   	 transportOrderDetailService.deleteBatchTransportOrderNos(Arrays.asList(transportOrderIds));
-		   	 saleContractDetailService.batchTransportOrderUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
+		   	 saleContractDetailService.updateBatchByEntity(saleContractDetailList);
 		    return true;
-		}catch(Exception e)
-		{
-			return false;
 		}
-		
-	}
-
-
-  
-
 	
 }
