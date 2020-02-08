@@ -34,6 +34,7 @@ public class ProcessOrderVo implements Serializable {
 
     private Date upt;
 
+    private String status;
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -174,4 +175,13 @@ public class ProcessOrderVo implements Serializable {
     public void setUpt(Date upt) {
         this.upt = upt;
     }
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+    
 }

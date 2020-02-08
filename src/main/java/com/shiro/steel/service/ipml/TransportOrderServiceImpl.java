@@ -71,7 +71,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	    transportOrder.setTransportno(transportOrderNo);
 	    transportOrder.setCrt(new Date());
 	    transportOrder.setCreateby(userInfoDto.getUsername());
-
+        transportOrder.setStatus(EnumStockStatus.TRANSPORTING.getText());
  	    List<SaleContractDetailVo>  collection = JSONObject.parseArray(transportOrderDetail, SaleContractDetailVo.class);
  	    BigDecimal totalWeight = new BigDecimal(0);
  	    BigDecimal actualWeight = new BigDecimal(0);

@@ -103,6 +103,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    deliveryOrder.setWarehousephone(warehouseInfo.getWarehousephone());
  	    deliveryOrder.setWarehousefax(warehouseInfo.getWarehousefax());
  	    deliveryOrder.setCreateBy(userInfoDto.getUsername());
+ 	    deliveryOrder.setStatus(EnumStockStatus.OUTSTOCKING.getText());
  	    super.baseMapper.insert(deliveryOrder);
  	    List<SaleContractDetailVo>  collection = JSONObject.parseArray(saleContractDetail, SaleContractDetailVo.class);
  	    BigDecimal totalAmount = new BigDecimal(0);

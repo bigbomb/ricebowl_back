@@ -150,6 +150,23 @@ public class StockApi extends BaseApi{
          return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list.getRecords(), page.getTotal(),page.getPages());
     }
     
+    @RequestMapping(value = "/findItemByCustomerId" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
+    public Object findItemByCustomerId(@ModelAttribute StockVo stockVo,String stockstatus){
+    	 BeanCopier copier = BeanCopier.create(StockVo.class, Stock.class, false);
+    	 Stock stock = new Stock();
+    	copier.copy(stockVo, stock, null);
+     	 EntityWrapper<Stock> wrapper = new EntityWrapper<Stock>(stock);
+     	 wrapper.gt("num", 0);
+     	  wrapper.eq("status", EnumStockStatus.LOCKSTOCK.getText()).and().eq("customerId", stock.getCustomerid());
+     	 
+
+         List<Stock> list = stockService.selectList(wrapper);
+         return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list);
+    }
+    
+    
+    
     @RequestMapping(value = "/lock" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object lock(String ids,String nums,String customerId,String customerName,String productids){

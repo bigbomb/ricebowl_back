@@ -10,10 +10,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.shiro.steel.Enum.EnumStockStatus;
+import com.shiro.steel.entity.ProcessOrder;
 import com.shiro.steel.entity.ProcessOrderDetailFinish;
 import com.shiro.steel.entity.SaleContractDetail;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.mapper.ProcessOrderDetailFinishMapper;
+import com.shiro.steel.mapper.ProcessOrderMapper;
 import com.shiro.steel.mapper.SaleContractDetailMapper;
 import com.shiro.steel.mapper.StockMapper;
 import com.shiro.steel.pojo.vo.ProcessDetailFinishVo;
@@ -36,6 +38,9 @@ public class ProcessOrderDetailFinishServiceImpl extends ServiceImpl<ProcessOrde
 	
 	@Autowired
 	private SaleContractDetailMapper saleContractDetailMapper;
+	
+	@Autowired
+	private ProcessOrderMapper processOrderMapper;
 	
 	@Override
 	public Boolean addProcessOrderFinish(ProcessDetailFinishVo processDetailFinishVo) {
@@ -73,6 +78,11 @@ public class ProcessOrderDetailFinishServiceImpl extends ServiceImpl<ProcessOrde
 	    	{
 	    		super.baseMapper.deleteBatchIds(delIds);
 	    	}
+	    	EntityWrapper<ProcessOrder> powrapper = new EntityWrapper<ProcessOrder>();
+	    	powrapper.eq("processNo", processnoString);
+	    	ProcessOrder processOrder = new ProcessOrder();
+	    	processOrder.setStatus(EnumStockStatus.PROCESSFINISH.getText());
+	    	processOrderMapper.update(processOrder, powrapper);
 	    	Stock stock = new Stock();
     		stock.setStatus(EnumStockStatus.PROCESSFINISH.getText());
     		stock.setId(processOrderDetailFinishList.get(0).getStockid());

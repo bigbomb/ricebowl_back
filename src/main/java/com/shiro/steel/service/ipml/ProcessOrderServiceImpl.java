@@ -80,7 +80,7 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
  	    Subject subject = SecurityUtils.getSubject();   
 	    userInfoDto = (UserInfoDto) subject.getPrincipal();
 	    processOrder.setCreateBy(userInfoDto.getUsername());
- 	   
+ 	    processOrder.setStatus(EnumStockStatus.PROCESSING.getText());
  	    //对加工模板进行操作
  	    ProcessTemplate processTemplate = new ProcessTemplate();
  	    processTemplate.setCustomerid(processOrderVo.getCustomerId());

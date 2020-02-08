@@ -67,6 +67,8 @@ public class SaleContractDto {
 
     private String contractstatus;
     
+    private String contracttype;
+    
     private String invoiceStatus;
     
     private String createBy;
@@ -301,7 +303,16 @@ public class SaleContractDto {
         this.contractstatus = contractstatus;
     }
 
-    public String getInvoiceStatus() {
+    
+    public String getContracttype() {
+		return contracttype;
+	}
+
+	public void setContracttype(String contracttype) {
+		this.contracttype = contracttype;
+	}
+
+	public String getInvoiceStatus() {
 		return invoiceStatus;
 	}
 

@@ -42,6 +42,8 @@ public class TransportOrderDto implements Serializable {
     
     private String remark;
     
+    private String status;
+    
     private BigDecimal transporttotalfee;
     
     private static final long serialVersionUID = 1L;
@@ -182,6 +184,12 @@ public class TransportOrderDto implements Serializable {
 		this.transporttotalfee = transporttotalfee;
 	}
 
+	public String getStatus() {
+		return status;
+	}
 
+	public void setStatus(String status) {
+		this.status = status;
+	}
     
 }
