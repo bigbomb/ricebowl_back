@@ -151,8 +151,8 @@
     <foreach collection="finaList" item="bean" index="index" open="" close="" separator=";">
             UPDATE sale_contract
             <set>
-                actualWeight = actualWeight - #{bean.actualweight},
-                actualAmount = actualAmount - #{bean.actualamount}
+                actualWeight = actualWeight - #{bean.finalweight},
+                actualAmount = actualAmount - #{bean.finalamount}
                 
             </set>
             <where>

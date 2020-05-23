@@ -48,6 +48,10 @@ public class SaleContractDto {
 
     private BigDecimal actualamount;
 
+    private BigDecimal finalweight;
+
+    private BigDecimal finalamount;
+
     private String payment;
 
     private String settlement;
@@ -231,6 +235,22 @@ public class SaleContractDto {
      */
     public void setActualamount(BigDecimal actualamount) {
         this.actualamount = actualamount;
+    }
+
+    public BigDecimal getFinalweight() {
+        return finalweight;
+    }
+
+    public void setFinalweight(BigDecimal finalweight) {
+        this.finalweight = finalweight;
+    }
+
+    public BigDecimal getFinalamount() {
+        return finalamount;
+    }
+
+    public void setFinalamount(BigDecimal finalamount) {
+        this.finalamount = finalamount;
     }
 
     /**

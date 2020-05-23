@@ -2,6 +2,7 @@ package com.shiro.steel.mapper;
 
 import java.util.List;
 
+import com.shiro.steel.entity.DeliveryOrderDetail;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
@@ -27,7 +28,7 @@ public interface SaleContractDetailMapper extends BaseMapper<SaleContractDetail>
 	void batchProcessUpdate(@Param("list")List<String> asList, @Param("sdlist") List<String> saleDetailIdList);
 
 
-	void batchDeliveryOrderUpdate(@Param("list")List<String> asList, @Param("sdlist")List<String> saleDetailIdList);
+//	void batchDeliveryOrderUpdate(@Param("list")List<String> asList, @Param("sdlist")List<String> saleDetailIdList);
 
 
 	void updateByContractno(SaleContractDetail saleContractDetail);
@@ -39,4 +40,8 @@ public interface SaleContractDetailMapper extends BaseMapper<SaleContractDetail>
 
 
 	Boolean updateBatchByEntity(@Param("list")List<SaleContractDetail> saleContractDetailList);
+
+    void updateBatchBySd( @Param("list")List<SaleContractDetail> saleContractDetailList);
+
+	void batchDeliveryOrderUpdate(@Param("list")List<DeliveryOrderDetail> deliveryOrderDetailListExt);
 }

@@ -1,12 +1,14 @@
 server:
   port: 8089
+  uri-encoding: UTF-8
 
 spring:
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/shiro?characterEncoding=utf8
+    url: jdbc:mysql://172.17.96.17:3306/steel?characterEncoding=utf8&useAffectedRows=true&allowMultiQueries=true
+    #url: jdbc:mysql://localhost:3306/plustest?characterEncoding=utf8
     username: root
-    password: 1234
+    password: p7%xiIdSy@eJhq
     type: com.alibaba.druid.pool.DruidDataSource
     filters: stat
     maxActive: 20
@@ -21,9 +23,16 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
-
+  redis:
+    host: 172.17.96.6
+    port: 6379
+    password: abcABC123
 #mybatis 配置
 mybatis:
   mapper-locations: classpath:com/shiro/steel/mapper/xml/*.xml
   type-aliases-package: com.shiro.steel.entity
 
+logging:
+  config: classpath:log4j2.xml
+  level:
+    com.shiro.steel.mapper: debug

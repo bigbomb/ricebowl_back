@@ -1,16 +1,16 @@
 package com.shiro.steel.api;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import com.shiro.steel.pojo.constant.CommonConstant;
+import com.shiro.steel.utils.CollectorsUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -264,12 +264,12 @@ public class SaleContractApi extends BaseApi {
     public Object verifySaleContract(Integer id,String contractno,String contractType){
     	 SaleContract saleContract = new SaleContract();
     	 saleContract.setId(id);
-    	 if("现货合同".equals(contractType))
+    	 if(CommonConstant.UNAUDIT_TEMP_GOODS_CONTRACT.equals(contractType))
     	 {
-    		 saleContract.setContractstatus("现货合同");
-    	 }else if("意向临调合同".equals(contractType))
+    		 saleContract.setContractstatus(CommonConstant.AUDIT_TEMP_GOODS_CONTRACt);
+    	 }else if(CommonConstant.UNAUDIT_TEMP_CONTRACT.equals(contractType))
     	 {
-    		 saleContract.setContractstatus("正式临调合同");
+    		 saleContract.setContractstatus(CommonConstant.AUDIT_TEMP_CONTRACT);
     	 }
     	 UserInfoDto userInfoDto = new UserInfoDto();
     	 Subject subject = SecurityUtils.getSubject();   
@@ -289,14 +289,25 @@ public class SaleContractApi extends BaseApi {
     
     @RequestMapping(value = "/confirmSaleContract" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object confirmSaleContract(Integer id){
+    public Object confirmSaleContract(Integer id,String isornot){
     	SaleContract saleContract = new SaleContract();
+    	String msg = null;
 		 saleContract.setId(id);
-		 saleContract.setInvoicestatus("已开");
+		 if("0".equals(isornot))
+         {
+             saleContract.setInvoicestatus("未开");
+             msg= "撤回成功";
+         }
+		 else if("1".equals(isornot))
+         {
+             saleContract.setInvoicestatus("已开");
+             msg= "确认已开";
+         }
+
     	 Boolean status = saleContractService.updateById(saleContract);
     	 if (status)
 	     {
-	    	 return ResultUtil.result(EnumCode.OK.getValue(), "确认已开");
+	    	 return ResultUtil.result(EnumCode.OK.getValue(), msg);
 	     }else
 	     {
 	    	 return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "确认失败");
@@ -500,8 +511,81 @@ public class SaleContractApi extends BaseApi {
 //        	endTimeDate = new Date(endTime);
         }
         List<SaleContractAnalyseDto> saleContractAnalyseDtoList = saleContractAnalyseService.selectList(page,dto,createby,startTimeString,endTimeString);
+        /** 毛利统计*/
+        Map<String, List> saleContractAnalyseDtoSum = saleContractAnalyseDtoList.stream()
+                .filter(t -> t.getActualweight() != null)
+                .filter(t -> t.getFinalweight() != null)
+                .collect(Collectors.groupingBy(SaleContractAnalyseDto::getContractno, Collectors.collectingAndThen(Collectors.toList(), m -> {
+                    /** 采购重量统计*/
+                    final BigDecimal actualWeight = m
+                            .stream()
+                            .collect(CollectorsUtil.summingBigDecimal(SaleContractAnalyseDto::getActualweight));
+                    /** 采购的金额统计*/
+                    final BigDecimal actualAmount = m.stream().reduce(BigDecimal.ZERO, (x, y) -> {
+                        return x.add(y.getActualweight().multiply(y.getPurchaseprice()).setScale(3,BigDecimal.ROUND_HALF_UP));
+                    }, BigDecimal::add);
+
+                    /** 客户确认的重量统计*/
+                    final BigDecimal finalWeight = m
+                            .stream()
+                            .collect(CollectorsUtil.summingBigDecimal(SaleContractAnalyseDto::getFinalweight));
+                    /** 客户确认的金额统计*/
+                    final BigDecimal finalAmount = m.stream().reduce(BigDecimal.ZERO, (x, y) -> {
+                        return x.add(y.getFinalweight().multiply(y.getSaleprice()).setScale(3, BigDecimal.ROUND_HALF_UP));
+                    }, BigDecimal::add);
+                    /** 客户名称*/
+                    final String  customer = m
+                            .stream()
+                            .map(SaleContractAnalyseDto::getCustomername).distinct().collect(Collectors.joining(""));
+                    /** 出库费*/
+                    final BigDecimal stockOutTotalFee = m.stream().filter(t -> t.getStockoutfee() != null).reduce(BigDecimal.ZERO, (x, y) -> {
+                        return x.add(y.getActualweight().multiply(y.getStockoutfee()==null?new BigDecimal(0.000):y.getStockoutfee()).setScale(3,BigDecimal.ROUND_HALF_UP));
+                    }, BigDecimal::add);
+                    /** 加工费*/
+                    final BigDecimal processTotalFee = m.stream().filter(t -> t.getProcessfee() != null).reduce(BigDecimal.ZERO, (x, y) -> {
+                        return x.add(y.getActualweight().multiply(y.getProcessfee()==null?new BigDecimal(0.000):y.getProcessfee()).setScale(3,BigDecimal.ROUND_HALF_UP));
+                    }, BigDecimal::add);
+                    /** 运输费*/
+                    final String transportFee = m
+                            .stream()
+                            .map(n->String.valueOf(n.getTransportfee())).distinct().collect(Collectors.joining(""));
+                    return Arrays.asList(customer,
+                            actualWeight,
+                            actualAmount,
+                            finalWeight,
+                            finalAmount,
+                            processTotalFee==null?0.000:processTotalFee,
+                            transportFee==null?0.000:transportFee,
+                            stockOutTotalFee==null?0.000:stockOutTotalFee
+                    );
+                })));
+        List<SaleContractAnalyseDto> analyseDtoList = new ArrayList<SaleContractAnalyseDto>();
+        saleContractAnalyseDtoSum.forEach((k,v) ->
+                {
+                    System.out.println("key: " + k + " , " + "value: " + v);
+                    SaleContractAnalyseDto saleContractAnalyseDto = new SaleContractAnalyseDto();
+                    saleContractAnalyseDto.setContractno(k);
+                    saleContractAnalyseDto.setCustomername(v.get(0).toString());
+                    saleContractAnalyseDto.setActualweight(new BigDecimal(v.get(1).toString()));
+                    saleContractAnalyseDto.setActualamount(new BigDecimal(v.get(2).toString()));
+                    saleContractAnalyseDto.setFinalweight(new BigDecimal(v.get(3).toString()));
+                    saleContractAnalyseDto.setFinalamount(new BigDecimal(v.get(4).toString()));
+                    saleContractAnalyseDto.setProcessfee(new BigDecimal(v.get(5).toString()));
+                    saleContractAnalyseDto.setTransportfee(new BigDecimal(v.get(6).toString()));
+                    saleContractAnalyseDto.setStockouttotalfee(new BigDecimal(v.get(7).toString()));
+                    BigDecimal grossprofit =
+                            new BigDecimal(v.get(4).toString())
+                                    .subtract(new BigDecimal(v.get(2).toString()))
+                                        .subtract(new BigDecimal(v.get(5).toString()))
+                                                .subtract(new BigDecimal(v.get(6).toString()))
+                                                        .subtract(new BigDecimal(v.get(7).toString()));
+                    saleContractAnalyseDto.setGrossprofit(grossprofit);
+                    analyseDtoList.add(saleContractAnalyseDto);
+                }
+        );
+        System.out.println(analyseDtoList.toString());
         Map<String, Object> result = new HashMap<String, Object>();
-        result.put("saleContractAnalyseDtoList", saleContractAnalyseDtoList);
+        result.put("saleContractAnalyseDtoList", analyseDtoList);
         return ResultUtil.result(EnumCode.OK.getValue(), "读取成功",result);
     	
     }

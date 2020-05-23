@@ -12,6 +12,7 @@
     <result column="num" jdbcType="INTEGER" property="num" />
     <result column="actualWeight" jdbcType="DECIMAL" property="actualweight" />
     <result column="finalWeight" jdbcType="DECIMAL" property="finalweight" />
+      <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="unit" jdbcType="VARCHAR" property="unit" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
     <result column="processStatus" jdbcType="VARCHAR" property="processstatus" />

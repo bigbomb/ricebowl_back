@@ -1,5 +1,6 @@
 package com.shiro.steel.service.ipml;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shiro.steel.pojo.constant.CommonConstant;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -287,11 +289,11 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 				if("0".equals(saleContract.getContracttype()))
 				{
 					
-					saleContract.setContractstatus("意向临调合同");
+					saleContract.setContractstatus(CommonConstant.UNAUDIT_TEMP_CONTRACT);
 				}
 				else
 				{
-					saleContract.setContractstatus("现货合同");
+					saleContract.setContractstatus(CommonConstant.UNAUDIT_TEMP_GOODS_CONTRACT);
 //					saleContract.setVerifyBy(userInfoDto.getUsername());
 				}
 				saleContract.setCreateBy(userInfoDto.getUsername());
@@ -521,7 +523,10 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
     	 String newcontractno = preName+CommonUtil.getTimeStamp();
     	 saleContract.setContractno(newcontractno);
     	 saleContract.setContractstatus("意向临调合同");
+    	 saleContract.setContracttype("0");
     	 saleContract.setVerifyBy(null);
+    	 saleContract.setActualamount(new BigDecimal(0));
+    	 saleContract.setActualweight(new BigDecimal(0));
     	 saleContract.setUpt(null);
     	 saleContract.setCrt(new Date());
     	 super.baseMapper.insert(saleContract);

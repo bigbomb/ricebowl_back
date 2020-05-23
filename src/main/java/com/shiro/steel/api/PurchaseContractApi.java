@@ -191,10 +191,17 @@ public class PurchaseContractApi extends BaseApi {
     
     @RequestMapping(value = "/confirmPurchaseContract" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object confirmPurchaseContract(Integer id){
+    public Object confirmPurchaseContract(Integer id,String isornot){
 		 PurchaseContract purchaseContract = new PurchaseContract();
 		 purchaseContract.setId(id);
-		 purchaseContract.setInvoicestatus("已收到");
+		if("0".equals(isornot))
+		{
+			purchaseContract.setInvoicestatus("未收到");
+		}else if("1".equals(isornot))
+		{
+			purchaseContract.setInvoicestatus("已收到");
+		}
+
     	 Boolean status = purchaseContractService.updateById(purchaseContract);
     	 if (status)
 	     {

@@ -2,6 +2,7 @@ package com.shiro.steel.service;
 
 import java.util.List;
 
+import com.shiro.steel.entity.DeliveryOrderDetail;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.service.IService;
@@ -17,8 +18,8 @@ public interface SaleContractDetailService extends IService<SaleContractDetail>{
 	void deleteBatchNos(List<String> contactnos);
 	 @Transactional
 	void batchProcessUpdate(List<String> asList, List<String> saleDetailIdList);
-	 @Transactional
-	void batchDeliveryOrderUpdate(List<String> asList, List<String> saleDetailIdList);
+//	 @Transactional
+//	void batchDeliveryOrderUpdate(List<String> asList, List<String> saleDetailIdList);
 	 @Transactional
 	void updateByContractno(SaleContractDetail saleContractDetail);
 	 @Transactional
@@ -27,5 +28,8 @@ public interface SaleContractDetailService extends IService<SaleContractDetail>{
 	 List<SaleContractDto> selectByStockIdList(List<String> stockIdList);
 	 @Transactional
 	Boolean updateBatchByEntity(List<SaleContractDetail> saleContractDetailList);
-
+	@Transactional
+    void updateBatchBySd(List<SaleContractDetail> saleContractDetailList);
+	@Transactional
+	void batchDeliveryOrderUpdate(List<DeliveryOrderDetail> deliveryOrderDetailListExt);
 }

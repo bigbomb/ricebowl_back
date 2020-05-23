@@ -1,10 +1,7 @@
 package com.shiro.steel.service.ipml;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.shiro.SecurityUtils;
@@ -110,6 +107,10 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    BigDecimal totalWeight = new BigDecimal(0);
  	    List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
  	    List<Stock> stockList = new ArrayList<Stock>();
+ 	    Map<Integer,BigDecimal> actualWeightMap = new HashMap<Integer,BigDecimal>();
+		Map<Integer,BigDecimal> finalWeightMap = new HashMap<Integer,BigDecimal>();
+		BigDecimal actualWeightMapWeight = new BigDecimal(0);
+		BigDecimal finalWeightMapWeight = new BigDecimal(0);
  	    for(SaleContractDetailVo s:collection){
  	      Stock stock = new Stock();	
  	      stock.setId(s.getStockid());
@@ -135,11 +136,25 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
   		  totalWeight = totalWeight.add(s.getFinalweight());
   		  totalAmount = totalAmount.add(amount);
   		  SaleContractDetail  newsaleContractDetail = new SaleContractDetail();
-  		  newsaleContractDetail.setActualweight(s.getActualweight());
-  		  newsaleContractDetail.setFinalweight(s.getFinalweight());
+  		  if(actualWeightMap.containsKey(s.getId()))
+		  {
+			  actualWeightMapWeight = actualWeightMap.get(s.getId()).add(s.getActualweight());
+			  finalWeightMapWeight = finalWeightMap.get(s.getId()).add(s.getFinalweight());
+		  }
+  		  else
+
+		  {
+			  actualWeightMapWeight = s.getActualweight();
+			  finalWeightMapWeight = s.getFinalweight();
+
+		  }
+  		  actualWeightMap.put(s.getId(),actualWeightMapWeight);
+  		  finalWeightMap.put(s.getId(),finalWeightMapWeight);
+  		  newsaleContractDetail.setActualweight(actualWeightMapWeight);
+  		  newsaleContractDetail.setFinalweight(finalWeightMapWeight);
   		  newsaleContractDetail.setId(s.getId());
   		  newsaleContractDetail.setDeliverystatus(EnumStockStatus.OUTSTOCKING.getText());
-  		  newsaleContractDetail.setStockid(s.getStockid());
+//  		  newsaleContractDetail.setStockid(s.getStockid());
   		  saleContractDetailList.add(newsaleContractDetail);
   		  stockList.add(stock);
   	   }
@@ -160,7 +175,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	   }
   	    stockService.updateBatchById(stockList);
  	   
- 	    saleContractDetailService.insertOrUpdateBatch(saleContractDetailList);
+ 	    saleContractDetailService.updateBatchBySd(saleContractDetailList);
  	    SaleContract saleContract = new SaleContract();
  	    saleContract.setContractno(deliveryOrderVo.getContractno());
  	    saleContract.setActualamount(totalAmount);
@@ -231,17 +246,18 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 		{
 			throw new MyException(ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "关联送货单已存在，删除失败！如要删除，请先删除关联送货单"));
 		}
-		 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
+
     	 List<String> saleDetailIdList = new ArrayList<String>();
     	 List<String> stockIdList = new ArrayList<String>();
     	 List<Stock> stockList = new ArrayList<Stock>();
+		List<DeliveryOrderDetail> deliveryOrderDetailListExt = new ArrayList<DeliveryOrderDetail>();
     	 for(String sd :Arrays.asList(deliveryOrderNos))
     	 {
     		 DeliveryOrderDetail  deliveryOrderDetail = new DeliveryOrderDetail();
     		 deliveryOrderDetail.setDeliveryno(sd);
     		 EntityWrapper<DeliveryOrderDetail> eWrapper = new EntityWrapper<DeliveryOrderDetail>(deliveryOrderDetail);
     		 List<DeliveryOrderDetail> deliveryOrderDetailList = deliveryOrderDetailService.selectList(eWrapper);
-    		 
+			 deliveryOrderDetailListExt.addAll(deliveryOrderDetailList);
     		 if(deliveryOrderDetailList.size()>0)
     		 {
     			 for (DeliveryOrderDetail pod:deliveryOrderDetailList)
@@ -271,16 +287,19 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
     	 {
     		 stockService.updateBatchById(stockList);
     	 }
-    	 deliveryOrderDetailService.deleteBatchDeliveryOrderNos(Arrays.asList(deliveryOrderNos));
-    	 List<SaleContractDto> finaList = saleContractDetailService.selectByStockIdList(stockIdList);
+
+//    	 List<SaleContractDto> finaList = saleContractDetailService.selectByStockIdList(stockIdList);
+		List<SaleContractDto> finaList = baseMapper.selectByDeliList(Arrays.asList(deliveryOrderNos));
     	 saleContractService.batchWeigtAmountUpdate(finaList);
-    	 saleContractDetailService.batchDeliveryOrderUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
+    	 saleContractDetailService.batchDeliveryOrderUpdate(deliveryOrderDetailListExt);
     	 ProcessOrderDetailFinish processOrderDetailFinish = new ProcessOrderDetailFinish();
   	     EntityWrapper<ProcessOrderDetailFinish> processOrderDetailFinishEntityWrapper = new EntityWrapper<ProcessOrderDetailFinish>();
   	     processOrderDetailFinishEntityWrapper.in("deliveryNo", deliveryOrderNos);
   	     processOrderDetailFinish.setDeliverystatus("");
   	     processOrderDetailFinish.setDeliveryno("");
   	     processOrderDetailFinishMapper.update(processOrderDetailFinish, processOrderDetailFinishEntityWrapper);
+  	     deliveryOrderDetailService.deleteBatchDeliveryOrderNos(Arrays.asList(deliveryOrderNos));
+		 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
     	 return true;
 	}
 

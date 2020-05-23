@@ -2,6 +2,7 @@ package com.shiro.steel.service.ipml;
 
 import java.util.List;
 
+import com.shiro.steel.entity.DeliveryOrderDetail;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -28,12 +29,12 @@ public class SaleContractDetailServiceImpl extends ServiceImpl<SaleContractDetai
 	}
 
 
-	@Override
-	public void batchDeliveryOrderUpdate(List<String> asList, List<String> saleDetailIdList) {
-		// TODO Auto-generated method stub
-		super.baseMapper.batchDeliveryOrderUpdate(asList,saleDetailIdList);
-		
-	}
+//	@Override
+//	public void batchDeliveryOrderUpdate(List<String> asList, List<String> saleDetailIdList) {
+//		// TODO Auto-generated method stub
+//		super.baseMapper.batchDeliveryOrderUpdate(asList,saleDetailIdList);
+//
+//	}
 
 	@Override
 	public void batchProcessUpdate(List<String> asList, List<String> saleDetailIdList) {
@@ -65,5 +66,15 @@ public class SaleContractDetailServiceImpl extends ServiceImpl<SaleContractDetai
 		// TODO Auto-generated method stub
 		return super.baseMapper.updateBatchByEntity(saleContractDetailList);
 		
+	}
+
+	@Override
+	public void updateBatchBySd(List<SaleContractDetail> saleContractDetailList) {
+		super.baseMapper.updateBatchBySd(saleContractDetailList);
+	}
+
+	@Override
+	public void batchDeliveryOrderUpdate(List<DeliveryOrderDetail> deliveryOrderDetailListExt) {
+		super.baseMapper.batchDeliveryOrderUpdate(deliveryOrderDetailListExt);
 	}
 }

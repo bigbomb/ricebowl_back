@@ -2,6 +2,7 @@ package com.shiro.steel.mapper;
 
 import java.util.List;
 
+import com.shiro.steel.pojo.dto.SaleContractDto;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
@@ -18,4 +19,5 @@ public interface DeliveryOrderMapper extends BaseMapper<DeliveryOrder>{
 
 	Integer updateBatchByDeliveryOrder( List<DeliveryOrder> deliveryOrderList);
 
+	List<SaleContractDto> selectByDeliList(@Param("asList") List<String> asList);
 }

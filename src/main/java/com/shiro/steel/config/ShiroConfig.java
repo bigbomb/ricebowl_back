@@ -56,17 +56,17 @@ public class ShiroConfig {
         sffb.setSecurityManager(securityManager);
         Map<String, Filter> newfilterMap = sffb.getFilters();
         sffb.setFilters(newfilterMap);
-        // 登录页面
-        sffb.setLoginUrl("/LoginApi/v1/relogin");
-        // 登录成功后要跳转的链接
-        // 未授权界面;
-        sffb.setUnauthorizedUrl("/LoginApi/v1/relogin");
-        
 //        // 登录页面
-//        sffb.setLoginUrl("http://117.186.237.126:18080/api/LoginApi/v1/relogin");
+//        sffb.setLoginUrl("/LoginApi/v1/relogin");
 //        // 登录成功后要跳转的链接
 //        // 未授权界面;
-//        sffb.setUnauthorizedUrl("http://117.186.237.126:18080/api/LoginApi/v1/relogin");
+//        sffb.setUnauthorizedUrl("/LoginApi/v1/relogin");
+        
+        // 登录页面
+        sffb.setLoginUrl("http://steeladmin.huixiniron.com:8080/api/LoginApi/v1/relogin");
+        // 登录成功后要跳转的链接
+        // 未授权界面;
+        sffb.setUnauthorizedUrl("http://steeladmin.huixiniron.com:8080/api/LoginApi/v1/relogin");
         // 拦截器
         Map<String,String> filterMap = new LinkedHashMap<>();
         // 可以匿名访问

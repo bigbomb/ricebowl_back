@@ -29,6 +29,8 @@ public class DeliveryOrderDetail implements Serializable {
     private BigDecimal actualweight;
     
     private BigDecimal finalweight;
+
+    private BigDecimal price;
     
     private String quality;
     
@@ -133,8 +135,15 @@ public class DeliveryOrderDetail implements Serializable {
 		this.finalweight = finalweight;
 	}
 
-	
-	public String getQuality() {
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(BigDecimal price) {
+        this.price = price;
+    }
+
+    public String getQuality() {
 		return quality;
 	}
 

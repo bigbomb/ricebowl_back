@@ -127,19 +127,16 @@
         </foreach>  
     </update> 
     
-     <update id = "batchDeliveryOrderUpdate" parameterType = "java.util.List">    
-        <![CDATA[    
-           update sale_contract_detail set deliveryStatus = null ,actualWeight = null,finalWeight = null, stockid = null , warehouseName = null where contractNo in    
-        ]]>    
-        <foreach collection="list" item = "items" open="(" separator="," close=")">
-        #{items}    
-        
-        </foreach>
-        and id in 
-         <foreach collection="sdlist" item = "sditems" open="(" separator="," close=")">
-        #{sditems}    
-        
-        </foreach>    
+     <update id = "batchDeliveryOrderUpdate" parameterType = "java.util.List">
+         <foreach collection="list" item="bean" index="index" open="" close="" separator=";">
+             UPDATE sale_contract_detail
+             <set>
+                 actualWeight= actualWeight - #{bean.actualweight},finalWeight= finalWeight - #{bean.finalweight}
+             </set>
+             <where>
+                 id = #{bean.saledetailid}
+             </where>
+         </foreach>
     </update> 
     <update id = "batchTransportOrderUpdate" parameterType = "java.util.List">    
         <![CDATA[    
@@ -175,5 +172,17 @@
             </where>
         </foreach>
     </update>
+
+    <update id="updateBatchBySd" parameterType="java.util.List">
+    <foreach collection="list" item="bean" index="index" open="" close="" separator=";">
+        UPDATE sale_contract_detail
+        <set>
+            actualWeight= actualWeight + #{bean.actualweight},finalWeight= finalWeight + #{bean.finalweight}
+        </set>
+        <where>
+            id = #{bean.id}
+        </where>
+    </foreach>
+</update>
 
 </mapper>

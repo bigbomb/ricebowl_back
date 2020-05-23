@@ -60,6 +60,13 @@
             </where>
         </foreach>
     </update>
-    
+    <select id="selectByDeliList" resultType="com.shiro.steel.pojo.dto.SaleContractDto" parameterType="java.util.List">
+        select sum(dod.finalWeight) as finalWeight,CONVERT(sum(dod.num*dod.finalWeight*dod.price),DECIMAL(10,2)) as finalAmount,contractNo
+        from delivery_order dor left join delivery_order_detail dod on dor.deliveryNo = dod.deliveryNo where
+         dor.deliveryNo in
+        <foreach collection="asList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach> GROUP BY dor.contractNo
+    </select>
     
 </mapper>
