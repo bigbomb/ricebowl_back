@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,7 +115,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    for(SaleContractDetailVo s:collection){
  	      Stock stock = new Stock();	
  	      stock.setId(s.getStockid());
- 	      if(EnumStockStatus.PROCESSFINISH.getText().equals(s.getProcessstatus()))
+ 	      if(!StringUtils.isEmpty(s.getSelectedIdss()))
  	      {
  	    	  
  	    	  String ids=s.getSelectedIdss();
@@ -129,7 +130,12 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    	 
  	    	 
  	      }
- 	     stock.setStatus(EnumStockStatus.OUTSTOCKING.getText());
+ 	      else
+		  {
+			  stock.setStatus(EnumStockStatus.OUTSTOCKING.getText());
+			  stockList.add(stock);
+		  }
+
  		  BigDecimal amount = new BigDecimal(0);
   		  amount = s.getFinalweight().multiply(s.getPrice()).setScale(3,BigDecimal.ROUND_HALF_UP);
           //amount = s.getFinalweight().multiply(s.getPrice()).multiply(new BigDecimal(s.getNum())).setScale(3,BigDecimal.ROUND_HALF_UP);
@@ -156,7 +162,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
   		  newsaleContractDetail.setDeliverystatus(EnumStockStatus.OUTSTOCKING.getText());
 //  		  newsaleContractDetail.setStockid(s.getStockid());
   		  saleContractDetailList.add(newsaleContractDetail);
-  		  stockList.add(stock);
+
   	   }
  	    List<DeliveryOrderDetail>  deliveryOrderDetailList = JSONObject.parseArray(saleContractDetail, DeliveryOrderDetail.class);
  	    for(DeliveryOrderDetail s:deliveryOrderDetailList){
@@ -173,8 +179,9 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 
  		   s.setId(null);
  	   }
-  	    stockService.updateBatchById(stockList);
- 	   
+ 	    if(stockList.size()>0) {
+			stockService.updateBatchById(stockList);
+		}
  	    saleContractDetailService.updateBatchBySd(saleContractDetailList);
  	    SaleContract saleContract = new SaleContract();
  	    saleContract.setContractno(deliveryOrderVo.getContractno());
@@ -263,15 +270,18 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
     			 for (DeliveryOrderDetail pod:deliveryOrderDetailList)
     			 {
     				 saleDetailIdList.add(pod.getSaledetailid());
-    				 SaleContractDetail saleContractDetail =  saleContractDetailService.selectById(pod.getSaledetailid());
-    				 if(EnumStockStatus.PROCESSFINISH.getText().equals(saleContractDetail.getProcessstatus()))
+					 EntityWrapper<ProcessOrderDetailFinish> podfWrapper = new EntityWrapper<ProcessOrderDetailFinish>();
+					 podfWrapper.eq("stockid",pod.getStockid());
+					 List<ProcessOrderDetailFinish> processOrderDetailFinishList =  processOrderDetailFinishMapper.selectList(podfWrapper);
+
+    				 if(processOrderDetailFinishList.size()>0)
     				 {
     					 Stock stock = new Stock();
         				 stock.setId(pod.getStockid());
          				 stock.setStatus(EnumStockStatus.PROCESSFINISH.getText());
          				 stockList.add(stock);
     				 }
-    				 else if(saleContractDetail.getProcessstatus() ==null){
+    				 else{
     					 Stock stock = new Stock();
         				 stock.setId(pod.getStockid());
          				 stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());

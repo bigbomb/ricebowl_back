@@ -69,7 +69,7 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 	public Boolean addProcessOrder(ProcessOrderVo processOrderVo,Integer contractId) {
 		// TODO Auto-generated method stub
 		String processNo = "";
-		List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
+//		List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
 		ProcessOrder processOrder = new ProcessOrder();		
 		BeanCopier copier = BeanCopier.create(ProcessOrderVo.class, ProcessOrder.class, false);		
 		copier.copy(processOrderVo, processOrder, null);		
@@ -113,15 +113,15 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 	  		   s.setProcessno(processNo);
 	  		   s.setSaleDetailId(s.getId().toString());
 	  		   s.setCrt(new Date());
-	  		   SaleContractDetail scd = new SaleContractDetail();
-	  		   scd.setId(s.getId());
-	  		   scd.setStockid(s.getStockid());
+//	  		   SaleContractDetail scd = new SaleContractDetail();
+//	  		   scd.setId(s.getId());
+//	  		   scd.setStockid(s.getStockid());
 	  		   stockidList.add(s.getStockid());
-	  		   scd.setActualweight(s.getActualweight());
-	  		   scd.setWarehousename(s.getWarehousename());
-	  		   scd.setProcessstatus(EnumStockStatus.PROCESSING.getText());
-	  		   scd.setRemark(s.getRemark());
-	  		   saleContractDetailList.add(scd);
+//	  		   scd.setActualweight(s.getActualweight());
+//	  		   scd.setWarehousename(s.getWarehousename());
+//	  		   scd.setProcessstatus(EnumStockStatus.PROCESSING.getText());
+//	  		   scd.setRemark(s.getRemark());
+//	  		   saleContractDetailList.add(scd);
 	  	   }
     	 processOrder.setProcessweight(processweight);
     	 super.baseMapper.insert(processOrder);
@@ -130,13 +130,13 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
     	 EntityWrapper<Stock> stockWrapper = new EntityWrapper<Stock>();
     	 stockWrapper.in("id", stockidList);
     	 stockService.update(stock, stockWrapper);
-    	 processOrderDetailService.insertBatch(collection);
+    	boolean status = processOrderDetailService.insertBatch(collection);
 //    	 SaleContract saleContract = new SaleContract();
 //    	 saleContract.setId(contractId);
 //    	 saleContract.setContractstatus("已审核");
 //    	 saleContractService.updateById(saleContract);
     	 
-    	 Boolean status = saleContractDetailService.updateBatchById(saleContractDetailList);
+//    	 Boolean status = saleContractDetailService.updateBatchById(saleContractDetailList);
     	return status;
 	}
 	@Override
@@ -149,7 +149,7 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 	public Boolean delProcessOrder(ParamsDto dto, String[] processNos, String[] saleContractNos)  throws MyException{
 		// TODO Auto-generated method stub
 			 super.baseMapper.deleteBatchIds(Arrays.asList(dto.getIds()));
-		   	 List<String> saleDetailIdList = new ArrayList<String>();
+//		   	 List<String> saleDetailIdList = new ArrayList<String>();
 		   	 List<Integer> stockidList = new ArrayList<Integer>();
 		   	 for(String sd :Arrays.asList(processNos))
 		   	 {
@@ -161,7 +161,7 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 		   		 {
 		   			 for (ProcessOrderDetail pod:processOrderDetailList)
 		   			 {
-		   				 saleDetailIdList.add(pod.getSaleDetailId());
+//		   				 saleDetailIdList.add(pod.getSaleDetailId());
 		   				 stockidList.add(pod.getStockid());
 		   			 }
 		   		 }
@@ -183,7 +183,7 @@ public class ProcessOrderServiceImpl extends ServiceImpl<ProcessOrderMapper, Pro
 		   	 EntityWrapper<ProcessOrderDetailFinish> podf = new EntityWrapper<ProcessOrderDetailFinish>();
 		   	 podf.in("processNo", Arrays.asList(processNos));
 		   	 processOrderDetailFinishService.delete(podf);
-		   	 saleContractDetailService.batchProcessUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
+//		   	 saleContractDetailService.batchProcessUpdate(Arrays.asList(saleContractNos),saleDetailIdList);
 		   	 return true;
 		}
 //		{

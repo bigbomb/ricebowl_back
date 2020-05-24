@@ -138,7 +138,7 @@ public class StockApi extends BaseApi{
      	 wrapper.gt("num", 0);
      	 if("jg".equals(stockstatus))
      	 {
-     		wrapper.eq("status", EnumStockStatus.LOCKSTOCK.getText()).and().eq("customerId", stock.getCustomerid());
+     		wrapper.eq("status", EnumStockStatus.LOCKSTOCK.getText());
      	 }else if("td".equals(stockstatus))
      	 {
          	 wrapper.eq("status",EnumStockStatus.LOCKSTOCK.getText()).or().eq("status",EnumStockStatus.PROCESSFINISH.getText());
