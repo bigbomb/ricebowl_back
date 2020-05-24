@@ -1,11 +1,15 @@
 package com.shiro.steel.api;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.http.MediaType;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -129,11 +133,16 @@ public class StockApi extends BaseApi{
     
     @RequestMapping(value = "/findItemByPage" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object findItemByPage(@ModelAttribute ParamsDto dto,@ModelAttribute StockVo stockVo,String stockstatus){
+    public Object findItemByPage(@ModelAttribute ParamsDto dto,@ModelAttribute StockVo stockVo,String stockstatus,String startTime,String endTime) throws ParseException {
     	 Page<Stock> page = new Page<>(dto.getStartPage(),dto.getPageSize());
     	 BeanCopier copier = BeanCopier.create(StockVo.class, Stock.class, false);
     	 Stock stock = new Stock();
-    	copier.copy(stockVo, stock, null);
+    	 copier.copy(stockVo, stock, null);
+		 Date startTimeDate = null;
+		 Date endTimeDate = null;
+		 String startTimeString = "";
+		 String endTimeString = "";
+
      	 EntityWrapper<Stock> wrapper = new EntityWrapper<Stock>(stock);
      	 wrapper.gt("num", 0);
      	 if("jg".equals(stockstatus))
@@ -145,7 +154,16 @@ public class StockApi extends BaseApi{
      	 }else {
      		 wrapper.eq("status",stockstatus);
 		}
-
+		if(!StringUtils.isEmpty(startTime))
+		{
+			SimpleDateFormat sf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z", Locale.ENGLISH);
+			startTimeDate = sf.parse(startTime);
+			endTimeDate = sf.parse(endTime);
+			startTimeString =new SimpleDateFormat("yyyy-MM-dd").format(startTimeDate);
+			endTimeString =new SimpleDateFormat("yyyy-MM-dd").format(endTimeDate);
+			wrapper.ge("crt",startTimeString).and().le("crt",endTimeString);
+		}
+		wrapper.orderBy("crt",false);
          Page<Stock> list = stockService.selectPage(page,wrapper);
          return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list.getRecords(), page.getTotal(),page.getPages());
     }
