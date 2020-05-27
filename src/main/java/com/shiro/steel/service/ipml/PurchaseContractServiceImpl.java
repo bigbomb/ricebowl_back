@@ -1,14 +1,17 @@
 package com.shiro.steel.service.ipml;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import com.shiro.steel.entity.*;
+import com.shiro.steel.exception.MyException;
+import com.shiro.steel.pojo.dto.*;
+import com.shiro.steel.pojo.vo.DeliveryOrderDetailVo;
+import com.shiro.steel.service.*;
+import com.shiro.steel.utils.CollectorsUtil;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,30 +24,9 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.shiro.steel.Enum.EnumCode;
-import com.shiro.steel.entity.Product;
-import com.shiro.steel.entity.Productfactory;
-import com.shiro.steel.entity.Productmark;
-import com.shiro.steel.entity.Productspec;
-import com.shiro.steel.entity.PurchaseContract;
-import com.shiro.steel.entity.PurchaseContractDetail;
-import com.shiro.steel.entity.SaleContract;
-import com.shiro.steel.entity.SaleContractDetail;
-import com.shiro.steel.entity.SaleContractWarehouse;
-import com.shiro.steel.entity.Stock;
 import com.shiro.steel.mapper.PurchaseContractMapper;
-import com.shiro.steel.pojo.dto.ParamsDto;
-import com.shiro.steel.pojo.dto.PurchaseContractDto;
-import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.ContractVo;
 import com.shiro.steel.pojo.vo.PurchaseContractVo;
-import com.shiro.steel.service.ProductFactoryService;
-import com.shiro.steel.service.ProductMarkService;
-import com.shiro.steel.service.ProductService;
-import com.shiro.steel.service.ProductSpecService;
-import com.shiro.steel.service.PurchaseContractDetailService;
-import com.shiro.steel.service.PurchaseContractService;
-import com.shiro.steel.service.SaleContractWarehouseService;
-import com.shiro.steel.service.StockService;
 import com.shiro.steel.utils.CommonUtil;
 import com.shiro.steel.utils.ResultUtil;
 @Service
@@ -52,7 +34,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	
 	@Autowired
 	private PurchaseContractDetailService purchaseContractDetailService;
-	
+
 	@Autowired
 	private ProductService productService;
 	
@@ -70,6 +52,15 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	
 	@Autowired
 	private StockService stockService;
+
+	@Autowired
+	private DeliveryOrderDetailService deliveryOrderDetailService;
+
+	@Autowired
+	private DeliveryOrderService deliveryOrderService;
+
+	@Autowired
+	private SaleContractDetailService saleContractDetailService;
 	final static String preName = "cg";
 	@Override
 	public List<PurchaseContractDto> findPurchaseContractByStatusPage(Page<PurchaseContractDto> page, ParamsDto dto,String statusTab,String invoiceStatus,String createby, String startTime,String endTime) {
@@ -86,7 +77,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	
 	
 	@Override
-	public Object addContract(PurchaseContractVo purchaseContractVo) {
+	public Object addContract(PurchaseContractVo purchaseContractVo) throws ParseException {
 		// TODO Auto-generated method stub
 		String contractno = "";
     	//contractVo.setContractstatus(ContractStatus.TOPAY.getText());
@@ -98,7 +89,6 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 		copier.copy(purchaseContractVo, purchaseContract, null);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		try {
 			if(StringUtils.isEmpty(purchaseContractVo.getPurchaseno()))
 			{
 				contractno = preName+CommonUtil.getTimeStamp();
@@ -262,13 +252,25 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 				List<Productmark> productmarkList = new ArrayList<Productmark>();
 				List<Productspec> productspecList = new ArrayList<Productspec>();
 				List<SaleContractWarehouse> saleContractWarehouseList = new ArrayList<SaleContractWarehouse>();
+				List<Stock> stockList = new ArrayList<Stock>();
+
 				 List checkProduct = new ArrayList();
 				purchaseContract.setUpt(sdf1.parse(sdf1.format(new Date())));
 				super.baseMapper.updateByPrimaryKey(purchaseContract);
-				Map contractMap = new HashMap();
-				contractMap.put("purchaseNo", purchaseContract.getPurchaseno());
-				purchaseContractDetailService.deleteByMap(contractMap);
+//				Map contractMap = new HashMap();
+//				contractMap.put("purchaseNo", purchaseContract.getPurchaseno());
+//				purchaseContractDetailService.deleteByMap(contractMap);
 				for(PurchaseContractDetail s:collection){
+					if(purchaseContractVo.getChange()==1)
+					{
+						Stock stock = new Stock();
+						stock.setPurdetailid(s.getId());
+						stock.setPackingno(s.getPackingno());
+						stock.setWeight(s.getWeight());
+						stock.setUnit(s.getUnit());
+						stockList.add(stock);
+					}
+
 					Product product = new Product();
 					Productfactory productfactory = new Productfactory();
 					Productmark productmark = new Productmark();
@@ -398,15 +400,85 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 		    	{
 		    		saleContractWarehouseService.insertBatch(saleContractWarehouseList);
 		    	}
-				purchaseContractDetailService.insertBatch(collection);
+
+		    	if(stockList.size()>0)
+				{
+
+					Boolean st = stockService.batchUpdatebyPurId(stockList);
+					List<DeliveryOrderDetail> dodList = new ArrayList<DeliveryOrderDetail>();
+					List<DeliveryOrderDetailPurDto> dodpdList = new ArrayList<DeliveryOrderDetailPurDto>();
+					for(Stock stock : stockList)
+					{
+						DeliveryOrderDetail dod = new DeliveryOrderDetail();
+						DeliveryOrderDetailPurDto doddto = deliveryOrderDetailService.selectByPurId(stock);
+						Optional.ofNullable(doddto).ifPresent(u->{
+							// TODO: do something
+							BigDecimal newweight = new BigDecimal(0);
+							BeanCopier dodcopier = BeanCopier.create(DeliveryOrderDetailPurDto.class, DeliveryOrderDetail.class, false);
+							dodcopier.copy(u, dod, null);
+							dod.setActualweight(u.getActualweight().add(u.getBalance()));
+							dodpdList.add(u);
+						});
+
+						if(!StringUtils.isEmpty(dod.getId()))
+						{
+							dodList.add(dod);
+						};
+					}
+					if(dodList.size()>0)
+					{
+						deliveryOrderDetailService.updateBatchById(dodList);
+					}
+
+                    if(dodpdList.size()>0)
+					{
+						List<DeliveryOrderDetailPurDto> dlolist = new ArrayList<DeliveryOrderDetailPurDto>();
+						List<SaleContractDetailDto> scddList = new ArrayList<SaleContractDetailDto>();
+						/** 根据采购入库前的入库吨位减去新的库存吨位的值，按照deliveryno做分类统计*/
+						Map<String, List> deliveryOrderDetailPurDtoSum = dodpdList.stream()
+								.collect(Collectors.groupingBy(DeliveryOrderDetailPurDto::getDeliveryno, Collectors.collectingAndThen(Collectors.toList(), m -> {
+									/** 采购重量统计*/
+									final BigDecimal balance = m
+											.stream()
+											.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getBalance));
+									return Arrays.asList(
+											balance
+									);
+								})));
+						deliveryOrderDetailPurDtoSum.forEach((k,v) ->
+						{
+							DeliveryOrderDetailPurDto dlo = new DeliveryOrderDetailPurDto();
+							dlo.setDeliveryno(k);
+							dlo.setBalance(new BigDecimal(v.get(0).toString()));
+							dlolist.add(dlo);
+						});
+						deliveryOrderService.batchUpdateBalance(dlolist);
+
+						/** 根据采购入库前的入库吨位减去新的库存吨位的值，按照saledetailid做分类统计*/
+						Map<Integer, List> saleOrderDetailDtoSum = dodpdList.stream()
+								.collect(Collectors.groupingBy(DeliveryOrderDetailPurDto::getSaledetailid, Collectors.collectingAndThen(Collectors.toList(), m -> {
+									/** 采购重量统计*/
+									final BigDecimal balance = m
+											.stream()
+											.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getBalance));
+									return Arrays.asList(
+											balance
+									);
+								})));
+						saleOrderDetailDtoSum.forEach((k,v) ->
+						{
+							SaleContractDetailDto sdd = new SaleContractDetailDto();
+							sdd.setId(k);
+							sdd.setBalance(new BigDecimal(v.get(0).toString()));
+							scddList.add(sdd);
+						});
+						saleContractDetailService.batchUpdateBalance(scddList);
+					}
+
+					purchaseContractDetailService.updateBatchById(collection);
+				}
 				status = "更新成功";
 			}
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	
 		 return ResultUtil.result(EnumCode.OK.getValue(), status);
 	}
 
@@ -450,6 +522,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
     		 BeanCopier copier = BeanCopier.create(PurchaseContractDetail.class, Stock.class, false);
     		 copier.copy(lpurchaseContractDetail, stock, null);
     		 String uuid = UUID.randomUUID().toString().replaceAll("-","");
+    		 stock.setPurdetailid(lpurchaseContractDetail.getId());
     		 stock.setProductid(uuid);
     		 stock.setMemberid(memberId);
     		 stock.setStatus("在库");
