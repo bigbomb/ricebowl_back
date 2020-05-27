@@ -16,20 +16,22 @@ public interface SaleContractDetailService extends IService<SaleContractDetail>{
 	List<SaleContractDetailDto> findSaleContractDetailByPage(ParamsDto dto);
 	 @Transactional
 	void deleteBatchNos(List<String> contactnos);
-	 @Transactional
+	@Transactional(rollbackFor = Exception.class)
 	void batchProcessUpdate(List<String> asList, List<String> saleDetailIdList);
 //	 @Transactional
 //	void batchDeliveryOrderUpdate(List<String> asList, List<String> saleDetailIdList);
-	 @Transactional
+    @Transactional(rollbackFor = Exception.class)
 	void updateByContractno(SaleContractDetail saleContractDetail);
-	 @Transactional
+	@Transactional(rollbackFor = Exception.class)
 	void batchTransportOrderUpdate(List<String> asList, List<String> saleDetailIdList);
 
 	 List<SaleContractDto> selectByStockIdList(List<String> stockIdList);
-	 @Transactional
+	@Transactional(rollbackFor = Exception.class)
 	Boolean updateBatchByEntity(List<SaleContractDetail> saleContractDetailList);
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
     void updateBatchBySd(List<SaleContractDetail> saleContractDetailList);
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	void batchDeliveryOrderUpdate(List<DeliveryOrderDetail> deliveryOrderDetailListExt);
+	@Transactional(rollbackFor = Exception.class)
+    void batchUpdateBalance(List<SaleContractDetailDto> scddList);
 }

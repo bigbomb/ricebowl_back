@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.plugins.Page;
 import com.shiro.steel.entity.Carriers;
 import com.shiro.steel.entity.TransportOrder;
 import com.shiro.steel.pojo.dto.ParamsDto;
+import com.shiro.steel.pojo.dto.SaleContractDto;
 import com.shiro.steel.pojo.dto.TransportOrderDto;
 import com.shiro.steel.pojo.vo.TransportOrderDetailVo;
 
@@ -25,4 +26,7 @@ public interface TransportOrderMapper extends BaseMapper<TransportOrder>{
 
 	List<TransportOrderDto> findTransportOrderByPage(Page<TransportOrderDto> page, @Param("dto")ParamsDto dto, @Param("createby") String createby,
 			@Param("memberId") String memberId, @Param("carrier") String carrier, @Param("startTime") String startTimeString,  @Param("endTime") String endTimeString);
+
+    List<TransportOrderDto> selectListBytransport(Page<SaleContractDto> page, @Param("dto")ParamsDto dto, @Param("createby")String createby,
+                                                  @Param("startTime")String startTimeString, @Param("endTime")String endTimeString);
 }

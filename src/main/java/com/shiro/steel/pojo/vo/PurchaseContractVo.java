@@ -42,7 +42,7 @@ public class PurchaseContractVo implements Serializable {
     private Date crt;
 
     private Date upt;
-    
+    private Integer change;
     private String purchaseContractDetail;
 
     private static final long serialVersionUID = 1L;
@@ -184,7 +184,15 @@ public class PurchaseContractVo implements Serializable {
         this.upt = upt;
     }
 
-	public String getPurchaseContractDetail() {
+    public Integer getChange() {
+        return change;
+    }
+
+    public void setChange(Integer change) {
+        this.change = change;
+    }
+
+    public String getPurchaseContractDetail() {
 		return purchaseContractDetail;
 	}
 

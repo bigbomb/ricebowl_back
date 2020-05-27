@@ -1,5 +1,6 @@
 package com.shiro.steel.service;
 
+import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -18,13 +19,13 @@ public interface PurchaseContractService extends IService<PurchaseContract>{
 	List<PurchaseContractDto> findPurchaseContractByPage(Page<PurchaseContractDto> page, ParamsDto dto);
 	
 	List<PurchaseContractDto> findPurchaseContractByStatusPage(Page<PurchaseContractDto> page, ParamsDto dto,String statusTab,String invoiceStatus, String createby, String startTimeString, String endTimeString);
-	@Transactional
-	Object addContract(PurchaseContractVo purchaseContractVo);
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
+	Object addContract(PurchaseContractVo purchaseContractVo) throws ParseException;
+	@Transactional(rollbackFor = Exception.class)
 	Integer delBatchIds(List<String> asList, List<String> asList2);
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	Integer updateByVerify(Integer id, String purchaseno, String memberId);
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	Boolean copyContract(String contractno);
 
 }

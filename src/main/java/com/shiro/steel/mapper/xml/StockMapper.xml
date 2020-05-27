@@ -129,4 +129,16 @@
             </where>
         </foreach>
     </update>
+
+    <update id="batchUpdatebyPurId" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE stock
+            <set>
+                packingNo = #{item.packingno},weight = #{item.weight},unit = #{item.unit}
+            </set>
+            <where>
+                purDetailId = #{item.purdetailid}
+            </where>
+        </foreach>
+    </update>
 </mapper>

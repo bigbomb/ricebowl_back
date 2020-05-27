@@ -112,7 +112,7 @@ public class PurchaseContractApi extends BaseApi {
      */
     @RequestMapping(value = "/addConstract",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object addUser(@Valid PurchaseContractVo purchaseContractVo, BindingResult bindingResult) {
+    public Object addUser(@Valid PurchaseContractVo purchaseContractVo, BindingResult bindingResult) throws ParseException {
 
 
        return purchaseContractService.addContract(purchaseContractVo);

@@ -2,6 +2,8 @@ package com.shiro.steel.service.ipml;
 
 import java.util.List;
 
+import com.shiro.steel.entity.Stock;
+import com.shiro.steel.pojo.dto.DeliveryOrderDetailPurDto;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -36,8 +38,11 @@ public class DeliveryOrderDetailServiceImpl extends ServiceImpl<DeliveryOrderDet
         return list;
 	}
 
+	@Override
+	public DeliveryOrderDetailPurDto selectByPurId(Stock stock) {
+		DeliveryOrderDetailPurDto dodv = super.baseMapper.selectByPurId(stock);
+		return dodv;
+	}
 
-	
 
-    
 }

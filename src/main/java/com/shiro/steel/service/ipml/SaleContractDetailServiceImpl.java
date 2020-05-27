@@ -77,4 +77,9 @@ public class SaleContractDetailServiceImpl extends ServiceImpl<SaleContractDetai
 	public void batchDeliveryOrderUpdate(List<DeliveryOrderDetail> deliveryOrderDetailListExt) {
 		super.baseMapper.batchDeliveryOrderUpdate(deliveryOrderDetailListExt);
 	}
+
+	@Override
+	public void batchUpdateBalance(List<SaleContractDetailDto> scddList) {
+		super.baseMapper.batchUpdateBalance(scddList);
+	}
 }

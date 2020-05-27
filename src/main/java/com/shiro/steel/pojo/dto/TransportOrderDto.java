@@ -7,6 +7,7 @@ import java.util.Date;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import org.springframework.util.StringUtils;
 
 public class TransportOrderDto implements Serializable {
 
@@ -23,6 +24,8 @@ public class TransportOrderDto implements Serializable {
     private String deliveryno;
 
     private String contractno;
+
+    private String customername;
 
     private String memberid;
 
@@ -102,6 +105,14 @@ public class TransportOrderDto implements Serializable {
 
     public void setContractno(String contractno) {
         this.contractno = contractno;
+    }
+
+    public String getCustomername() {
+        return customername;
+    }
+
+    public void setCustomername(String customername) {
+        this.customername = customername;
     }
 
     public String getMemberid() {

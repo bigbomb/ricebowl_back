@@ -18,10 +18,9 @@ public class SaleContractAnalyseServiceImpl  implements SaleContractAnalyseServi
 	private SaleContractAnalyseMapper saleContractAnalyseMapper;
 
 	@Override
-	public List<SaleContractAnalyseDto> selectList(Page<SaleContractDto> page, ParamsDto dto, String createby,
-			String startTimeString, String endTimeString) {
+	public List<SaleContractAnalyseDto> selectList(String deliveryno) {
 		// TODO Auto-generated method stub
-		return saleContractAnalyseMapper.selectList(page,dto,createby,startTimeString,endTimeString);
+		return saleContractAnalyseMapper.selectList(deliveryno);
 	}
 
   

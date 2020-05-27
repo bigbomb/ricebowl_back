@@ -57,6 +57,8 @@ public class Stock implements Serializable {
     private String customerid;
     
     private String customername;
+
+    private Integer purdetailid;
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -273,8 +275,11 @@ public class Stock implements Serializable {
 		this.customername = customername;
 	}
 
-	
-    
-    
-    
+    public Integer getPurdetailid() {
+        return purdetailid;
+    }
+
+    public void setPurdetailid(Integer purdetailid) {
+        this.purdetailid = purdetailid;
+    }
 }

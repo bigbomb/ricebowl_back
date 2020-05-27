@@ -11,7 +11,6 @@ import com.shiro.steel.pojo.dto.SaleContractDto;
 
 public interface SaleContractAnalyseMapper {
 
-	List<SaleContractAnalyseDto> selectList(Page<SaleContractDto> page,@Param("dto") ParamsDto dto,@Param("createby")String createby,
-			@Param("startTime")String startTimeString,@Param("endTime") String endTimeString);
+	List<SaleContractAnalyseDto> selectList(@Param("deliveryno") String deliveryno);
 
 }

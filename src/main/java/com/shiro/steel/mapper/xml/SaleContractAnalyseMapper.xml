@@ -2,29 +2,48 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.shiro.steel.mapper.SaleContractAnalyseMapper">
  <select id="selectList" resultType="com.shiro.steel.pojo.dto.SaleContractAnalyseDto">
-	 select sc.contractNo as contractno,sc.customerName as customername,scd.finalWeight as finalweight,scd.actualWeight as actualweight,scd.price,
-	 scd.stockOutFee as stockoutfee,po.processFee as processfee,tpo.transportTotalFee as transportfee,scd.price as saleprice,sk.price as purchaseprice
-	 from sale_contract_detail scd
-	 left join sale_contract sc on scd.contractNo = sc.contractNo
-	 left join process_order po on scd.contractNo = po.contractNo
-	 left join transport_order tpo on scd.contractNo = tpo.contractNo
-	 left join stock sk on sk.id = scd.stockid
-	 WHERE 1=1
-		<if test="''!= dto.keyword and dto.keyword!=null">
-        AND sc.customerName LIKE CONCAT('%',#{dto.keyword},'%')
-		</if>
-		<if test="''!=createby and createby!=null">
-       	AND sc.createBy =#{createby}
-		</if>
+<!--	 select sc.contractNo as contractno,tpo.transportNo as transportno,sc.customerName as customername,scd.finalWeight as finalweight,scd.actualWeight as actualweight,-->
+<!--	po.processFee as processfee,tpo.transportTotalFee as transportfee,scd.price as saleprice,sk.price as purchaseprice,dod.stockId,dlo.liftingFee as stockoutfee-->
+<!--	 from transport_order tpo-->
+<!--	 left join sale_contract sc on sc.contractNo = tpo.contractNo-->
+<!--	 left join  sale_contract_detail scd on scd.contractNo = sc.contractNo-->
+<!--	 left join process_order po on scd.contractNo = po.contractNo-->
+<!--	 left join delivery_order_detail dod on scd.id = dod.saleDetailId-->
+<!--	 left join delivery_order dlo on dlo.deliveryNo = dod.deliveryNo-->
+<!--	 left join stock sk on sk.id = dod.stockId-->
+<!--	 WHERE 1=1-->
+<!--		<if test="''!= dto.keyword and dto.keyword!=null">-->
+<!--        AND sc.customerName LIKE CONCAT('%',#{dto.keyword},'%')-->
+<!--		</if>-->
+<!--		<if test="''!=createby and createby!=null">-->
+<!--       	AND sc.createBy =#{createby}-->
+<!--		</if>-->
 
-	 	<if test="startTime != null and startTime != ''">
-		 AND  DATE_FORMAT(sc.contractDate,'%Y-%m-%d') <![CDATA[>=]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
- 		</if>
-	 	<if test="endTime != null and endTime != ''">
-		 AND  DATE_FORMAT(sc.contractDate,'%Y-%m-%d')  <![CDATA[<=]]> DATE_FORMAT(#{endTime},'%Y-%m-%d ')
-	 	</if>
+<!--	 	<if test="startTime != null and startTime != ''">-->
+<!--		 AND  DATE_FORMAT(sc.contractDate,'%Y-%m-%d') <![CDATA[>=]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')-->
+<!-- 		</if>-->
+<!--	 	<if test="endTime != null and endTime != ''">-->
+<!--		 AND  DATE_FORMAT(sc.contractDate,'%Y-%m-%d')  <![CDATA[<=]]> DATE_FORMAT(#{endTime},'%Y-%m-%d ')-->
+<!--	 	</if>-->
 
-       order by sc.crt desc
+<!--       order by sc.crt desc-->
+
+
+	 select dlo.deliveryNo as deliveryno,dlo.liftingFee as stockoutfee,dod.stockId,sk.price as purchaseprice,scd.price as saleprice,
+	 scd.actualWeight as actualweight,scd.finalWeight as finalweight,po.processFee as processfee
+
+		 from delivery_order dlo
+		 LEFT JOIN delivery_order_detail dod on dlo.deliveryNo = dod.deliveryNo
+		 left join stock sk on dod.stockId = sk.id
+		 left join sale_contract_detail scd on scd.id = dod.saleDetailId
+		 left join process_order_detail_finish podf on podf.stockid = sk.id
+		 left join process_order po on po.processNo = podf.processNo
+		 WHERE 1=1
+
+		 <if test="''!=deliveryno and deliveryno!=null">
+			 AND dlo.deliveryNo =#{deliveryno}
+		 </if>
+	     group by sk.id
 	</select>
 	
 </mapper>

@@ -23,8 +23,7 @@ import com.shiro.steel.pojo.vo.CustomerInfoVo;
  */
 public interface SaleContractAnalyseService  {
 
-	List<SaleContractAnalyseDto> selectList(Page<SaleContractDto> page, ParamsDto dto, String createby,
-			String startTimeString, String endTimeString);
+	List<SaleContractAnalyseDto> selectList(String deliveryno);
 
 
     

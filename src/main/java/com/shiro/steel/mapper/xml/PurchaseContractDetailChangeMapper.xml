@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.PurchaseContractDetailChangeMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.PurchaseContractDetailChange">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="purchaseNo" jdbcType="VARCHAR" property="purchaseno" />
+    <result column="productName" jdbcType="VARCHAR" property="productname" />
+    <result column="productSpec" jdbcType="VARCHAR" property="productspec" />
+    <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
+    <result column="productMark" jdbcType="VARCHAR" property="productmark" />
+    <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="price" jdbcType="DECIMAL" property="price" />
+    <result column="unit" jdbcType="VARCHAR" property="unit" />
+    <result column="total" jdbcType="DECIMAL" property="total" />
+    <result column="warehousename" jdbcType="VARCHAR" property="warehousename" />
+    <result column="stockOutType" jdbcType="VARCHAR" property="stockouttype" />
+    <result column="quality" jdbcType="VARCHAR" property="quality" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+    <result column="packingNo" jdbcType="VARCHAR" property="packingno" />
+    <result column="ori_productName" jdbcType="VARCHAR" property="oriProductname" />
+    <result column="ori_productSpec" jdbcType="VARCHAR" property="oriProductspec" />
+    <result column="ori_productFactory" jdbcType="VARCHAR" property="oriProductfactory" />
+    <result column="ori_productMark" jdbcType="VARCHAR" property="oriProductmark" />
+    <result column="ori_weight" jdbcType="DECIMAL" property="oriWeight" />
+    <result column="ori_price" jdbcType="DECIMAL" property="oriPrice" />
+    <result column="ori_total" jdbcType="DECIMAL" property="oriTotal" />
+    <result column="ori_warehousename" jdbcType="VARCHAR" property="oriWarehousename" />
+    <result column="ori_stockOutType" jdbcType="VARCHAR" property="oriStockouttype" />
+    <result column="ori_quality" jdbcType="VARCHAR" property="oriQuality" />
+    <result column="ori_remark" jdbcType="VARCHAR" property="oriRemark" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from purchase_contract_detail_change
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.shiro.steel.entity.PurchaseContractDetailChange">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into purchase_contract_detail_change (purchaseNo, productName, productSpec, 
+      productFactory, productMark, num, 
+      weight, price, unit, 
+      total, warehousename, stockOutType, 
+      quality, remark, status, 
+      crt, upt, packingNo, 
+      ori_productName, ori_productSpec, ori_productFactory, 
+      ori_productMark, ori_weight, ori_price, 
+      ori_total, ori_warehousename, ori_stockOutType, 
+      ori_quality, ori_remark)
+    values (#{purchaseno,jdbcType=VARCHAR}, #{productname,jdbcType=VARCHAR}, #{productspec,jdbcType=VARCHAR}, 
+      #{productfactory,jdbcType=VARCHAR}, #{productmark,jdbcType=VARCHAR}, #{num,jdbcType=INTEGER}, 
+      #{weight,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL}, #{unit,jdbcType=VARCHAR}, 
+      #{total,jdbcType=DECIMAL}, #{warehousename,jdbcType=VARCHAR}, #{stockouttype,jdbcType=VARCHAR}, 
+      #{quality,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}, 
+      #{crt,jdbcType=TIMESTAMP}, #{upt,jdbcType=TIMESTAMP}, #{packingno,jdbcType=VARCHAR}, 
+      #{oriProductname,jdbcType=VARCHAR}, #{oriProductspec,jdbcType=VARCHAR}, #{oriProductfactory,jdbcType=VARCHAR}, 
+      #{oriProductmark,jdbcType=VARCHAR}, #{oriWeight,jdbcType=DECIMAL}, #{oriPrice,jdbcType=DECIMAL}, 
+      #{oriTotal,jdbcType=DECIMAL}, #{oriWarehousename,jdbcType=VARCHAR}, #{oriStockouttype,jdbcType=VARCHAR}, 
+      #{oriQuality,jdbcType=VARCHAR}, #{oriRemark,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.PurchaseContractDetailChange">
+    update purchase_contract_detail_change
+    set purchaseNo = #{purchaseno,jdbcType=VARCHAR},
+      productName = #{productname,jdbcType=VARCHAR},
+      productSpec = #{productspec,jdbcType=VARCHAR},
+      productFactory = #{productfactory,jdbcType=VARCHAR},
+      productMark = #{productmark,jdbcType=VARCHAR},
+      num = #{num,jdbcType=INTEGER},
+      weight = #{weight,jdbcType=DECIMAL},
+      price = #{price,jdbcType=DECIMAL},
+      unit = #{unit,jdbcType=VARCHAR},
+      total = #{total,jdbcType=DECIMAL},
+      warehousename = #{warehousename,jdbcType=VARCHAR},
+      stockOutType = #{stockouttype,jdbcType=VARCHAR},
+      quality = #{quality,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP},
+      packingNo = #{packingno,jdbcType=VARCHAR},
+      ori_productName = #{oriProductname,jdbcType=VARCHAR},
+      ori_productSpec = #{oriProductspec,jdbcType=VARCHAR},
+      ori_productFactory = #{oriProductfactory,jdbcType=VARCHAR},
+      ori_productMark = #{oriProductmark,jdbcType=VARCHAR},
+      ori_weight = #{oriWeight,jdbcType=DECIMAL},
+      ori_price = #{oriPrice,jdbcType=DECIMAL},
+      ori_total = #{oriTotal,jdbcType=DECIMAL},
+      ori_warehousename = #{oriWarehousename,jdbcType=VARCHAR},
+      ori_stockOutType = #{oriStockouttype,jdbcType=VARCHAR},
+      ori_quality = #{oriQuality,jdbcType=VARCHAR},
+      ori_remark = #{oriRemark,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, purchaseNo, productName, productSpec, productFactory, productMark, num, 
+    weight, price, unit, total, warehousename, stockOutType, quality, remark, status, 
+    crt, upt, packingNo, ori_productName, ori_productSpec, ori_productFactory, ori_productMark, 
+    ori_weight, ori_price, ori_total, ori_warehousename, ori_stockOutType, ori_quality, 
+    ori_remark
+    from purchase_contract_detail_change
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, purchaseNo, productName, productSpec, productFactory, productMark, num, 
+    weight, price, unit, total, warehousename, stockOutType, quality, remark, status, 
+    crt, upt, packingNo, ori_productName, ori_productSpec, ori_productFactory, ori_productMark, 
+    ori_weight, ori_price, ori_total, ori_warehousename, ori_stockOutType, ori_quality, 
+    ori_remark
+    from purchase_contract_detail_change
+  </select>
+</mapper>

@@ -2,6 +2,7 @@ package com.shiro.steel.service;
 
 import java.util.List;
 
+import com.shiro.steel.pojo.dto.SaleContractDto;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.plugins.Page;
@@ -23,4 +24,5 @@ public interface TransportOrderService extends IService<TransportOrder>{
 	@Transactional
 	Boolean delTransportOrder(ParamsDto dto, String[] transportOrderNos, String[] saleContractNos, String[] deliveryOrderNos);
 
+	List<TransportOrderDto> selectListBytransport(Page<SaleContractDto> page, ParamsDto dto, String createby, String startTimeString, String endTimeString);
 }

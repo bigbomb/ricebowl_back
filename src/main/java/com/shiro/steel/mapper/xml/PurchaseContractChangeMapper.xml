@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.PurchaseContractChangeMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.PurchaseContractChange">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="purchaseStatus" jdbcType="VARCHAR" property="purchasestatus" />
+    <result column="invoiceStatus" jdbcType="VARCHAR" property="invoicestatus" />
+    <result column="supplyerName" jdbcType="VARCHAR" property="supplyername" />
+    <result column="purchaseNo" jdbcType="VARCHAR" property="purchaseno" />
+    <result column="contractNo" jdbcType="VARCHAR" property="contractno" />
+    <result column="customerName" jdbcType="VARCHAR" property="customername" />
+    <result column="purchaseWeight" jdbcType="DECIMAL" property="purchaseweight" />
+    <result column="purchaseAmount" jdbcType="DECIMAL" property="purchaseamount" />
+    <result column="purchaseDate" jdbcType="TIMESTAMP" property="purchasedate" />
+    <result column="payment" jdbcType="VARCHAR" property="payment" />
+    <result column="createBy" jdbcType="VARCHAR" property="createby" />
+    <result column="verifyBy" jdbcType="VARCHAR" property="verifyby" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+    <result column="supplyerId" jdbcType="INTEGER" property="supplyerid" />
+    <result column="ori_supplyerName" jdbcType="VARCHAR" property="oriSupplyername" />
+    <result column="ori_customerName" jdbcType="VARCHAR" property="oriCustomername" />
+    <result column="ori_purchaseWeight" jdbcType="DECIMAL" property="oriPurchaseweight" />
+    <result column="ori_purchaseAmount" jdbcType="DECIMAL" property="oriPurchaseamount" />
+    <result column="ori_purchaseDate" jdbcType="TIMESTAMP" property="oriPurchasedate" />
+    <result column="ori_supplyerId" jdbcType="INTEGER" property="oriSupplyerid" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from purchase_contract_change
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.shiro.steel.entity.PurchaseContractChange">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into purchase_contract_change (memberId, purchaseStatus, invoiceStatus, 
+      supplyerName, purchaseNo, contractNo, 
+      customerName, purchaseWeight, purchaseAmount, 
+      purchaseDate, payment, createBy, 
+      verifyBy, remark, crt, 
+      upt, supplyerId, ori_supplyerName, 
+      ori_customerName, ori_purchaseWeight, ori_purchaseAmount, 
+      ori_purchaseDate, ori_supplyerId)
+    values (#{memberid,jdbcType=VARCHAR}, #{purchasestatus,jdbcType=VARCHAR}, #{invoicestatus,jdbcType=VARCHAR}, 
+      #{supplyername,jdbcType=VARCHAR}, #{purchaseno,jdbcType=VARCHAR}, #{contractno,jdbcType=VARCHAR}, 
+      #{customername,jdbcType=VARCHAR}, #{purchaseweight,jdbcType=DECIMAL}, #{purchaseamount,jdbcType=DECIMAL}, 
+      #{purchasedate,jdbcType=TIMESTAMP}, #{payment,jdbcType=VARCHAR}, #{createby,jdbcType=VARCHAR}, 
+      #{verifyby,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{crt,jdbcType=TIMESTAMP}, 
+      #{upt,jdbcType=TIMESTAMP}, #{supplyerid,jdbcType=INTEGER}, #{oriSupplyername,jdbcType=VARCHAR}, 
+      #{oriCustomername,jdbcType=VARCHAR}, #{oriPurchaseweight,jdbcType=DECIMAL}, #{oriPurchaseamount,jdbcType=DECIMAL}, 
+      #{oriPurchasedate,jdbcType=TIMESTAMP}, #{oriSupplyerid,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.PurchaseContractChange">
+    update purchase_contract_change
+    set memberId = #{memberid,jdbcType=VARCHAR},
+      purchaseStatus = #{purchasestatus,jdbcType=VARCHAR},
+      invoiceStatus = #{invoicestatus,jdbcType=VARCHAR},
+      supplyerName = #{supplyername,jdbcType=VARCHAR},
+      purchaseNo = #{purchaseno,jdbcType=VARCHAR},
+      contractNo = #{contractno,jdbcType=VARCHAR},
+      customerName = #{customername,jdbcType=VARCHAR},
+      purchaseWeight = #{purchaseweight,jdbcType=DECIMAL},
+      purchaseAmount = #{purchaseamount,jdbcType=DECIMAL},
+      purchaseDate = #{purchasedate,jdbcType=TIMESTAMP},
+      payment = #{payment,jdbcType=VARCHAR},
+      createBy = #{createby,jdbcType=VARCHAR},
+      verifyBy = #{verifyby,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP},
+      supplyerId = #{supplyerid,jdbcType=INTEGER},
+      ori_supplyerName = #{oriSupplyername,jdbcType=VARCHAR},
+      ori_customerName = #{oriCustomername,jdbcType=VARCHAR},
+      ori_purchaseWeight = #{oriPurchaseweight,jdbcType=DECIMAL},
+      ori_purchaseAmount = #{oriPurchaseamount,jdbcType=DECIMAL},
+      ori_purchaseDate = #{oriPurchasedate,jdbcType=TIMESTAMP},
+      ori_supplyerId = #{oriSupplyerid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, memberId, purchaseStatus, invoiceStatus, supplyerName, purchaseNo, contractNo, 
+    customerName, purchaseWeight, purchaseAmount, purchaseDate, payment, createBy, verifyBy, 
+    remark, crt, upt, supplyerId, ori_supplyerName, ori_customerName, ori_purchaseWeight, 
+    ori_purchaseAmount, ori_purchaseDate, ori_supplyerId
+    from purchase_contract_change
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, memberId, purchaseStatus, invoiceStatus, supplyerName, purchaseNo, contractNo, 
+    customerName, purchaseWeight, purchaseAmount, purchaseDate, payment, createBy, verifyBy, 
+    remark, crt, upt, supplyerId, ori_supplyerName, ori_customerName, ori_purchaseWeight, 
+    ori_purchaseAmount, ori_purchaseDate, ori_supplyerId
+    from purchase_contract_change
+  </select>
+</mapper>

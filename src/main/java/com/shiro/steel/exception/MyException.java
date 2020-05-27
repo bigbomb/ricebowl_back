@@ -17,6 +17,10 @@ public class MyException extends  RuntimeException{
         this.result = result;
     }
 
+    public MyException() {
+
+    }
+
     public Object getResult() {
         return result;
     }

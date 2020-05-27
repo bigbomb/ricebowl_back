@@ -26,7 +26,7 @@
   <select id="findByPage" resultType="com.shiro.steel.pojo.vo.DeliveryOrderVo">
 		SELECT
 		id,memberId,deliveryNo,contractNo, weight,finalWeight,startTime, endTime,customerName,customerId,warehouseName,warehouseAddress,warehousePhone,warehouseFax,vehicleNumber,
-		deliveryMethod,remark,crt,upt,createBy,overtimefee,isItemRight,status
+		deliveryMethod,remark,crt,upt,createBy,overtimefee,isItemRight,status,liftingFee,feeOption
 		FROM
 		delivery_order
 		WHERE 1=1
@@ -60,6 +60,24 @@
             </where>
         </foreach>
     </update>
+
+    <update id="batchUpdateBalance" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE delivery_order
+            <set>
+                weight = weight + #{item.balance},
+                liftingfee = CASE feeOption
+                    when 1 then (weight + #{item.balance}) * liftingPerFee
+                    when 2 then (weight + #{item.balance}) * liftingPerFee
+                END
+            </set>
+            <where>
+                deliveryNo = #{item.deliveryno}
+            </where>
+        </foreach>
+    </update>
+
+
     <select id="selectByDeliList" resultType="com.shiro.steel.pojo.dto.SaleContractDto" parameterType="java.util.List">
         select sum(dod.finalWeight) as finalWeight,CONVERT(sum(dod.num*dod.finalWeight*dod.price),DECIMAL(10,2)) as finalAmount,contractNo
         from delivery_order dor left join delivery_order_detail dod on dor.deliveryNo = dod.deliveryNo where

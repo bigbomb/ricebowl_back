@@ -56,6 +56,12 @@ public class DeliveryOrder implements Serializable {
     
     private BigDecimal overtimefee;
 
+    private Integer feeoption;
+
+    private BigDecimal liftingfee;
+
+    private Integer liftingperfee;
+
     private Integer isItemRight;
     
     private String status;
@@ -243,8 +249,31 @@ public class DeliveryOrder implements Serializable {
 		this.overtimefee = overtimefee;
 	}
 
-	
-	public Integer getIsItemRight() {
+    public Integer getFeeoption() {
+        return feeoption;
+    }
+
+    public void setFeeoption(Integer feeoption) {
+        this.feeoption = feeoption;
+    }
+
+    public BigDecimal getLiftingfee() {
+        return liftingfee;
+    }
+
+    public void setLiftingfee(BigDecimal liftingfee) {
+        this.liftingfee = liftingfee;
+    }
+
+    public Integer getLiftingperfee() {
+        return liftingperfee;
+    }
+
+    public void setLiftingperfee(Integer liftingperfee) {
+        this.liftingperfee = liftingperfee;
+    }
+
+    public Integer getIsItemRight() {
 		return isItemRight;
 	}
 

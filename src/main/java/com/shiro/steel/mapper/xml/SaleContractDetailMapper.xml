@@ -172,17 +172,27 @@
             </where>
         </foreach>
     </update>
-
     <update id="updateBatchBySd" parameterType="java.util.List">
-    <foreach collection="list" item="bean" index="index" open="" close="" separator=";">
-        UPDATE sale_contract_detail
-        <set>
-            actualWeight= actualWeight + #{bean.actualweight},finalWeight= finalWeight + #{bean.finalweight}
-        </set>
-        <where>
-            id = #{bean.id}
-        </where>
-    </foreach>
-</update>
+        <foreach collection="list" item="bean" index="index" open="" close="" separator=";">
+            UPDATE sale_contract_detail
+            <set>
+                actualWeight= actualWeight + #{bean.actualweight},finalWeight= finalWeight + #{bean.finalweight}
+            </set>
+            <where>
+                id = #{bean.id}
+            </where>
+        </foreach>
+    </update>
+    <update id="batchUpdateBalance" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE sale_contract_detail
+            <set>
+                actualWeight = actualWeight + #{item.balance}
+            </set>
+            <where>
+                id = #{item.id}
+            </where>
+        </foreach>
+    </update>
 
 </mapper>

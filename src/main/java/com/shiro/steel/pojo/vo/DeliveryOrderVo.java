@@ -47,7 +47,11 @@ public class DeliveryOrderVo implements Serializable {
     private BigDecimal finalweight;
     
     private BigDecimal overtimefee;
-    
+
+    private Integer feeoption;
+
+    private BigDecimal liftingfee;
+
     private String deliveryOrderDetail;
 
     private Integer isItemRight;
@@ -228,7 +232,23 @@ public class DeliveryOrderVo implements Serializable {
 		this.overtimefee = overtimefee;
 	}
 
-	public BigDecimal getWeight() {
+    public Integer getFeeoption() {
+        return feeoption;
+    }
+
+    public void setFeeoption(Integer feeoption) {
+        this.feeoption = feeoption;
+    }
+
+    public BigDecimal getLiftingfee() {
+        return liftingfee;
+    }
+
+    public void setLiftingfee(BigDecimal liftingfee) {
+        this.liftingfee = liftingfee;
+    }
+
+    public BigDecimal getWeight() {
 		return weight;
 	}
 

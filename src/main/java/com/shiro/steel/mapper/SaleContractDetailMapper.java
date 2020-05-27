@@ -44,4 +44,6 @@ public interface SaleContractDetailMapper extends BaseMapper<SaleContractDetail>
     void updateBatchBySd( @Param("list")List<SaleContractDetail> saleContractDetailList);
 
 	void batchDeliveryOrderUpdate(@Param("list")List<DeliveryOrderDetail> deliveryOrderDetailListExt);
+
+    void batchUpdateBalance(List<SaleContractDetailDto> scddList);
 }

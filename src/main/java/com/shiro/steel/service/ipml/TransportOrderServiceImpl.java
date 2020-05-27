@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.shiro.steel.pojo.dto.SaleContractDto;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -75,7 +76,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
  	    List<SaleContractDetailVo>  collection = JSONObject.parseArray(transportOrderDetail, SaleContractDetailVo.class);
  	    BigDecimal totalWeight = new BigDecimal(0);
  	    BigDecimal actualWeight = new BigDecimal(0);
- 	    List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
+// 	    List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
  	    List<Stock> stockList = new ArrayList<Stock>();
  	    for(SaleContractDetailVo s:collection){
  	      Stock stock = new Stock();	
@@ -84,14 +85,14 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
  		  BigDecimal amount = new BigDecimal(0);
   		  totalWeight = totalWeight.add(s.getFinalweight());
   		  actualWeight = actualWeight.add(s.getActualweight());
-  		  SaleContractDetail  newsaleContractDetail = new SaleContractDetail();
-//  		  newsaleContractDetail.setId(Integer.valueOf(s.getSaledetailid()));
-		  newsaleContractDetail.setStockid(s.getStockid());
-  		  
-  		
-  		  newsaleContractDetail.setDeliverystatus(EnumStockStatus.OUTSTOCKFINISH.getText());
-  		  newsaleContractDetail.setTransportstatus(EnumStockStatus.TRANSPORTING.getText());
-  		  saleContractDetailList.add(newsaleContractDetail);
+//  		  SaleContractDetail  newsaleContractDetail = new SaleContractDetail();
+////  		  newsaleContractDetail.setId(Integer.valueOf(s.getSaledetailid()));
+//		  newsaleContractDetail.setStockid(s.getStockid());
+//
+//
+//  		  newsaleContractDetail.setDeliverystatus(EnumStockStatus.OUTSTOCKFINISH.getText());
+//  		  newsaleContractDetail.setTransportstatus(EnumStockStatus.TRANSPORTING.getText());
+//  		  saleContractDetailList.add(newsaleContractDetail);
   		  stockList.add(stock);
   	   }
  	    List<TransportOrderDetail>  transportOrderDetailList = JSONObject.parseArray(transportOrderDetail, TransportOrderDetail.class);
@@ -128,8 +129,8 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	    deliveryOrderService.updateBatchByDeliveryOrder(deliveryOrderList);
  	    super.baseMapper.insert(transportOrder);
  	    stockService.updateBatchById(stockList);
- 	    transportOrderDetailService.insertBatch(transportOrderDetailList);
- 	    Boolean status =saleContractDetailService.updateBatchByEntity(saleContractDetailList);
+ 	    Boolean status = transportOrderDetailService.insertBatch(transportOrderDetailList);
+// 	    Boolean status =saleContractDetailService.updateBatchByEntity(saleContractDetailList);
 		return status;
 	}
 	@Override
@@ -183,5 +184,10 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 		   	 saleContractDetailService.updateBatchByEntity(saleContractDetailList);
 		    return true;
 		}
-	
+
+	@Override
+	public List<TransportOrderDto> selectListBytransport(Page<SaleContractDto> page, ParamsDto dto, String createby, String startTimeString, String endTimeString) {
+		return super.baseMapper.selectListBytransport(page,dto,createby,startTimeString,endTimeString);
+	}
+
 }

@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
-import com.shiro.steel.Enum.EnumCode;
 import com.shiro.steel.Enum.EnumStockStatus;
 import com.shiro.steel.entity.Stock;
 import com.shiro.steel.exception.MyException;
@@ -20,7 +19,6 @@ import com.shiro.steel.mapper.StockMapper;
 import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.service.StockService;
 import com.shiro.steel.utils.RedisHelper;
-import com.shiro.steel.utils.ResultUtil;
 
 @Service
 public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements StockService{
@@ -196,7 +194,13 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 			return false;
 		}   
 	}
-    	 
+
+	@Override
+	public Boolean batchUpdatebyPurId(List<Stock> stockList) {
+		Boolean st =super.baseMapper.batchUpdatebyPurId(stockList);
+		return st;
+	}
+
 
 }
 

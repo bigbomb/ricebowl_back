@@ -2,6 +2,8 @@ package com.shiro.steel.service;
 
 import java.util.List;
 
+import com.shiro.steel.entity.Stock;
+import com.shiro.steel.pojo.dto.DeliveryOrderDetailPurDto;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.plugins.Page;
@@ -18,4 +20,5 @@ public interface DeliveryOrderDetailService extends IService<DeliveryOrderDetail
 	List<DeliveryOrderDetailVo> findDetailByPageList(ParamsDto dto, String memberId,
 			String[] deliveryNos);
 
+	DeliveryOrderDetailPurDto selectByPurId(Stock stock);
 }

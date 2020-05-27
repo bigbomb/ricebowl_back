@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 
 public class SaleContractAnalyseDto {
 	private String contractno;
+	private String transportno;
+	private String deliveryno;
 	private String contractdate;
 	private String customername;
+	private Integer stockId;
 	private BigDecimal actualweight;
 	private BigDecimal finalweight;
 	private BigDecimal finalamount;
@@ -29,6 +32,22 @@ public class SaleContractAnalyseDto {
 		this.contractno = contractno;
 	}
 
+	public String getTransportno() {
+		return transportno;
+	}
+
+	public void setTransportno(String transportno) {
+		this.transportno = transportno;
+	}
+
+	public String getDeliveryno() {
+		return deliveryno;
+	}
+
+	public void setDeliveryno(String deliveryno) {
+		this.deliveryno = deliveryno;
+	}
+
 	public String getContractdate() {
 		return contractdate;
 	}
@@ -43,6 +62,14 @@ public class SaleContractAnalyseDto {
 
 	public void setCustomername(String customername) {
 		this.customername = customername;
+	}
+
+	public Integer getStockId() {
+		return stockId;
+	}
+
+	public void setStockId(Integer stockId) {
+		this.stockId = stockId;
 	}
 
 	public BigDecimal getActualweight() {

@@ -2,6 +2,8 @@ package com.shiro.steel.mapper;
 
 import java.util.List;
 
+import com.shiro.steel.entity.Stock;
+import com.shiro.steel.pojo.dto.DeliveryOrderDetailPurDto;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.mapper.BaseMapper;
@@ -16,5 +18,6 @@ public interface DeliveryOrderDetailMapper extends BaseMapper<DeliveryOrderDetai
 
 	List<DeliveryOrderDetailVo> findDetailByPageList(@Param("memberId")String memberId,
 			@Param("deliveryNos")String[] deliveryNos);
-  
+
+	DeliveryOrderDetailPurDto selectByPurId(Stock stock);
 }

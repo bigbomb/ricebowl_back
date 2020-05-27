@@ -2,7 +2,12 @@ package com.shiro.steel.service.ipml;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.shiro.steel.Enum.EnumLiftingFee;
+import com.shiro.steel.Enum.EnumTransportFee;
+import com.shiro.steel.pojo.dto.*;
+import com.shiro.steel.utils.CollectorsUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -29,9 +34,6 @@ import com.shiro.steel.exception.MyException;
 import com.shiro.steel.mapper.DeliveryOrderMapper;
 import com.shiro.steel.mapper.ProcessOrderDetailFinishMapper;
 import com.shiro.steel.mapper.TransportOrderMapper;
-import com.shiro.steel.pojo.dto.ParamsDto;
-import com.shiro.steel.pojo.dto.SaleContractDto;
-import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.DeliveryOrderVo;
 import com.shiro.steel.pojo.vo.SaleContractDetailVo;
 import com.shiro.steel.service.DeliveryOrderDetailService;
@@ -102,6 +104,17 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
  	    deliveryOrder.setWarehousefax(warehouseInfo.getWarehousefax());
  	    deliveryOrder.setCreateBy(userInfoDto.getUsername());
  	    deliveryOrder.setStatus(EnumStockStatus.OUTSTOCKING.getText());
+		if(EnumLiftingFee.TAXFREE.getValue()==(deliveryOrderVo.getFeeoption())|| EnumTransportFee.TAXINCLUDED.getValue()==(deliveryOrderVo.getFeeoption()) )
+		{
+
+			deliveryOrder.setLiftingfee(deliveryOrderVo.getLiftingfee().multiply(deliveryOrderVo.getWeight()));
+			deliveryOrder.setLiftingperfee(Integer.valueOf(deliveryOrderVo.getLiftingfee().toString()));
+
+		}
+		else
+		{
+			deliveryOrder.setLiftingfee(deliveryOrderVo.getLiftingfee());
+		}
  	    super.baseMapper.insert(deliveryOrder);
  	    List<SaleContractDetailVo>  collection = JSONObject.parseArray(saleContractDetail, SaleContractDetailVo.class);
  	    BigDecimal totalAmount = new BigDecimal(0);
@@ -142,20 +155,22 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
   		  totalWeight = totalWeight.add(s.getFinalweight());
   		  totalAmount = totalAmount.add(amount);
   		  SaleContractDetail  newsaleContractDetail = new SaleContractDetail();
-  		  if(actualWeightMap.containsKey(s.getId()))
-		  {
-			  actualWeightMapWeight = actualWeightMap.get(s.getId()).add(s.getActualweight());
-			  finalWeightMapWeight = finalWeightMap.get(s.getId()).add(s.getFinalweight());
-		  }
-  		  else
-
-		  {
-			  actualWeightMapWeight = s.getActualweight();
-			  finalWeightMapWeight = s.getFinalweight();
-
-		  }
-  		  actualWeightMap.put(s.getId(),actualWeightMapWeight);
-  		  finalWeightMap.put(s.getId(),finalWeightMapWeight);
+//  		  if(actualWeightMap.containsKey(s.getId()))
+//		  {
+//			  actualWeightMapWeight = actualWeightMap.get(s.getId()).add(s.getActualweight());
+//			  finalWeightMapWeight = finalWeightMap.get(s.getId()).add(s.getFinalweight());
+//		  }
+//  		  else
+//
+//		  {
+//			  actualWeightMapWeight = s.getActualweight();
+//			  finalWeightMapWeight = s.getFinalweight();
+//			  actualWeightMap.put(s.getId(),actualWeightMapWeight);
+//			  finalWeightMap.put(s.getId(),finalWeightMapWeight);
+//
+//		  }
+  		  actualWeightMapWeight = s.getActualweight();
+  		  finalWeightMapWeight = s.getFinalweight();
   		  newsaleContractDetail.setActualweight(actualWeightMapWeight);
   		  newsaleContractDetail.setFinalweight(finalWeightMapWeight);
   		  newsaleContractDetail.setId(s.getId());
@@ -299,7 +314,7 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
     	 }
 
 //    	 List<SaleContractDto> finaList = saleContractDetailService.selectByStockIdList(stockIdList);
-		List<SaleContractDto> finaList = baseMapper.selectByDeliList(Arrays.asList(deliveryOrderNos));
+		 List<SaleContractDto> finaList = baseMapper.selectByDeliList(Arrays.asList(deliveryOrderNos));
     	 saleContractService.batchWeigtAmountUpdate(finaList);
     	 saleContractDetailService.batchDeliveryOrderUpdate(deliveryOrderDetailListExt);
     	 ProcessOrderDetailFinish processOrderDetailFinish = new ProcessOrderDetailFinish();
@@ -320,7 +335,11 @@ public class DeliveryOrderServiceImpl extends ServiceImpl<DeliveryOrderMapper, D
 		// TODO Auto-generated method stub
 		return deliveryOrderMapper.updateBatchByDeliveryOrder(deliveryOrderList);
 	}
-	
 
-    
+	@Override
+	public void batchUpdateBalance(List<DeliveryOrderDetailPurDto> dlolist) {
+           deliveryOrderMapper.batchUpdateBalance(dlolist);
+	}
+
+
 }

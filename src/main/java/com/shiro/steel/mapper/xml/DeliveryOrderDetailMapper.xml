@@ -32,18 +32,16 @@
         </foreach>    
     </delete> 
     
-    <!--  <select id="findDetailByPageList" resultType="com.shiro.steel.pojo.vo.DeliveryOrderDetailVo">
+   <select id="selectByPurId" resultType="com.shiro.steel.pojo.dto.DeliveryOrderDetailPurDto">
 		SELECT
-		id,deliveryNo,productName, productSpec,productFactory, productMark,num,actualWeight,finalWeight,unit,remark,warehousename,quality
+        pcd.weight as actualweight,dod.id,(sk.weight - pcd.weight) as balance, dod.saleDetailId,dod.deliveryNo
 		FROM
-		delivery_order_detail
+       purchase_contract_detail pcd
+       left join stock sk on pcd.id = sk.purDetailId
+       left join delivery_order_detail dod on sk.id = dod.stockid
 		WHERE 1=1
-		<if test="''!= deliveryNos and deliveryNos!=null">
-        AND deliveryNo in 
-        <foreach collection="array" item="name" index="index" open="(" close=")" separator=",">
-		    #{name}
-		</foreach>
-		</if>
-		order by crt asc
-	</select> -->
+       <if test="''!= purdetailid and purdetailid!=null">
+           AND sk.purDetailId =#{purdetailid}
+       </if>
+	</select>
 </mapper>
