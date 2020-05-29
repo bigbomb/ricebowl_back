@@ -67,8 +67,8 @@
             <set>
                 weight = weight + #{item.balance},
                 liftingfee = CASE feeOption
-                    when 1 then (weight + #{item.balance}) * liftingPerFee
-                    when 2 then (weight + #{item.balance}) * liftingPerFee
+                    when 1 then weight * liftingPerFee
+                    when 2 then weight * liftingPerFee
                 END
             </set>
             <where>

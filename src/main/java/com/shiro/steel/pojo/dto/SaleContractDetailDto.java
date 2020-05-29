@@ -38,6 +38,8 @@ public class SaleContractDetailDto implements Serializable {
 
     private BigDecimal balance;
 
+    private BigDecimal balanceamount;
+
     private String remark;
 
 	private String status;
@@ -214,6 +216,14 @@ public class SaleContractDetailDto implements Serializable {
 
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
+	}
+
+	public BigDecimal getBalanceamount() {
+		return balanceamount;
+	}
+
+	public void setBalanceamount(BigDecimal balanceamount) {
+		this.balanceamount = balanceamount;
 	}
 
 	public String getStockouttype() {

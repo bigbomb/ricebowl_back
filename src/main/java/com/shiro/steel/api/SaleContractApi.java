@@ -538,11 +538,6 @@ public class SaleContractApi extends BaseApi {
                     );
                 })));
 
-//                sumactualWeight =sumactualWeight.add(new BigDecimal(v.get(0).toString()));
-//                sumactualAmount = sumactualAmount.add(new BigDecimal(v.get(1).toString()));
-//                sumfinalWeight = sumfinalWeight.add(new BigDecimal(v.get(2).toString()));
-//                sumfinalAmount = sumfinalAmount.add(new BigDecimal(v.get(03).toString()));
-//                sumprocessTotalFee = sumprocessTotalFee.add(new BigDecimal(v.get(4).toString()));
                 saleContractAnalyseDtoSum.forEach((k,v) ->
                         {
                             System.out.println("key: " + k + " , " + "value: " + v);
@@ -585,91 +580,7 @@ public class SaleContractApi extends BaseApi {
             newsaleContractAnalyseDto.setGrossprofit(grossprofit);
             finalanalyseDtoList.add(newsaleContractAnalyseDto);
         }
-//       List<SaleContractAnalyseDto> saleContractAnalyseDtoList = saleContractAnalyseService.selectList(page,dto,createby,startTimeString,endTimeString);
-//        /** 毛利统计*/
-//        Map<String, List> saleContractAnalyseDtoSum = saleContractAnalyseDtoList.stream()
-//                .filter(t -> !StringUtils.isEmpty(t.getActualweight()))
-//                .filter(t -> !StringUtils.isEmpty(t.getFinalweight()))
-//                .filter(t -> !StringUtils.isEmpty(t.getStockId()))
-//                .collect(Collectors.groupingBy(SaleContractAnalyseDto::getTransportno, Collectors.collectingAndThen(Collectors.toList(), m -> {
-//                    /** 采购重量统计*/
-//                    final BigDecimal actualWeight = m
-//                            .stream()
-//                            .collect(CollectorsUtil.summingBigDecimal(SaleContractAnalyseDto::getActualweight));
-//                    /** 采购的金额统计*/
-//                    final BigDecimal actualAmount = m.stream().reduce(BigDecimal.ZERO, (x, y) -> {
-//                        return x.add(y.getActualweight().multiply(y.getPurchaseprice()).setScale(3,BigDecimal.ROUND_HALF_UP));
-//                    }, BigDecimal::add);
-//
-//                    /** 客户确认的重量统计*/
-//                    final BigDecimal finalWeight = m
-//                            .stream()
-//                            .collect(CollectorsUtil.summingBigDecimal(SaleContractAnalyseDto::getFinalweight));
-//                    /** 客户确认的金额统计*/
-//                    final BigDecimal finalAmount = m.stream().reduce(BigDecimal.ZERO, (x, y) -> {
-//                        return x.add(y.getFinalweight().multiply(y.getSaleprice()).setScale(3, BigDecimal.ROUND_HALF_UP));
-//                    }, BigDecimal::add);
-//                    /** 客户名称*/
-//                    final String  customer = m
-//                            .stream()
-//                            .map(SaleContractAnalyseDto::getCustomername).distinct().collect(Collectors.joining(""));
-//                    /** 出库费*/
-//                    final String stockOutTotalFee = m
-//                            .stream()
-//                            .filter(t -> !StringUtils.isEmpty((t.getStockoutfee())))
-//                            .map(n->String.valueOf(n.getStockoutfee())).distinct().collect(Collectors.joining());
-////                    final BigDecimal stockOutTotalFee = m.stream().filter(t -> t.getStockoutfee() != null).reduce(BigDecimal.ZERO, (x, y) -> {
-////                        return x.add(y.getActualweight().multiply(y.getStockoutfee()==null?new BigDecimal(0.000):y.getStockoutfee()).setScale(3,BigDecimal.ROUND_HALF_UP));
-////                    }, BigDecimal::add);
-//                    /** 加工费*/
-//                    final BigDecimal processTotalFee = m.stream().filter(t -> t.getProcessfee() != null).reduce(BigDecimal.ZERO, (x, y) -> {
-//                        return x.add(y.getActualweight().multiply(y.getProcessfee()==null?new BigDecimal(0.000):y.getProcessfee()).setScale(3,BigDecimal.ROUND_HALF_UP));
-//                    }, BigDecimal::add);
-//                    /** 运输费*/
-//                    final String transportFee = m
-//                            .stream()
-//                            .filter(t -> !StringUtils.isEmpty(t.getActualweight()))
-//                            .map(n->String.valueOf(n.getTransportfee())).distinct().collect(Collectors.joining());
-//                    final String contractNo = m
-//                            .stream()
-//                            .map(n->n.getContractno()).distinct().collect(Collectors.joining());
-//                    return Arrays.asList(customer,
-//                            actualWeight,
-//                            actualAmount,
-//                            finalWeight,
-//                            finalAmount,
-//                            processTotalFee==null?0.000:processTotalFee,
-//                            transportFee.equals("")?0.000:transportFee,
-//                            stockOutTotalFee.equals("")?0.000:stockOutTotalFee,
-//                            contractNo
-//                    );
-//                })));
-//        List<SaleContractAnalyseDto> analyseDtoList = new ArrayList<SaleContractAnalyseDto>();
-//        saleContractAnalyseDtoSum.forEach((k,v) ->
-//                {
-//                    System.out.println("key: " + k + " , " + "value: " + v);
-//                    SaleContractAnalyseDto saleContractAnalyseDto = new SaleContractAnalyseDto();
-//                    saleContractAnalyseDto.setTransportno(k);
-//                    saleContractAnalyseDto.setCustomername(v.get(0).toString());
-//                    saleContractAnalyseDto.setActualweight(new BigDecimal(v.get(1).toString()));
-//                    saleContractAnalyseDto.setActualamount(new BigDecimal(v.get(2).toString()));
-//                    saleContractAnalyseDto.setFinalweight(new BigDecimal(v.get(3).toString()));
-//                    saleContractAnalyseDto.setFinalamount(new BigDecimal(v.get(4).toString()));
-//                    saleContractAnalyseDto.setProcessfee(new BigDecimal(v.get(5).toString()));
-//                    saleContractAnalyseDto.setTransportfee(new BigDecimal(v.get(6).toString()));
-//                    saleContractAnalyseDto.setStockouttotalfee(new BigDecimal(v.get(7).toString()));
-//                    BigDecimal grossprofit =
-//                            new BigDecimal(v.get(4).toString())
-//                                    .subtract(new BigDecimal(v.get(2).toString()))
-//                                        .subtract(new BigDecimal(v.get(5).toString()))
-//                                                .subtract(new BigDecimal(v.get(6).toString()))
-//                                                        .subtract(new BigDecimal(v.get(7).toString()));
-//                    saleContractAnalyseDto.setGrossprofit(grossprofit);
-//                    saleContractAnalyseDto.setContractno(v.get(8).toString());
-//                    analyseDtoList.add(saleContractAnalyseDto);
-//                }
-//        );
-//        System.out.println(analyseDtoList.toString());
+
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("saleContractAnalyseDtoList", finalanalyseDtoList);
 //        result.put("saleContractAnalyseDtoList", analyseDtoList);

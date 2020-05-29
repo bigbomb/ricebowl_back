@@ -3,6 +3,7 @@ package com.shiro.steel.pojo.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
@@ -48,7 +49,10 @@ public class TransportOrderDto implements Serializable {
     private String status;
     
     private BigDecimal transporttotalfee;
-    
+
+    private Integer feeoption;
+
+    private List<TransportOrderDetailDto> transportOrderDetailDtoList;
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -202,5 +206,20 @@ public class TransportOrderDto implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
-    
+
+    public Integer getFeeoption() {
+        return feeoption;
+    }
+
+    public void setFeeoption(Integer feeoption) {
+        this.feeoption = feeoption;
+    }
+
+    public List<TransportOrderDetailDto> getTransportOrderDetailDtoList() {
+        return transportOrderDetailDtoList;
+    }
+
+    public void setTransportOrderDetailDtoList(List<TransportOrderDetailDto> transportOrderDetailDtoList) {
+        this.transportOrderDetailDtoList = transportOrderDetailDtoList;
+    }
 }

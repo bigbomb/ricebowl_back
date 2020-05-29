@@ -28,14 +28,14 @@
 
 <!--       order by sc.crt desc-->
 
-
-	 select dlo.deliveryNo as deliveryno,dlo.liftingFee as stockoutfee,dod.stockId,sk.price as purchaseprice,scd.price as saleprice,
-	 scd.actualWeight as actualweight,scd.finalWeight as finalweight,po.processFee as processfee
+<!--	 left join sale_contract_detail scd on scd.id = dod.saleDetailId-->
+	 select dlo.deliveryNo as deliveryno,dlo.liftingFee as stockoutfee,dod.stockId,sk.price as purchaseprice,dod.price as saleprice,
+	 dod.actualWeight as actualweight,dod.finalWeight as finalweight,po.processFee as processfee
 
 		 from delivery_order dlo
 		 LEFT JOIN delivery_order_detail dod on dlo.deliveryNo = dod.deliveryNo
 		 left join stock sk on dod.stockId = sk.id
-		 left join sale_contract_detail scd on scd.id = dod.saleDetailId
+
 		 left join process_order_detail_finish podf on podf.stockid = sk.id
 		 left join process_order po on po.processNo = podf.processNo
 		 WHERE 1=1

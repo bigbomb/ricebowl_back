@@ -61,6 +61,9 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 
 	@Autowired
 	private SaleContractDetailService saleContractDetailService;
+
+	@Autowired
+	private TransportOrderDetailService transportOrderDetailService;
 	final static String preName = "cg";
 	@Override
 	public List<PurchaseContractDto> findPurchaseContractByStatusPage(Page<PurchaseContractDto> page, ParamsDto dto,String statusTab,String invoiceStatus,String createby, String startTime,String endTime) {
@@ -417,13 +420,17 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 							BeanCopier dodcopier = BeanCopier.create(DeliveryOrderDetailPurDto.class, DeliveryOrderDetail.class, false);
 							dodcopier.copy(u, dod, null);
 							dod.setActualweight(u.getActualweight().add(u.getBalance()));
-							dodpdList.add(u);
+							if(!StringUtils.isEmpty(u.getDeliveryno())&&!StringUtils.isEmpty(u.getSaledetailid()))
+							{
+								dodpdList.add(u);
+							}
+							if(!StringUtils.isEmpty(dod.getId()))
+							{
+								dodList.add(dod);
+							};
 						});
 
-						if(!StringUtils.isEmpty(dod.getId()))
-						{
-							dodList.add(dod);
-						};
+
 					}
 					if(dodList.size()>0)
 					{

@@ -8,8 +8,8 @@ public enum EnumStockStatus {
     LOCKSTOCK(4,"已锁货"),
 	TRANSPORTING(5,"运输中"),
 	PROCESSING(6,"加工中"),
-	PROCESSFINISH(7,"加工完成");
-	
+	PROCESSFINISH(7,"加工完成"),
+    TRANSPORTFINISH(8,"运输完成");
     private final int value;
     private final String text;
 

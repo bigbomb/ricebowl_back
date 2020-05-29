@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.mapper.BaseMapper;
 import com.shiro.steel.entity.Carriers;
 import com.shiro.steel.entity.TransportOrderDetail;
 import com.shiro.steel.pojo.dto.ParamsDto;
+import com.shiro.steel.pojo.dto.TransportOrderDetailDto;
 import com.shiro.steel.pojo.vo.TransportOrderDetailVo;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface TransportOrderDetailMapper extends BaseMapper<TransportOrderDet
 
     int updateByPrimaryKey(TransportOrderDetail record);
 
-	List<TransportOrderDetailVo> findDetailByPageList(@Param("dto") ParamsDto dto, @Param("memberId") String memberId, @Param("transportNo") String transportNo);
+	List<TransportOrderDetailDto> findDetailByPageList(@Param("dto") ParamsDto dto, @Param("memberId") String memberId, @Param("transportNo") String transportNo);
 
 	void deleteBatchTransportOrderNos(List<String> asList);
 }

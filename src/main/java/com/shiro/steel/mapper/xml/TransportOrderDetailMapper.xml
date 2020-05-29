@@ -55,7 +55,7 @@
     from transport_order_detail
   </select>
   
-    <select id="findDetailByPageList" resultType="com.shiro.steel.pojo.vo.TransportOrderDetailVo">
+    <select id="findDetailByPageList" resultType="com.shiro.steel.pojo.dto.TransportOrderDetailDto">
 		SELECT
 		id, transportNo, saleDetailId, productName, productSpec, productFactory, productMark, 
     	num, actualWeight, finalWeight, unit, stockId, remark, status, crt, upt

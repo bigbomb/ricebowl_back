@@ -8,6 +8,7 @@ public class DeliveryOrderDetailPurDto {
     private Integer saledetailid;
     private String deliveryno;
     private BigDecimal balance;
+    private Integer stockid;
 
     public BigDecimal getActualweight() {
         return actualweight;
@@ -47,5 +48,13 @@ public class DeliveryOrderDetailPurDto {
 
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
+    }
+
+    public Integer getStockid() {
+        return stockid;
+    }
+
+    public void setStockid(Integer stockid) {
+        this.stockid = stockid;
     }
 }

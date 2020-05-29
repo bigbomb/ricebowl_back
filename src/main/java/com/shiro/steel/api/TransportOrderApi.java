@@ -7,6 +7,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.baomidou.mybatisplus.mapper.EntityWrapper;
+import com.shiro.steel.entity.TransportOrder;
+import com.shiro.steel.entity.TransportOrderDetail;
+import com.shiro.steel.pojo.dto.TransportOrderDetailDto;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,20 +58,12 @@ public class TransportOrderApi extends BaseApi{
      */
     @RequestMapping(value = "/addTransportOrder" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object addDeliveryOrder(@Validated TransportOrderVo transportOrderVo,BindingResult bindingResult,String actualWeight) {
+    public Object addTransportOrder(@Validated TransportOrderVo transportOrderVo,BindingResult bindingResult) {
     	if (bindingResult.hasErrors()){
             List<ObjectError> errorList = bindingResult.getAllErrors();
             return ResultUtil.result(EnumCode.OK.getValue(), errorList.toString());
         	}
-//    	    BigDecimal totalWeight = new BigDecimal(0);
-//    	    for(String id:ids)
-//    	    {
-//    	    	SaleContractDetail saleContractDetail = new SaleContractDetail();
-//    	    	saleContractDetail = saleContractDetailService.selectById(Integer.parseInt(id));
-//    	    	BigDecimal weight = saleContractDetail.getActualweight();
-//    	    	totalWeight = totalWeight.add(weight).setScale(2, BigDecimal.ROUND_HALF_UP);
-//    	    }
-//    	    transportOrderVo.setTransportweight(totalWeight);
+
     	    Boolean status =  transportOrderService.addTransportOrder(transportOrderVo);
     	   
     	    if (status)
@@ -79,14 +75,45 @@ public class TransportOrderApi extends BaseApi{
     	     }
     
     }
-    
+
+    @RequestMapping(value = "/confirmTransportOrder" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
+    public Object confirmTransportOrder(@Validated TransportOrderVo transportOrderVo,BindingResult bindingResult,String actualTotalWeight) {
+        if (bindingResult.hasErrors()){
+            List<ObjectError> errorList = bindingResult.getAllErrors();
+            return ResultUtil.result(EnumCode.OK.getValue(), errorList.toString());
+        }
+
+        Boolean status =  transportOrderService.confirmTransportOrder(transportOrderVo,actualTotalWeight);
+
+        if (status)
+        {
+            return ResultUtil.result(EnumCode.OK.getValue(), "保存成功");
+        }else
+        {
+            return ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "保存失败");
+        }
+
+    }
     
     @RequestMapping(value = "/findDetailByPageList" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object findDetailByPageList(ParamsDto dto,String memberId,String transportNo){
 //        Page<DeliveryOrderDetailVo> page = new Page<>(dto.getStartPage(),dto.getPageSize());
-         List<TransportOrderDetailVo> list = transportOrderDetailService.findDetailByPageList(dto,memberId,transportNo);
-        return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list);
+        EntityWrapper<TransportOrder> eWrapper = new EntityWrapper<TransportOrder>();
+        eWrapper.eq("transportNo",transportNo);
+         TransportOrder transportOrder = transportOrderService.selectOne(eWrapper);
+         List<TransportOrderDetailDto> list = transportOrderDetailService.findDetailByPageList(dto,memberId,transportNo);
+         TransportOrderDto transportOrderDto = new TransportOrderDto();
+         transportOrderDto.setTransportOrderDetailDtoList(list);
+         transportOrderDto.setTransportno(transportNo);
+         transportOrderDto.setCarrier(transportOrder.getCarrier());
+         transportOrderDto.setTransportaddress(transportOrder.getTransportaddress());
+         transportOrderDto.setTransportfee(transportOrder.getTransportfee());
+         transportOrderDto.setFeeoption(transportOrder.getFeeoption());
+         transportOrderDto.setId(transportOrder.getId());
+         transportOrderDto.setRemark(transportOrder.getRemark());
+         return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", transportOrderDto);
     }
     
     @RequestMapping(value = "/findByPage" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

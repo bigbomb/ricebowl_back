@@ -34,7 +34,7 @@
     
    <select id="selectByPurId" resultType="com.shiro.steel.pojo.dto.DeliveryOrderDetailPurDto">
 		SELECT
-        pcd.weight as actualweight,dod.id,(sk.weight - pcd.weight) as balance, dod.saleDetailId,dod.deliveryNo
+        pcd.weight as actualweight,dod.id,(sk.weight - pcd.weight) as balance, dod.saleDetailId,dod.deliveryNo,sk.id as stockid
 		FROM
        purchase_contract_detail pcd
        left join stock sk on pcd.id = sk.purDetailId

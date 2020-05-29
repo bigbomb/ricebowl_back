@@ -2,6 +2,7 @@ package com.shiro.steel.service.ipml;
 
 import java.util.List;
 
+import com.shiro.steel.pojo.dto.TransportOrderDetailDto;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
@@ -24,9 +25,9 @@ import com.shiro.steel.service.TransportOrderDetailService;
 public class TransportOrderDetailServiceImpl extends ServiceImpl<TransportOrderDetailMapper, TransportOrderDetail> implements TransportOrderDetailService {
 
 	@Override
-	public List<TransportOrderDetailVo> findDetailByPageList(ParamsDto dto, String memberId, String transportNo) {
+	public List<TransportOrderDetailDto> findDetailByPageList(ParamsDto dto, String memberId, String transportNo) {
 		// TODO Auto-generated method stub
-		List<TransportOrderDetailVo> list = super.baseMapper.findDetailByPageList(dto,memberId,transportNo);
+		List<TransportOrderDetailDto> list = super.baseMapper.findDetailByPageList(dto,memberId,transportNo);
         return list;
 	}
 
