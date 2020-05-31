@@ -158,8 +158,24 @@ public class CustomerApi extends BaseApi {
     @RequestMapping(value = "/getCustomerList",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET,RequestMethod.POST})//跨域
     public Object getCustomerList(@ModelAttribute ParamsDto dto,@RequestParam String memberId) {
-    	CustomerInfo customerInfo = new CustomerInfo();
+        UserInfoDto userInfoDto = new UserInfoDto();
+        Subject subject = SecurityUtils.getSubject();
+        userInfoDto = (UserInfoDto) subject.getPrincipal();
+        String createby = null;
+        Integer type = userInfoDto.getType();
+        CustomerInfo customerInfo = new CustomerInfo();
+        if(type==1)
+        {
+
+        }
+        else if(type==2)
+        {
+            createby = userInfoDto.getUsername();
+            customerInfo.setCreateBy(createby);
+        }
+
     	customerInfo.setMemberid(memberId);
+
     	 EntityWrapper<CustomerInfo> eWrapper = new EntityWrapper<CustomerInfo>(customerInfo);
         List<CustomerInfo> list = customerInfoService.selectList(eWrapper);
         return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list);

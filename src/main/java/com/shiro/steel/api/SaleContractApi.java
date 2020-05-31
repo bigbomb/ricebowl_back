@@ -556,24 +556,32 @@ public class SaleContractApi extends BaseApi {
             SaleContractAnalyseDto newsaleContractAnalyseDto = new SaleContractAnalyseDto();
             BigDecimal sumprocessTotalFee = new BigDecimal(0);
             BigDecimal sumstockOutTotalFee = new BigDecimal(0);
+            BigDecimal totalactualweight= new BigDecimal(0);
+            BigDecimal totalactualamount= new BigDecimal(0);
+            BigDecimal totalfinalweight = new BigDecimal(0);
+            BigDecimal totalfinalamount = new BigDecimal(0);
             for(SaleContractAnalyseDto saleContractAnalyseDto:analyseDtoList)
             {
                 sumprocessTotalFee = sumprocessTotalFee.add(saleContractAnalyseDto.getProcessfee());
                 sumstockOutTotalFee =sumstockOutTotalFee.add(saleContractAnalyseDto.getStockouttotalfee());
+                totalactualweight = totalactualweight.add(saleContractAnalyseDto.getActualweight());
+                totalactualamount = totalactualamount.add(saleContractAnalyseDto.getActualamount());
+                totalfinalweight = totalfinalweight.add(saleContractAnalyseDto.getFinalweight());
+                totalfinalamount = totalfinalamount.add(saleContractAnalyseDto.getFinalamount());
             }
             newsaleContractAnalyseDto.setContractno(tod.getContractno());
             newsaleContractAnalyseDto.setTransportno(tod.getTransportno());
             newsaleContractAnalyseDto.setCustomername(tod.getCustomername());
-            newsaleContractAnalyseDto.setActualweight(analyseDtoList.get(0).getActualweight());
-            newsaleContractAnalyseDto.setActualamount(analyseDtoList.get(0).getActualamount());
-            newsaleContractAnalyseDto.setFinalweight(analyseDtoList.get(0).getFinalweight());
-            newsaleContractAnalyseDto.setFinalamount(analyseDtoList.get(0).getFinalamount());
+            newsaleContractAnalyseDto.setActualweight(totalactualweight);
+            newsaleContractAnalyseDto.setActualamount(totalactualamount);
+            newsaleContractAnalyseDto.setFinalweight(totalfinalweight);
+            newsaleContractAnalyseDto.setFinalamount(totalfinalamount);
             newsaleContractAnalyseDto.setTransportfee(tod.getTransportfee());
             newsaleContractAnalyseDto.setProcessfee(sumprocessTotalFee);
             newsaleContractAnalyseDto.setStockouttotalfee(sumstockOutTotalFee);
             BigDecimal grossprofit =
-                            analyseDtoList.get(0).getFinalamount()
-                                    .subtract(analyseDtoList.get(0).getActualamount())
+                            totalfinalamount
+                                    .subtract(totalactualamount)
                                         .subtract(tod.getTransportfee())
                                                 .subtract(sumprocessTotalFee)
                                                         .subtract(sumstockOutTotalFee);

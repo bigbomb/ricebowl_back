@@ -43,5 +43,7 @@
        <if test="''!= purdetailid and purdetailid!=null">
            AND sk.purDetailId =#{purdetailid}
        </if>
+       AND sk.num>0
+       AND sk.supplyerId IS NOT NULL
 	</select>
 </mapper>

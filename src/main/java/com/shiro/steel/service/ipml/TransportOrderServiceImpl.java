@@ -191,7 +191,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 			transportOrder.setTransportfee(transportOrderVo.getTransportfee());
 			transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee().multiply(new BigDecimal(actualTotalWeight)));
 		} else {
-			transportOrder.setTransportfee(new BigDecimal(0));
+//			transportOrder.setTransportfee(new BigDecimal(0));
 			transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee());
 		}
 		super.baseMapper.updateById(transportOrder);
@@ -209,6 +209,10 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 				deliveryOrderDetailPurDtoList.add(deliveryOrderDetailPurDto);
 			}
 
+		}
+		if(deliveryOrderDetailPurDtoList.size()==0)
+		{
+			return true;
 		}
 		transportOrderDetailService.updateBatchById(transportOrderDetailList);
       /** 商品误差统计,按照deliveryno为group,更新的是deliveryOrder*/
