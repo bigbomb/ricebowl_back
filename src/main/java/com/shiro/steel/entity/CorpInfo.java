@@ -5,6 +5,8 @@ import java.io.Serializable;
 import com.baomidou.mybatisplus.annotations.TableId;
 import com.baomidou.mybatisplus.annotations.TableName;
 import com.baomidou.mybatisplus.enums.IdType;
+import org.springframework.web.multipart.MultipartFile;
+
 @TableName("corp_info")
 public class CorpInfo implements Serializable {
 	@TableId(type = IdType.AUTO)
@@ -28,14 +30,8 @@ public class CorpInfo implements Serializable {
     
     private String memberId;
 
-    private String invitecode;
-    public String getInvitecode() {
-		return invitecode;
-	}
+    private String contractsealurl;
 
-	public void setInvitecode(String invitecode) {
-		this.invitecode = invitecode;
-	}
 
 	public String getMemberId() {
 		return memberId;
@@ -118,6 +114,13 @@ public class CorpInfo implements Serializable {
 	public void setLinkmanPhone(String linkmanPhone) {
 		this.linkmanPhone = linkmanPhone;
 	}
-    
-    
+
+    public String getContractsealurl() {
+        return contractsealurl;
+    }
+
+    public void setContractsealurl(String contractsealurl) {
+        this.contractsealurl = contractsealurl;
+    }
+
 }

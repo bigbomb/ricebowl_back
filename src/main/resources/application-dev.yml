@@ -27,6 +27,10 @@ spring:
     host: 127.0.0.1
     port: 6379
     password:
+  http:
+    multipart:
+      maxFileSize: 20MB
+      maxRequestSize: 20MB
 #mybatis 配置
 mybatis:
   mapper-locations: classpath:com/shiro/steel/mapper/xml/*.xml
@@ -36,3 +40,10 @@ logging:
   config: classpath:log4j2.xml
   level:
     com.shiro.steel.mapper: debug
+cos:
+  accessKeyId: AKID39AA3AN5tVwJdosmDYqwUoBRgniWKrHb
+  accessKeySecret: IUXVIvRl27A32riT2hG2lO4hRUvKdsy3
+  endpoint: ap-shanghai
+  bucket: fw-1300712873
+  dir: steel/
+

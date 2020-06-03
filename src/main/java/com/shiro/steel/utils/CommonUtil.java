@@ -25,7 +25,9 @@ import com.baomidou.mybatisplus.generator.config.converts.MySqlTypeConvert;
 import com.baomidou.mybatisplus.generator.config.rules.DbColumnType;
 import com.baomidou.mybatisplus.generator.config.rules.DbType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,6 +64,27 @@ public class CommonUtil {
 			tmp[i] = str[i - size];
 		} 
 		return tmp; // 返回拼接完成的字符串数组
+	}
+	public static File MultipartFileToFile(MultipartFile file) {
+		File f = null;
+		try {
+			InputStream is = file.getInputStream();
+			f = new File(file.getOriginalFilename());
+
+			OutputStream os = new FileOutputStream(f);
+
+			int bytesRead = 0;
+			byte[] buffer = new byte[8192];
+			while ((bytesRead = is.read(buffer, 0, 8192)) != -1) {
+				os.write(buffer, 0, bytesRead);
+			}
+			os.close();
+			is.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return f;
 	}
 
 }

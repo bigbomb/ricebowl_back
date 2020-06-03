@@ -24,7 +24,7 @@ public interface PurchaseContractService extends IService<PurchaseContract>{
 	@Transactional(rollbackFor = Exception.class)
 	Integer delBatchIds(List<String> asList, List<String> asList2);
 	@Transactional(rollbackFor = Exception.class)
-	Integer updateByVerify(Integer id, String purchaseno, String memberId);
+	Integer updateByVerify(Integer id, String purchaseno, String memberId) throws ParseException;
 	@Transactional(rollbackFor = Exception.class)
 	Boolean copyContract(String contractno);
 

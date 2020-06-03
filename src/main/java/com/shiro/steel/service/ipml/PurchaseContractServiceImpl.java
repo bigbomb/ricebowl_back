@@ -508,7 +508,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	}
 
 	@Override
-	public Integer updateByVerify(Integer id, String purchaseno,String memberId) {
+	public Integer updateByVerify(Integer id, String purchaseno,String memberId) throws ParseException {
 		// TODO Auto-generated method stub
 	   	PurchaseContract purchaseContract = new PurchaseContract();
     	purchaseContract.setId(id);
@@ -533,7 +533,8 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
     		 stock.setProductid(uuid);
     		 stock.setMemberid(memberId);
     		 stock.setStatus("在库");
-    		 stock.setCrt(new Date());
+			 SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    		 stock.setUpt(sdf1.parse(sdf1.format(new Date())));
     		 stockList.add(stock);
     	 }
     	 stockService.insertBatch(stockList);

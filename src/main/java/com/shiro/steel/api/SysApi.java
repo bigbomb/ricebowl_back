@@ -28,9 +28,11 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -250,8 +252,9 @@ public class SysApi {
      */
     @RequestMapping(value = "/saveCorpInfo", method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object saveCorpInfo(@Valid CorpInfo corpInfo) {
-        return corpInfoService.saveCorpInfo(corpInfo);
+    public Object saveCorpInfo(@Valid CorpInfo corpInfo,
+            MultipartFile picFile) throws IOException {
+        return corpInfoService.saveCorpInfo(corpInfo,picFile);
     }
     
     /**

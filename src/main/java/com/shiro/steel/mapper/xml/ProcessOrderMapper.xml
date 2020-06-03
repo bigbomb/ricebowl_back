@@ -24,7 +24,7 @@
   <select id="findByPage" resultType="com.shiro.steel.pojo.vo.ProcessOrderVo">
 		SELECT
 		id,memberId,contractNo, customerName, processNo,processType,warehouseName,warehouseId,
-		processFee,processWeight,remark,crt,upt,createBy,status
+      TRUNCATE((processFee*processWeight),2) as processFee,remark,crt,upt,createBy,status
 		FROM
 		process_order
 		WHERE 1=1

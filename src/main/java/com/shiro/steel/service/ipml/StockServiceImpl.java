@@ -146,26 +146,29 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
     			    	if(stock!=null)
     			    	{
     			    		EntityWrapper<Stock> newwrapper = new EntityWrapper<Stock>();
-//    			    		//如果判断是锁货的数量和库存数一致
-//    			    		if(stock.getNum()==Integer.valueOf(num[i]))
-//    			    		{
-//    	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
-//    	        	    		stock.setLockman(userInfoDto.getUsername());
-//    	        	    		newwrapper.eq("productId", id);
-//    	        	    		status=stockService.update(stock, newwrapper);
-//    			    		}
-//    			    		//如果判断锁货的数量小于库存数
-//    			    		else {
-    			    		    
     	        	    		stock.setNum(stock.getNum()-Integer.valueOf(num[i]));
     	        	    		newwrapper.eq("id", id);
     	        	    		super.baseMapper.update(stock, newwrapper);
     	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
     	        	    		stock.setLockman(userInfoDto.getUsername());
-    	        	    		stock.setNum(Integer.valueOf(num[i]));
+							    stock.setNum(Integer.valueOf(num[i]));
     	        	    		stock.setCustomerid(customerId);
     	        	    		stock.setCustomername(customerName);
-    	        	    		super.baseMapper.insert(stock);
+                                stock.setParentstockid(Integer.valueOf(id));
+                                EntityWrapper<Stock> stockwrapper = new EntityWrapper<Stock>();
+                                stockwrapper.eq("parentStockId",id).eq("customerId",customerId);
+                                List<Stock> newstockList = super.baseMapper.selectList(stockwrapper);
+//                                if(newstockList.size()==1)
+//								{
+//									stock.setNum(newstockList.get(0).getNum()+Integer.valueOf(num[i]));
+//									status = true;
+//								}
+//                                else
+//								{
+
+									super.baseMapper.insert(stock);
+
+
 //    			    		}
     			    	}
         	    		
@@ -183,6 +186,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
     	    }
     		if (successstocklist.size()>0)
     		{
+
     			return true;  
     		}
     		else {

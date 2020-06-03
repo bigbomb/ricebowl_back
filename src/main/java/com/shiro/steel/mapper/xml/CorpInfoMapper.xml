@@ -10,7 +10,7 @@
     <result column="bankAccount" jdbcType="VARCHAR" property="bankaccount" />
     <result column="taxNumber" jdbcType="VARCHAR" property="taxnumber" />
     <result column="memberId" jdbcType="VARCHAR" property="memberId" />
-    <result column="inviteCode" jdbcType="VARCHAR" property="inviteCode" />
+    <result column="contractSealUrl" jdbcType="VARCHAR" property="contractsealurl" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from corp_info

@@ -75,6 +75,7 @@ public class ShiroConfig {
         filterMap.put("/LoginApi/v1/relogin", "anon");
         filterMap.put("/LoginApi/v1/logOut", "anon");
         filterMap.put("/UserApi/v1/uploadHander", "anon");
+        filterMap.put("/TestApi/v1/test","anon");
 
         // 需要认证才可以访问
         filterMap.put("/**", "authc");

@@ -25,7 +25,12 @@
     <result column="packingNo" jdbcType="VARCHAR" property="packingno" />
      <result column="purchaseNo" jdbcType="VARCHAR" property="purchaseno" />
      <result column="customerId" jdbcType="VARCHAR" property="customerid" />
-     <result column="customerName" jdbcType="VARCHAR" property="customername" />
+      <result column="customerName" jdbcType="VARCHAR" property="customername" />
+     <result column="supplyerId" jdbcType="INTEGER" property="supplyerid" />
+      <result column="supplyerName" jdbcType="VARCHAR" property="supplyername" />
+      <result column="saleDetailId" jdbcType="INTEGER" property="saledetailid" />
+      <result column="purDetailId" jdbcType="INTEGER" property="purdetailid" />
+      <result column="parentStockId" jdbcType="INTEGER" property="parentstockid" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from stock
@@ -141,4 +146,5 @@
             </where>
         </foreach>
     </update>
+
 </mapper>

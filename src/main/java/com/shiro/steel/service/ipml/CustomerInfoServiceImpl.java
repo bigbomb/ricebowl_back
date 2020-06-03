@@ -151,7 +151,7 @@ public class CustomerInfoServiceImpl extends ServiceImpl<CustomerInfoMapper, Cus
 	public Object bind(String companyPhone, String invitecode,String openId) {
 		CorpInfo corpInfo = new CorpInfo();
 		CustomerInfo customerInfo = new CustomerInfo();
-		corpInfo.setInvitecode(invitecode);
+//		corpInfo.setInvitecode(invitecode);
 		 EntityWrapper<CorpInfo> eWrapper = new EntityWrapper<CorpInfo>(corpInfo);
 		 corpInfo =  corpInfoService.selectOne(eWrapper);
 		 if(corpInfo!=null)

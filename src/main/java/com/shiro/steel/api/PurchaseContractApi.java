@@ -178,7 +178,7 @@ public class PurchaseContractApi extends BaseApi {
     
     @RequestMapping(value = "/verifyPurchaseContract" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object verifySaleContract(Integer id,String purchaseno,String memberId){
+    public Object verifySaleContract(Integer id,String purchaseno,String memberId) throws ParseException {
     	 Integer status = purchaseContractService.updateByVerify(id,purchaseno,memberId);
     	 if (status>0)
 	     {

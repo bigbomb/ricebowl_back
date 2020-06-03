@@ -58,7 +58,16 @@ public class Stock implements Serializable {
     
     private String customername;
 
+    private Integer supplyerid;
+
+    private String supplyername;
+
+    private Integer saledetailid;
+
     private Integer purdetailid;
+
+    private Integer parentstockid;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -275,11 +284,43 @@ public class Stock implements Serializable {
 		this.customername = customername;
 	}
 
+    public Integer getSupplyerid() {
+        return supplyerid;
+    }
+
+    public void setSupplyerid(Integer supplyerid) {
+        this.supplyerid = supplyerid;
+    }
+
+    public String getSupplyername() {
+        return supplyername;
+    }
+
+    public void setSupplyername(String supplyername) {
+        this.supplyername = supplyername;
+    }
+
+    public Integer getSaledetailid() {
+        return saledetailid;
+    }
+
+    public void setSaledetailid(Integer saledetailid) {
+        this.saledetailid = saledetailid;
+    }
+
     public Integer getPurdetailid() {
         return purdetailid;
     }
 
     public void setPurdetailid(Integer purdetailid) {
         this.purdetailid = purdetailid;
+    }
+
+    public Integer getParentstockid() {
+        return parentstockid;
+    }
+
+    public void setParentstockid(Integer parentstockid) {
+        this.parentstockid = parentstockid;
     }
 }
