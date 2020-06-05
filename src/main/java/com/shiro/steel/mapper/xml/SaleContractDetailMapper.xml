@@ -187,7 +187,7 @@
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             UPDATE sale_contract_detail
             <set>
-                actualWeight = actualWeight + #{item.balance}
+                actualWeight = actualWeight + #{item.weightbalance},num = num + #{item.numbalance}
             </set>
             <where>
                 id = #{item.id}

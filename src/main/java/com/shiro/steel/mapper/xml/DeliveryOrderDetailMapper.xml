@@ -33,8 +33,8 @@
     </delete> 
     
    <select id="selectByPurId" resultType="com.shiro.steel.pojo.dto.DeliveryOrderDetailPurDto">
-		SELECT
-        pcd.weight as actualweight,dod.id,(sk.weight - pcd.weight) as balance, dod.saleDetailId,dod.deliveryNo,sk.id as stockid
+		SELECT pcd.num as actualnum,
+        pcd.weight as actualweight,dod.id,(sk.oriweight - pcd.weight) as weightbalance,(sk.orinum - pcd.num) as numbalance, dod.saleDetailId,dod.deliveryNo,sk.id as stockid
 		FROM
        purchase_contract_detail pcd
        left join stock sk on pcd.id = sk.purDetailId
@@ -45,5 +45,6 @@
        </if>
        AND sk.num>0
        AND sk.supplyerId IS NOT NULL
+       AND sk.parentStockId IS NULL
 	</select>
 </mapper>

@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 
 public class DeliveryOrderDetailPurDto {
     private BigDecimal actualweight;
+    private Integer actualnum;
     private Integer id;
     private Integer saledetailid;
     private String deliveryno;
-    private BigDecimal balance;
+    private BigDecimal weightbalance;
+    private Integer numbalance;
     private Integer stockid;
 
     public BigDecimal getActualweight() {
@@ -16,6 +18,14 @@ public class DeliveryOrderDetailPurDto {
 
     public void setActualweight(BigDecimal actualweight) {
         this.actualweight = actualweight;
+    }
+
+    public Integer getActualnum() {
+        return actualnum;
+    }
+
+    public void setActualnum(Integer actualnum) {
+        this.actualnum = actualnum;
     }
 
     public Integer getId() {
@@ -42,12 +52,20 @@ public class DeliveryOrderDetailPurDto {
         this.deliveryno = deliveryno;
     }
 
-    public BigDecimal getBalance() {
-        return balance;
+    public BigDecimal getWeightbalance() {
+        return weightbalance;
     }
 
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
+    public void setWeightbalance(BigDecimal weightbalance) {
+        this.weightbalance = weightbalance;
+    }
+
+    public Integer getNumbalance() {
+        return numbalance;
+    }
+
+    public void setNumbalance(Integer numbalance) {
+        this.numbalance = numbalance;
     }
 
     public Integer getStockid() {

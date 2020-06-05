@@ -24,7 +24,11 @@ public class Stock implements Serializable {
 
     private String productmark;
 
+    private Integer orinum;
+
     private Integer num;
+
+    private BigDecimal oriweight;
 
     private BigDecimal weight;
 
@@ -322,5 +326,21 @@ public class Stock implements Serializable {
 
     public void setParentstockid(Integer parentstockid) {
         this.parentstockid = parentstockid;
+    }
+
+    public Integer getOrinum() {
+        return orinum;
+    }
+
+    public void setOrinum(Integer orinum) {
+        this.orinum = orinum;
+    }
+
+    public BigDecimal getOriweight() {
+        return oriweight;
+    }
+
+    public void setOriweight(BigDecimal oriweight) {
+        this.oriweight = oriweight;
     }
 }

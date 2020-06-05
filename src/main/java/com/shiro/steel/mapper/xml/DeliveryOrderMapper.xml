@@ -65,7 +65,7 @@
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             UPDATE delivery_order
             <set>
-                weight = weight + #{item.balance},
+                weight = weight + #{item.weightbalance}, num = num + #{item.numbalance},
                 liftingfee = CASE feeOption
                     when 1 then weight * liftingPerFee
                     when 2 then weight * liftingPerFee

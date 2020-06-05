@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.shiro.steel.entity.*;
 import com.shiro.steel.exception.MyException;
 import com.shiro.steel.pojo.dto.*;
@@ -110,6 +111,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 				   SaleContractWarehouse saleContractWarehouse = new SaleContractWarehouse();
 		  		   s.setPurchaseno(contractno);
 		  		   s.setStatus("待审核");
+		  		   s.setCrt(sdf1.parse(sdf1.format(new Date())));
 		  		   EntityWrapper<Product> eWrapper = new EntityWrapper<Product>(product);
 	  		 	   product.setProductname(s.getProductname());
 	  		 	   product.setMemberid(purchaseContractVo.getMemberid());
@@ -266,12 +268,31 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 				for(PurchaseContractDetail s:collection){
 					if(purchaseContractVo.getChange()==1)
 					{
-						Stock stock = new Stock();
-						stock.setPurdetailid(s.getId());
-						stock.setPackingno(s.getPackingno());
-						stock.setWeight(s.getWeight());
-						stock.setUnit(s.getUnit());
-						stockList.add(stock);
+						EntityWrapper stockWrapper = new EntityWrapper();
+						stockWrapper.eq("purDetailId",s.getId()).isNull("parentStockId");
+
+						Stock stock = stockService.selectOne(stockWrapper);
+						Optional<Stock> stockOptional = Optional.ofNullable(stock);
+						if(stockOptional.isPresent())
+						{
+							BigDecimal weightbalance = new BigDecimal(0);
+							Integer numbalance = s.getNum()-stock.getOrinum();
+							weightbalance = s.getWeight().subtract(stock.getOriweight());
+							stock.setWeight(stock.getWeight().add(weightbalance));
+							stock.setNum(stock.getNum()+numbalance);
+							stock.setPurdetailid(s.getId());
+							stock.setPackingno(s.getPackingno());
+							stock.setOriweight(s.getWeight());
+							stock.setOrinum(s.getNum());
+							stock.setUnit(s.getUnit());
+							stockList.add(stock);
+						}
+						else
+						{
+							status = "更新失败";
+							return ResultUtil.result(EnumCode.OK.getValue(), status);
+						}
+
 					}
 
 					Product product = new Product();
@@ -419,7 +440,8 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 							BigDecimal newweight = new BigDecimal(0);
 							BeanCopier dodcopier = BeanCopier.create(DeliveryOrderDetailPurDto.class, DeliveryOrderDetail.class, false);
 							dodcopier.copy(u, dod, null);
-							dod.setActualweight(u.getActualweight().add(u.getBalance()));
+							dod.setActualweight(u.getActualweight().add(u.getWeightbalance()));
+							dod.setNum(u.getActualnum()+u.getNumbalance());
 							if(!StringUtils.isEmpty(u.getDeliveryno())&&!StringUtils.isEmpty(u.getSaledetailid()))
 							{
 								dodpdList.add(u);
@@ -445,18 +467,24 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 						Map<String, List> deliveryOrderDetailPurDtoSum = dodpdList.stream()
 								.collect(Collectors.groupingBy(DeliveryOrderDetailPurDto::getDeliveryno, Collectors.collectingAndThen(Collectors.toList(), m -> {
 									/** 采购重量统计*/
-									final BigDecimal balance = m
+									final BigDecimal weightbalance = m
 											.stream()
-											.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getBalance));
+											.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getWeightbalance));
+									final Integer numbalance = m
+											.stream()
+											.mapToInt(DeliveryOrderDetailPurDto::getNumbalance).sum();
+
 									return Arrays.asList(
-											balance
+											weightbalance,
+											numbalance
 									);
 								})));
 						deliveryOrderDetailPurDtoSum.forEach((k,v) ->
 						{
 							DeliveryOrderDetailPurDto dlo = new DeliveryOrderDetailPurDto();
 							dlo.setDeliveryno(k);
-							dlo.setBalance(new BigDecimal(v.get(0).toString()));
+							dlo.setWeightbalance(new BigDecimal(v.get(0).toString()));
+							dlo.setNumbalance(Integer.valueOf(v.get(1).toString()));
 							dlolist.add(dlo);
 						});
 						deliveryOrderService.batchUpdateBalance(dlolist);
@@ -465,18 +493,23 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 						Map<Integer, List> saleOrderDetailDtoSum = dodpdList.stream()
 								.collect(Collectors.groupingBy(DeliveryOrderDetailPurDto::getSaledetailid, Collectors.collectingAndThen(Collectors.toList(), m -> {
 									/** 采购重量统计*/
-									final BigDecimal balance = m
+									final BigDecimal weightbalance = m
 											.stream()
-											.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getBalance));
+											.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getWeightbalance));
+									final Integer numbalance = m
+											.stream()
+											.mapToInt(DeliveryOrderDetailPurDto::getNumbalance).sum();
 									return Arrays.asList(
-											balance
+											weightbalance,
+											numbalance
 									);
 								})));
 						saleOrderDetailDtoSum.forEach((k,v) ->
 						{
 							SaleContractDetailDto sdd = new SaleContractDetailDto();
 							sdd.setId(k);
-							sdd.setBalance(new BigDecimal(v.get(0).toString()));
+							sdd.setWeightbalance(new BigDecimal(v.get(0).toString()));
+                            sdd.setNumbalance(Integer.valueOf(v.get(1).toString()));
 							scddList.add(sdd);
 						});
 						saleContractDetailService.batchUpdateBalance(scddList);

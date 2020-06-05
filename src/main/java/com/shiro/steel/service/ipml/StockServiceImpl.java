@@ -1,5 +1,6 @@
 package com.shiro.steel.service.ipml;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,8 @@ import com.shiro.steel.utils.RedisHelper;
 @Service
 public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements StockService{
 
+	ThreadLocal<Map<String,Integer>> localnum = new ThreadLocal<Map<String, Integer>>();
+	ThreadLocal<Map<String,BigDecimal>> localweight = new ThreadLocal<Map<String, BigDecimal>>();
 	@Autowired
 	private StockMapper stockMapper;
 	
@@ -34,9 +37,8 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 		return stockMapper.updateByPrimaryKey(stock);
 	}
 	@Override
-	public Integer batchUpdateBykey(String ids,String productids,String nums) throws MyException{
+	public Integer batchUpdateBykey(String ids,String productids,String nums,String weights) throws MyException{
 		// TODO Auto-generated method stub
-		ThreadLocal<Map<String,Integer>> localnum = new ThreadLocal<Map<String, Integer>>();
 		List<Stock> updatestocklist = new ArrayList<Stock>();
     	List<Stock> addstocklist = new ArrayList<Stock>();
     	UserInfoDto userInfoDto = new UserInfoDto();
@@ -44,12 +46,14 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 	    userInfoDto = (UserInfoDto) subject.getPrincipal();
     	String[] st = ids.split(",");
     	String[] num = nums.split(",");
+    	String[] weight = weights.split(",");
     	String[] pd = productids.split(",");
     	Map<String,Integer> numMap = new HashMap<String,Integer>();
-
+        Map<String,BigDecimal> weightMap = new HashMap<>();
     	 try {
 	    		 int i = 0;
 	    		 int sumNum=0;
+	    		 BigDecimal sumWeight = new BigDecimal(0);
 	    		 for (String id : st) 
 	    		 {  
 	    			    Boolean lckBoolean = redisHelper.lock(id);
@@ -64,19 +68,25 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 	    			    	{
 	    			    		stockMapper.deleteById(Integer.valueOf(id));
 	    			    		stock = new Stock();
-	    			    		if(numMap.containsKey(pd[i]))
+	    			    		if(numMap.containsKey(pd[i])&&weightMap.containsKey(pd[i]))
 				    			{
 				    				sumNum = Integer.valueOf(numMap.get(pd[i]))+Integer.valueOf(num[i]);
 				    				numMap.put(pd[i], sumNum);
+				    				sumWeight = weightMap.get(pd[i]).add(new BigDecimal(weight[i])).setScale(5,BigDecimal.ROUND_HALF_UP);
+				    				weightMap.put(pd[i],sumWeight);
 				    			}
 				    			else
 				    			{
 				    				numMap.put(pd[i], Integer.valueOf(num[i]));
+				    				weightMap.put(pd[i],new BigDecimal(weight[i]).setScale(5,BigDecimal.ROUND_HALF_UP));
 				    			}
 				    			
 				    	    	localnum.set(numMap);
+								localweight.set(weightMap);
 		        	    		stock.setNum(localnum.get().get(pd[i]));
+		        	    		stock.setWeight(localweight.get().get(pd[i]));
 	    			    		stock.setProductid(pd[i]);
+	    			    		stock.setId(Integer.valueOf(id));
 		    			    	stock.setStatus(EnumStockStatus.INSTOCK.getText());
 	    			    		stock.setLockman("");
 	    			    		updatestocklist.add(stock);
@@ -84,18 +94,23 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 				    		//如果判断只是锁了一部分
 				    		else {
 				    			stockMapper.deleteById(Integer.valueOf(id));
-				    			if(numMap.containsKey(pd[i]))
+				    			if(numMap.containsKey(pd[i])&&weightMap.containsKey(pd[i]))
 				    			{
 				    				sumNum = Integer.valueOf(numMap.get(pd[i]))+Integer.valueOf(num[i]);
 				    				numMap.put(pd[i], sumNum);
+									sumWeight = weightMap.get(pd[i]).add(new BigDecimal(weight[i])).setScale(5,BigDecimal.ROUND_HALF_UP);
+									weightMap.put(pd[i],sumWeight);
 				    			}
 				    			else
 				    			{
 				    				numMap.put(pd[i], Integer.valueOf(num[i]));
+									weightMap.put(pd[i],new BigDecimal(weight[i]).setScale(5,BigDecimal.ROUND_HALF_UP));
 				    			}
 				    			
 				    	    	localnum.set(numMap);
+				    			localweight.set(weightMap);
 		        	    		stock.setNum(localnum.get().get(pd[i])+stock.getNum());
+								stock.setWeight(localweight.get().get(pd[i]).add(stock.getWeight()));
 		        	    		stock.setProductid(pd[i]);
 		        	    		stock.setStatus(EnumStockStatus.INSTOCK.getText());
 		        	    		addstocklist.add(stock);
@@ -118,11 +133,12 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 		    	 }
     	   finally {
     		   localnum.remove();
+    		   localweight.remove();
     	   }
 		return 1;
     }
 	@Override
-	public Boolean lock(String ids, String nums,String customerId,String customerName, String productids) throws MyException{
+	public Boolean lock(String ids, String nums,String weights,String customerId,String customerName, String productids) throws MyException{
 		// TODO Auto-generated method stub
 		List<Stock> successstocklist = new ArrayList<Stock>();
     	List<Stock> failstocklist = new ArrayList<Stock>();
@@ -131,6 +147,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 	    userInfoDto = (UserInfoDto) subject.getPrincipal();
     	String[] st = ids.split(",");
     	String[] num = nums.split(",");
+    	String[] weight = weights.split(",");
 //    	String[] pd = productids.split(",");
     	 try {
     		 int i = 0;
@@ -147,29 +164,32 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
     			    	{
     			    		EntityWrapper<Stock> newwrapper = new EntityWrapper<Stock>();
     	        	    		stock.setNum(stock.getNum()-Integer.valueOf(num[i]));
+    	        	    		stock.setWeight(stock.getWeight().subtract(new BigDecimal(weight[i])).setScale(5,BigDecimal.ROUND_HALF_UP));
     	        	    		newwrapper.eq("id", id);
     	        	    		super.baseMapper.update(stock, newwrapper);
     	        	    		stock.setStatus(EnumStockStatus.LOCKSTOCK.getText());
     	        	    		stock.setLockman(userInfoDto.getUsername());
 							    stock.setNum(Integer.valueOf(num[i]));
+							    stock.setWeight(new BigDecimal(weight[i]).setScale(5,BigDecimal.ROUND_HALF_UP));
     	        	    		stock.setCustomerid(customerId);
     	        	    		stock.setCustomername(customerName);
                                 stock.setParentstockid(Integer.valueOf(id));
                                 EntityWrapper<Stock> stockwrapper = new EntityWrapper<Stock>();
-                                stockwrapper.eq("parentStockId",id).eq("customerId",customerId);
+                                stockwrapper.eq("parentStockId",id).eq("customerId",customerId).eq("status",EnumStockStatus.LOCKSTOCK.getText());
                                 List<Stock> newstockList = super.baseMapper.selectList(stockwrapper);
-//                                if(newstockList.size()==1)
-//								{
-//									stock.setNum(newstockList.get(0).getNum()+Integer.valueOf(num[i]));
-//									status = true;
-//								}
-//                                else
-//								{
+                                if(newstockList.size()==1)
+								{
+									stock.setNum(newstockList.get(0).getNum()+Integer.valueOf(num[i]));
+									stock.setWeight(newstockList.get(0).getWeight().add(new BigDecimal(weight[i]).setScale(5,BigDecimal.ROUND_HALF_UP)));
+									status = true;
+								}
+                                else
+								{
 
 									super.baseMapper.insert(stock);
 
 
-//    			    		}
+        			    		}
     			    	}
         	    		
         	    		if(status)
@@ -186,7 +206,7 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
     	    }
     		if (successstocklist.size()>0)
     		{
-
+                super.baseMapper.batchAddByPIdCusId(successstocklist);
     			return true;  
     		}
     		else {

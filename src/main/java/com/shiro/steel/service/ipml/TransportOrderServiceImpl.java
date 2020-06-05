@@ -202,7 +202,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 			TransportOrderDetail tod = transportOrderDetailService.selectById(transportOrderDetailobject.getId());
 			if (!tod.getFinalweight().equals(transportOrderDetailobject.getFinalweight().setScale(3, BigDecimal.ROUND_HALF_UP))) {
 				DeliveryOrderDetailPurDto deliveryOrderDetailPurDto = new DeliveryOrderDetailPurDto();
-				deliveryOrderDetailPurDto.setBalance(transportOrderDetailobject.getFinalweight().subtract(tod.getFinalweight()));
+				deliveryOrderDetailPurDto.setWeightbalance(transportOrderDetailobject.getFinalweight().subtract(tod.getFinalweight()));
 				deliveryOrderDetailPurDto.setSaledetailid(Integer.valueOf(transportOrderDetailobject.getSaledetailid()));
 				deliveryOrderDetailPurDto.setStockid(tod.getStockid());
 				deliveryOrderDetailPurDto.setDeliveryno(tod.getDeliveryno());
@@ -221,7 +221,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 							/** balance累计*/
 							final BigDecimal balance = m
 									.stream()
-									.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getBalance));
+									.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getWeightbalance));
 
 							return Arrays.asList(
 									balance
@@ -248,7 +248,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 							/** balance累计*/
 							final BigDecimal balance = m
 									.stream()
-									.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getBalance));
+									.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getWeightbalance));
 
 							return Arrays.asList(
 									balance
@@ -275,7 +275,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 					/** balance累计*/
 					final BigDecimal balance = m
 							.stream()
-							.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getBalance));
+							.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getWeightbalance));
 
 					return Arrays.asList(
 							balance
@@ -293,9 +293,9 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 					saleContractDetailList.add(saleContractDetail);
 					SaleContractDetailDto saleContractDetailDto = new SaleContractDetailDto();
 					saleContractDetailDto.setContractno(saleContractDetail.getContractno());
-					saleContractDetailDto.setBalance(new BigDecimal(v.get(0).toString()));
+					saleContractDetailDto.setWeightbalance(new BigDecimal(v.get(0).toString()));
 //					saleContractDetailDto.setPrice(saleContractDetail.getPrice());
-					saleContractDetailDto.setBalanceamount(new BigDecimal(v.get(0).toString()).multiply(saleContractDetail.getPrice()));
+					saleContractDetailDto.setWeightbalanceamount(new BigDecimal(v.get(0).toString()).multiply(saleContractDetail.getPrice()));
 					saleContractDetailDtoList.add(saleContractDetailDto);
 				}
 		);
@@ -306,11 +306,11 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 							/** finalweight累计*/
 							final BigDecimal finalbalance= m
 									.stream()
-									.collect(CollectorsUtil.summingBigDecimal(SaleContractDetailDto::getBalance));
+									.collect(CollectorsUtil.summingBigDecimal(SaleContractDetailDto::getWeightbalance));
 
 							final BigDecimal finalbalanceAmount = m
 									.stream()
-									.collect(CollectorsUtil.summingBigDecimal(SaleContractDetailDto::getBalanceamount));
+									.collect(CollectorsUtil.summingBigDecimal(SaleContractDetailDto::getWeightbalanceamount));
 
 					        /** finalamount累计*/
 							return Arrays.asList(

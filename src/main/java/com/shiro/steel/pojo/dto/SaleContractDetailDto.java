@@ -36,9 +36,11 @@ public class SaleContractDetailDto implements Serializable {
 
     private BigDecimal price;
 
-    private BigDecimal balance;
+    private BigDecimal weightbalance;
 
-    private BigDecimal balanceamount;
+    private BigDecimal weightbalanceamount;
+
+    private Integer numbalance;
 
     private String remark;
 
@@ -210,20 +212,28 @@ public class SaleContractDetailDto implements Serializable {
         this.price = price;
     }
 
-	public BigDecimal getBalance() {
-		return balance;
+	public BigDecimal getWeightbalance() {
+		return weightbalance;
 	}
 
-	public void setBalance(BigDecimal balance) {
-		this.balance = balance;
+	public void setWeightbalance(BigDecimal weightbalance) {
+		this.weightbalance = weightbalance;
 	}
 
-	public BigDecimal getBalanceamount() {
-		return balanceamount;
+	public BigDecimal getWeightbalanceamount() {
+		return weightbalanceamount;
 	}
 
-	public void setBalanceamount(BigDecimal balanceamount) {
-		this.balanceamount = balanceamount;
+	public void setWeightbalanceamount(BigDecimal weightbalanceamount) {
+		this.weightbalanceamount = weightbalanceamount;
+	}
+
+	public Integer getNumbalance() {
+		return numbalance;
+	}
+
+	public void setNumbalance(Integer numbalance) {
+		this.numbalance = numbalance;
 	}
 
 	public String getStockouttype() {

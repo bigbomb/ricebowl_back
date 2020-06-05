@@ -19,4 +19,6 @@ public interface StockMapper extends BaseMapper<Stock>{
     int batchAddBykeys(List<Stock> addstocklist);
 
     Boolean batchUpdatebyPurId(List<Stock> stockList);
+
+    void batchAddByPIdCusId(List<Stock> successstocklist);
 }

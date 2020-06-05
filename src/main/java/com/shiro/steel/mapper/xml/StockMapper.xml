@@ -115,7 +115,7 @@
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             UPDATE stock
             <set>
-                lockman = #{item.lockman},status = #{item.status},num = #{item.num},customerId = Null,customerName = Null
+                lockman = #{item.lockman},status = #{item.status},num = #{item.num},weight= #{item.weight},customerId = Null,customerName = Null
             </set>
             <where>
                 productId = #{item.productid}
@@ -127,7 +127,7 @@
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             UPDATE stock
             <set>
-                num = #{item.num}
+                num = #{item.num},weight = #{item.weight}
             </set>
             <where>
                 productId = #{item.productid} and status = #{item.status}
@@ -135,14 +135,30 @@
         </foreach>
     </update>
 
+    <update id="batchAddByPIdCusId" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE stock
+            <set>
+                num = #{item.num},weight = #{item.weight}
+            </set>
+            <where>
+                customerId = #{item.customerid} and parentStockId = #{item.parentstockid}
+            </where>
+        </foreach>
+    </update>
+
+
     <update id="batchUpdatebyPurId" parameterType="java.util.List">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             UPDATE stock
             <set>
-                packingNo = #{item.packingno},weight = #{item.weight},unit = #{item.unit}
+                packingNo = #{item.packingno},oriweight = #{item.oriweight},
+                unit = #{item.unit},orinum = #{item.orinum}, weight =  #{item.weight},
+                num = #{item.num}
+
             </set>
             <where>
-                purDetailId = #{item.purdetailid}
+                purDetailId = #{item.purdetailid} and parentStockId is null
             </where>
         </foreach>
     </update>

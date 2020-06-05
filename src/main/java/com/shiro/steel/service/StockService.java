@@ -13,11 +13,11 @@ public interface StockService extends IService<Stock>{
 	Integer updateByPrimaryKey(Stock stock);
 
 	@Transactional(rollbackFor = Exception.class)
-	Integer batchUpdateBykey(String ids, String productids, String nums);
+	Integer batchUpdateBykey(String ids, String productids, String nums,String weights);
 //	@Transactional
 //	Boolean lock(String ids, String nums, String productids);
     @Transactional(rollbackFor = Exception.class)
-	Boolean lock(String ids, String nums, String customerId, String customerName, String productids) throws MyException;
+	Boolean lock(String ids, String nums,String weights, String customerId, String customerName, String productids) throws MyException;
 	@Transactional(rollbackFor = Exception.class)
 	Boolean batchUpdatebyPurId(List<Stock> stockList);
 }
