@@ -49,7 +49,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	private ProductSpecService productSpecService;
 
 	@Autowired
-	private SaleContractWarehouseService saleContractWarehouseService;
+	private  WarehouseInfoService  warehouseInfoService;
 	
 	@Autowired
 	private StockService stockService;
@@ -81,7 +81,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	
 	
 	@Override
-	public Object addContract(PurchaseContractVo purchaseContractVo) throws ParseException {
+	public String addContract(PurchaseContractVo purchaseContractVo) throws Exception {
 		// TODO Auto-generated method stub
 		String contractno = "";
     	//contractVo.setContractstatus(ContractStatus.TOPAY.getText());
@@ -101,14 +101,14 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 				List<Productfactory> productfactoryList = new ArrayList<Productfactory>();
 				List<Productmark> productmarkList = new ArrayList<Productmark>();
 				List<Productspec> productspecList = new ArrayList<Productspec>();
-				List<SaleContractWarehouse> saleContractWarehouseList = new ArrayList<SaleContractWarehouse>();
+				List<WarehouseInfo> saleContractWarehouseList = new ArrayList<WarehouseInfo>();
 				List checkProduct = new ArrayList();
 		    	for(PurchaseContractDetail s:collection){
 		    		Product product = new Product();
 					Productfactory productfactory = new Productfactory();
 					Productmark productmark = new Productmark();
 					Productspec productspec = new Productspec();
-				   SaleContractWarehouse saleContractWarehouse = new SaleContractWarehouse();
+					WarehouseInfo saleContractWarehouse = new WarehouseInfo();
 		  		   s.setPurchaseno(contractno);
 		  		   s.setStatus("待审核");
 		  		   s.setCrt(sdf1.parse(sdf1.format(new Date())));
@@ -193,13 +193,13 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	  		      }
 	  		      
 
-	  		      EntityWrapper<SaleContractWarehouse> SaleContractWarehouseWapper = new EntityWrapper<SaleContractWarehouse>(saleContractWarehouse);
+	  		      EntityWrapper<WarehouseInfo> SaleContractWarehouseWapper = new EntityWrapper<WarehouseInfo>(saleContractWarehouse);
 	  		      saleContractWarehouse.setWarehousename(s.getWarehousename());
 	  		      saleContractWarehouse.setMemberid(purchaseContractVo.getMemberid());
-	  		      saleContractWarehouse = saleContractWarehouseService.selectOne(SaleContractWarehouseWapper);
+	  		      saleContractWarehouse = warehouseInfoService.selectOne(SaleContractWarehouseWapper);
 	  		      if(saleContractWarehouse == null)
 	  		      {
-	  		    	saleContractWarehouse = new SaleContractWarehouse();
+	  		    	saleContractWarehouse = new WarehouseInfo();
 	  		    	saleContractWarehouse.setWarehousename(s.getWarehousename());
 		  		    saleContractWarehouse.setMemberid(purchaseContractVo.getMemberid());
 	  		    	
@@ -235,7 +235,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 		    	}
 		    	if(saleContractWarehouseList.size()>0)
 		    	{
-		    		saleContractWarehouseService.insertBatch(saleContractWarehouseList);
+		    		warehouseInfoService.insertBatch(saleContractWarehouseList);
 		    	}
 		    	UserInfoDto userInfoDto = new UserInfoDto();
 		        Subject subject = SecurityUtils.getSubject();   
@@ -256,19 +256,24 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 				List<Productfactory> productfactoryList = new ArrayList<Productfactory>();
 				List<Productmark> productmarkList = new ArrayList<Productmark>();
 				List<Productspec> productspecList = new ArrayList<Productspec>();
-				List<SaleContractWarehouse> saleContractWarehouseList = new ArrayList<SaleContractWarehouse>();
+				List<WarehouseInfo> saleContractWarehouseList = new ArrayList<WarehouseInfo>();
 				List<Stock> stockList = new ArrayList<Stock>();
 
 				 List checkProduct = new ArrayList();
 				purchaseContract.setUpt(sdf1.parse(sdf1.format(new Date())));
 				super.baseMapper.updateByPrimaryKey(purchaseContract);
-//				Map contractMap = new HashMap();
-//				contractMap.put("purchaseNo", purchaseContract.getPurchaseno());
-//				purchaseContractDetailService.deleteByMap(contractMap);
+
 				for(PurchaseContractDetail s:collection){
-					if(purchaseContractVo.getChange()==1)
-					{
+//					if(purchaseContractVo.getChange()==1)
+//					{
 						EntityWrapper stockWrapper = new EntityWrapper();
+						stockWrapper.eq("purDetailId",s.getId());
+						List<Stock> stockListBypur = new ArrayList<Stock>();
+						stockListBypur = stockService.selectList(stockWrapper);
+						if(stockListBypur.size()>1)
+						{
+							throw new Exception("td");
+						}
 						stockWrapper.eq("purDetailId",s.getId()).isNull("parentStockId");
 
 						Stock stock = stockService.selectOne(stockWrapper);
@@ -281,25 +286,29 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 							stock.setWeight(stock.getWeight().add(weightbalance));
 							stock.setNum(stock.getNum()+numbalance);
 							stock.setPurdetailid(s.getId());
+							stock.setProductname(s.getProductname());
+							stock.setProductspec(s.getProductspec());
+							stock.setProductmark(s.getProductmark());
+							stock.setProductfactory(s.getProductfactory());
+					        stock.setPrice(s.getPrice());
+					        stock.setWarehousename(s.getWarehousename());
+					        stock.setStockouttype(s.getStockouttype());
+					        stock.setQuality(s.getQuality());
 							stock.setPackingno(s.getPackingno());
-							stock.setOriweight(s.getWeight());
-							stock.setOrinum(s.getNum());
+							stock.setOriweight(stock.getWeight());
+							stock.setOrinum(stock.getNum());
+							stock.setTotal(s.getWeight().multiply(stock.getPrice()));
 							stock.setUnit(s.getUnit());
+							stock.setUpt(sdf1.parse(sdf1.format(new Date())));
 							stockList.add(stock);
 						}
-						else
-						{
-							status = "更新失败";
-							return ResultUtil.result(EnumCode.OK.getValue(), status);
-						}
 
-					}
-
+//					}
 					Product product = new Product();
 					Productfactory productfactory = new Productfactory();
 					Productmark productmark = new Productmark();
 					Productspec productspec = new Productspec();
-					SaleContractWarehouse saleContractWarehouse = new SaleContractWarehouse();
+					WarehouseInfo saleContractWarehouse = new WarehouseInfo();
 			  		  s.setPurchaseno(purchaseContract.getPurchaseno());  
 //			  		  s.setStatus("在库");
 			  		  EntityWrapper<Product> eWrapper = new EntityWrapper<Product>(product);
@@ -382,13 +391,13 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 			  		 	}
 		  		      }
 		  		      
-		  		    EntityWrapper<SaleContractWarehouse> SaleContractWarehouseWapper = new EntityWrapper<SaleContractWarehouse>(saleContractWarehouse);
+		  		    EntityWrapper<WarehouseInfo> SaleContractWarehouseWapper = new EntityWrapper<WarehouseInfo>(saleContractWarehouse);
 		  		      saleContractWarehouse.setWarehousename(s.getWarehousename());
 		  		      saleContractWarehouse.setMemberid(purchaseContractVo.getMemberid());
-		  		      saleContractWarehouse = saleContractWarehouseService.selectOne(SaleContractWarehouseWapper);
+		  		      saleContractWarehouse = warehouseInfoService.selectOne(SaleContractWarehouseWapper);
 		  		      if(saleContractWarehouse == null)
 		  		      {
-		  		    	saleContractWarehouse = new SaleContractWarehouse();
+		  		    	saleContractWarehouse = new WarehouseInfo();
 		  		    	saleContractWarehouse.setWarehousename(s.getWarehousename());
 			  		    saleContractWarehouse.setMemberid(purchaseContractVo.getMemberid());
 		  		    	
@@ -422,102 +431,109 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 		    	}
 		    	if(saleContractWarehouseList.size()>0)
 		    	{
-		    		saleContractWarehouseService.insertBatch(saleContractWarehouseList);
+		    		warehouseInfoService.insertBatch(saleContractWarehouseList);
 		    	}
 
 		    	if(stockList.size()>0)
 				{
 
 					Boolean st = stockService.batchUpdatebyPurId(stockList);
-					List<DeliveryOrderDetail> dodList = new ArrayList<DeliveryOrderDetail>();
-					List<DeliveryOrderDetailPurDto> dodpdList = new ArrayList<DeliveryOrderDetailPurDto>();
-					for(Stock stock : stockList)
-					{
-						DeliveryOrderDetail dod = new DeliveryOrderDetail();
-						DeliveryOrderDetailPurDto doddto = deliveryOrderDetailService.selectByPurId(stock);
-						Optional.ofNullable(doddto).ifPresent(u->{
+//					List<DeliveryOrderDetail> dodList = new ArrayList<DeliveryOrderDetail>();
+//					List<DeliveryOrderDetailPurDto> dodpdList = new ArrayList<DeliveryOrderDetailPurDto>();
+//					for(Stock stock : stockList)
+//					{
+//						DeliveryOrderDetail dod = new DeliveryOrderDetail();
+//						DeliveryOrderDetailPurDto doddto = deliveryOrderDetailService.selectByPurId(stock);
+//
+//						if(doddto !=null)
+//						{
+//							status="关联提单已经生成，无法变更，如需变更，请删除相关单据";
+//							throw new Exception(status);
+//						}
+//						Optional.ofNullable(doddto).ifPresent(u->{
 							// TODO: do something
-							BigDecimal newweight = new BigDecimal(0);
-							BeanCopier dodcopier = BeanCopier.create(DeliveryOrderDetailPurDto.class, DeliveryOrderDetail.class, false);
-							dodcopier.copy(u, dod, null);
-							dod.setActualweight(u.getActualweight().add(u.getWeightbalance()));
-							dod.setNum(u.getActualnum()+u.getNumbalance());
-							if(!StringUtils.isEmpty(u.getDeliveryno())&&!StringUtils.isEmpty(u.getSaledetailid()))
-							{
-								dodpdList.add(u);
-							}
-							if(!StringUtils.isEmpty(dod.getId()))
-							{
-								dodList.add(dod);
-							};
-						});
+//							BigDecimal newweight = new BigDecimal(0);
+//							BeanCopier dodcopier = BeanCopier.create(DeliveryOrderDetailPurDto.class, DeliveryOrderDetail.class, false);
+//							dodcopier.copy(u, dod, null);
+//							dod.setActualweight(u.getActualweight().add(u.getWeightbalance()));
+//							dod.setNum(u.getActualnum()+u.getNumbalance());
+//							if(!StringUtils.isEmpty(u.getDeliveryno())&&!StringUtils.isEmpty(u.getSaledetailid()))
+//							{
+//								dodpdList.add(u);
+//							}
+//							if(!StringUtils.isEmpty(dod.getId()))
+//							{
+//								dodList.add(dod);
+//							};
+//						});
 
 
-					}
-					if(dodList.size()>0)
-					{
-						deliveryOrderDetailService.updateBatchById(dodList);
-					}
-
-                    if(dodpdList.size()>0)
-					{
-						List<DeliveryOrderDetailPurDto> dlolist = new ArrayList<DeliveryOrderDetailPurDto>();
-						List<SaleContractDetailDto> scddList = new ArrayList<SaleContractDetailDto>();
-						/** 根据采购入库前的入库吨位减去新的库存吨位的值，按照deliveryno做分类统计*/
-						Map<String, List> deliveryOrderDetailPurDtoSum = dodpdList.stream()
-								.collect(Collectors.groupingBy(DeliveryOrderDetailPurDto::getDeliveryno, Collectors.collectingAndThen(Collectors.toList(), m -> {
-									/** 采购重量统计*/
-									final BigDecimal weightbalance = m
-											.stream()
-											.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getWeightbalance));
-									final Integer numbalance = m
-											.stream()
-											.mapToInt(DeliveryOrderDetailPurDto::getNumbalance).sum();
-
-									return Arrays.asList(
-											weightbalance,
-											numbalance
-									);
-								})));
-						deliveryOrderDetailPurDtoSum.forEach((k,v) ->
-						{
-							DeliveryOrderDetailPurDto dlo = new DeliveryOrderDetailPurDto();
-							dlo.setDeliveryno(k);
-							dlo.setWeightbalance(new BigDecimal(v.get(0).toString()));
-							dlo.setNumbalance(Integer.valueOf(v.get(1).toString()));
-							dlolist.add(dlo);
-						});
-						deliveryOrderService.batchUpdateBalance(dlolist);
-
-						/** 根据采购入库前的入库吨位减去新的库存吨位的值，按照saledetailid做分类统计*/
-						Map<Integer, List> saleOrderDetailDtoSum = dodpdList.stream()
-								.collect(Collectors.groupingBy(DeliveryOrderDetailPurDto::getSaledetailid, Collectors.collectingAndThen(Collectors.toList(), m -> {
-									/** 采购重量统计*/
-									final BigDecimal weightbalance = m
-											.stream()
-											.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getWeightbalance));
-									final Integer numbalance = m
-											.stream()
-											.mapToInt(DeliveryOrderDetailPurDto::getNumbalance).sum();
-									return Arrays.asList(
-											weightbalance,
-											numbalance
-									);
-								})));
-						saleOrderDetailDtoSum.forEach((k,v) ->
-						{
-							SaleContractDetailDto sdd = new SaleContractDetailDto();
-							sdd.setId(k);
-							sdd.setWeightbalance(new BigDecimal(v.get(0).toString()));
-                            sdd.setNumbalance(Integer.valueOf(v.get(1).toString()));
-							scddList.add(sdd);
-						});
-						saleContractDetailService.batchUpdateBalance(scddList);
-					}
-
-					purchaseContractDetailService.updateBatchById(collection);
+//					}
+//					if(dodList.size()>0)
+//					{
+//						deliveryOrderDetailService.updateBatchById(dodList);
+//					}
+//
+//                    if(dodpdList.size()>0)
+//					{
+//						List<DeliveryOrderDetailPurDto> dlolist = new ArrayList<DeliveryOrderDetailPurDto>();
+//						List<SaleContractDetailDto> scddList = new ArrayList<SaleContractDetailDto>();
+//						/** 根据采购入库前的入库吨位减去新的库存吨位的值，按照deliveryno做分类统计*/
+//						Map<String, List> deliveryOrderDetailPurDtoSum = dodpdList.stream()
+//								.collect(Collectors.groupingBy(DeliveryOrderDetailPurDto::getDeliveryno, Collectors.collectingAndThen(Collectors.toList(), m -> {
+//									/** 采购重量统计*/
+//									final BigDecimal weightbalance = m
+//											.stream()
+//											.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getWeightbalance));
+//									final Integer numbalance = m
+//											.stream()
+//											.mapToInt(DeliveryOrderDetailPurDto::getNumbalance).sum();
+//
+//									return Arrays.asList(
+//											weightbalance,
+//											numbalance
+//									);
+//								})));
+//						deliveryOrderDetailPurDtoSum.forEach((k,v) ->
+//						{
+//							DeliveryOrderDetailPurDto dlo = new DeliveryOrderDetailPurDto();
+//							dlo.setDeliveryno(k);
+//							dlo.setWeightbalance(new BigDecimal(v.get(0).toString()));
+//							dlo.setNumbalance(Integer.valueOf(v.get(1).toString()));
+//							dlolist.add(dlo);
+//						});
+//						deliveryOrderService.batchUpdateBalance(dlolist);
+//
+//						/** 根据采购入库前的入库吨位减去新的库存吨位的值，按照saledetailid做分类统计*/
+//						Map<Integer, List> saleOrderDetailDtoSum = dodpdList.stream()
+//								.collect(Collectors.groupingBy(DeliveryOrderDetailPurDto::getSaledetailid, Collectors.collectingAndThen(Collectors.toList(), m -> {
+//									/** 采购重量统计*/
+//									final BigDecimal weightbalance = m
+//											.stream()
+//											.collect(CollectorsUtil.summingBigDecimal(DeliveryOrderDetailPurDto::getWeightbalance));
+//									final Integer numbalance = m
+//											.stream()
+//											.mapToInt(DeliveryOrderDetailPurDto::getNumbalance).sum();
+//									return Arrays.asList(
+//											weightbalance,
+//											numbalance
+//									);
+//								})));
+//						saleOrderDetailDtoSum.forEach((k,v) ->
+//						{
+//							SaleContractDetailDto sdd = new SaleContractDetailDto();
+//							sdd.setId(k);
+//							sdd.setWeightbalance(new BigDecimal(v.get(0).toString()));
+//                            sdd.setNumbalance(Integer.valueOf(v.get(1).toString()));
+//							scddList.add(sdd);
+//						});
+//						saleContractDetailService.batchUpdateBalance(scddList);
+//					}
+//
+//
 				}
-				status = "更新成功";
+		    	status ="保存成功";
+				purchaseContractDetailService.updateBatchById(collection);
 			}
 		 return ResultUtil.result(EnumCode.OK.getValue(), status);
 	}
@@ -563,6 +579,8 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
     		 copier.copy(lpurchaseContractDetail, stock, null);
     		 String uuid = UUID.randomUUID().toString().replaceAll("-","");
     		 stock.setPurdetailid(lpurchaseContractDetail.getId());
+    		 stock.setOrinum(lpurchaseContractDetail.getNum());
+    		 stock.setOriweight(lpurchaseContractDetail.getWeight());
     		 stock.setProductid(uuid);
     		 stock.setMemberid(memberId);
     		 stock.setStatus("在库");

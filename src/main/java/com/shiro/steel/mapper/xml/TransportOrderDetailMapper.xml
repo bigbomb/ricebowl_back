@@ -58,7 +58,7 @@
     <select id="findDetailByPageList" resultType="com.shiro.steel.pojo.dto.TransportOrderDetailDto">
 		SELECT
 		id, transportNo, saleDetailId, productName, productSpec, productFactory, productMark, 
-    	num, actualWeight, finalWeight, unit, stockId, remark, status, crt, upt
+    	num, actualWeight, finalWeight, unit, stockId, remark, status, crt, upt,podfId
 		FROM
 		transport_order_detail
 		WHERE 1=1

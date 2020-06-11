@@ -78,13 +78,13 @@ public class TransportOrderApi extends BaseApi{
 
     @RequestMapping(value = "/confirmTransportOrder" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object confirmTransportOrder(@Validated TransportOrderVo transportOrderVo,BindingResult bindingResult,String actualTotalWeight) {
+    public Object confirmTransportOrder(@Validated TransportOrderVo transportOrderVo,BindingResult bindingResult) {
         if (bindingResult.hasErrors()){
             List<ObjectError> errorList = bindingResult.getAllErrors();
             return ResultUtil.result(EnumCode.OK.getValue(), errorList.toString());
         }
 
-        Boolean status =  transportOrderService.confirmTransportOrder(transportOrderVo,actualTotalWeight);
+        Boolean status =  transportOrderService.confirmTransportOrder(transportOrderVo);
 
         if (status)
         {

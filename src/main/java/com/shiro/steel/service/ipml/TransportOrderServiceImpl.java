@@ -14,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +50,10 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 
 	@Autowired
 	private StockService stockService;
-	
+
+	@Autowired
+	private ProcessOrderDetailFinishService processOrderDetailFinishService;
+
 	final static String preName = "YS";
 	@Override
 	public Boolean addTransportOrder(TransportOrderVo transportOrderVo) {
@@ -70,7 +74,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	    transportOrder.setCreateby(userInfoDto.getUsername());
         transportOrder.setStatus(EnumStockStatus.TRANSPORTING.getText());
  	    List<SaleContractDetailVo>  collection = JSONObject.parseArray(transportOrderDetail, SaleContractDetailVo.class);
- 	    BigDecimal totalWeight = new BigDecimal(0);
+ 	    BigDecimal finalWeight = new BigDecimal(0);
  	    BigDecimal actualWeight = new BigDecimal(0);
 // 	    List<SaleContractDetail> saleContractDetailList = new ArrayList<SaleContractDetail>();
  	    List<Stock> stockList = new ArrayList<Stock>();
@@ -79,7 +83,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
  	      stock.setId(s.getStockid());
  	      stock.setStatus(EnumStockStatus.OUTSTOCKFINISH.getText());
  		  BigDecimal amount = new BigDecimal(0);
-  		  totalWeight = totalWeight.add(s.getFinalweight());
+ 		  finalWeight = finalWeight.add(s.getFinalweight());
   		  actualWeight = actualWeight.add(s.getActualweight());
 
   		  stockList.add(stock);
@@ -87,6 +91,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
  	    List<TransportOrderDetail>  transportOrderDetailList = JSONObject.parseArray(transportOrderDetail, TransportOrderDetail.class);
  	    for(TransportOrderDetail s:transportOrderDetailList){
  		   s.setTransportno(transportOrderNo);
+ 		   s.setPodfid(s.getId());
  		   s.setCrt(new Date());
  		   if(s.getId()!=null)
  		   {
@@ -95,7 +100,8 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 
  		   s.setId(null);
  	   }
- 	   transportOrder.setTransportweight(actualWeight);
+ 	   transportOrder.setTransportactualweight(actualWeight);
+ 	    transportOrder.setTransportfinalweight(finalWeight);
  	   transportOrder.setDeliveryno(transportOrderVo.getDeliveryno());
 	    if(EnumTransportFee.TAXFREE.getValue()==(transportOrderVo.getFeeoption())|| EnumTransportFee.TAXINCLUDED.getValue()==(transportOrderVo.getFeeoption()) )
 	    {
@@ -180,16 +186,17 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 	}
 
 	@Override
-	public Boolean confirmTransportOrder(TransportOrderVo transportOrderVo,String actualTotalWeight) {
+	public Boolean confirmTransportOrder(TransportOrderVo transportOrderVo) {
 		TransportOrder transportOrder = new TransportOrder();
 		transportOrder.setId(transportOrderVo.getId());
 		transportOrder.setFeeoption(transportOrderVo.getFeeoption());
-		transportOrder.setTransportweight(new BigDecimal(actualTotalWeight));
+		transportOrder.setTransportactualweight(transportOrderVo.getTransportactualweight());
+		transportOrder.setTransportfinalweight(transportOrderVo.getTransportfinalweight());
 		transportOrder.setStatus(EnumStockStatus.TRANSPORTFINISH.getText());
 		if (EnumTransportFee.TAXFREE.getValue() == (transportOrderVo.getFeeoption()) || EnumTransportFee.TAXINCLUDED.getValue() == (transportOrderVo.getFeeoption())) {
 
 			transportOrder.setTransportfee(transportOrderVo.getTransportfee());
-			transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee().multiply(new BigDecimal(actualTotalWeight)));
+			transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee().multiply(transportOrderVo.getTransportactualweight()));
 		} else {
 //			transportOrder.setTransportfee(new BigDecimal(0));
 			transportOrder.setTransporttotalfee(transportOrderVo.getTransportfee());
@@ -198,6 +205,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 		String transportOrderDetail = transportOrderVo.getTransportOrderDetail();
 		List<TransportOrderDetail> transportOrderDetailList = JSONObject.parseArray(transportOrderDetail, TransportOrderDetail.class);
 		List<DeliveryOrderDetailPurDto> deliveryOrderDetailPurDtoList = new ArrayList<DeliveryOrderDetailPurDto>();
+		List<ProcessOrderDetailFinish> processOrderDetailFinishes = new ArrayList<>();
 		for (TransportOrderDetail transportOrderDetailobject : transportOrderDetailList) {
 			TransportOrderDetail tod = transportOrderDetailService.selectById(transportOrderDetailobject.getId());
 			if (!tod.getFinalweight().equals(transportOrderDetailobject.getFinalweight().setScale(3, BigDecimal.ROUND_HALF_UP))) {
@@ -207,6 +215,10 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 				deliveryOrderDetailPurDto.setStockid(tod.getStockid());
 				deliveryOrderDetailPurDto.setDeliveryno(tod.getDeliveryno());
 				deliveryOrderDetailPurDtoList.add(deliveryOrderDetailPurDto);
+				ProcessOrderDetailFinish processOrderDetailFinish = new ProcessOrderDetailFinish();
+				processOrderDetailFinish.setFinalweight(transportOrderDetailobject.getFinalweight());
+				processOrderDetailFinish.setId(transportOrderDetailobject.getPodfid());
+				processOrderDetailFinishes.add(processOrderDetailFinish);
 			}
 
 		}
@@ -214,6 +226,7 @@ public class TransportOrderServiceImpl extends ServiceImpl<TransportOrderMapper,
 		{
 			return true;
 		}
+		processOrderDetailFinishService.updateBatchById(processOrderDetailFinishes);
 		transportOrderDetailService.updateBatchById(transportOrderDetailList);
       /** 商品误差统计,按照deliveryno为group,更新的是deliveryOrder*/
 		Map<String, List> balanceSumByDeliveryno = deliveryOrderDetailPurDtoList.stream()

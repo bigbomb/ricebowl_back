@@ -64,35 +64,35 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 	    			    	stock.setStatus(EnumStockStatus.INSTOCK.getText());
 	    			    	stock = stockMapper.selectOne(stock);
 	    			    	//如果锁货全部锁完
-	    			    	if(stock.getNum()==0)
-	    			    	{
-	    			    		stockMapper.deleteById(Integer.valueOf(id));
-	    			    		stock = new Stock();
-	    			    		if(numMap.containsKey(pd[i])&&weightMap.containsKey(pd[i]))
-				    			{
-				    				sumNum = Integer.valueOf(numMap.get(pd[i]))+Integer.valueOf(num[i]);
-				    				numMap.put(pd[i], sumNum);
-				    				sumWeight = weightMap.get(pd[i]).add(new BigDecimal(weight[i])).setScale(5,BigDecimal.ROUND_HALF_UP);
-				    				weightMap.put(pd[i],sumWeight);
-				    			}
-				    			else
-				    			{
-				    				numMap.put(pd[i], Integer.valueOf(num[i]));
-				    				weightMap.put(pd[i],new BigDecimal(weight[i]).setScale(5,BigDecimal.ROUND_HALF_UP));
-				    			}
-				    			
-				    	    	localnum.set(numMap);
-								localweight.set(weightMap);
-		        	    		stock.setNum(localnum.get().get(pd[i]));
-		        	    		stock.setWeight(localweight.get().get(pd[i]));
-	    			    		stock.setProductid(pd[i]);
-	    			    		stock.setId(Integer.valueOf(id));
-		    			    	stock.setStatus(EnumStockStatus.INSTOCK.getText());
-	    			    		stock.setLockman("");
-	    			    		updatestocklist.add(stock);
-	    			    	}
-				    		//如果判断只是锁了一部分
-				    		else {
+//	    			    	if(stock.getNum()==0 ||)
+//	    			    	{
+//	    			    		stockMapper.deleteById(Integer.valueOf(id));
+//	    			    		stock = new Stock();
+//	    			    		if(numMap.containsKey(pd[i])&&weightMap.containsKey(pd[i]))
+//				    			{
+//				    				sumNum = Integer.valueOf(numMap.get(pd[i]))+Integer.valueOf(num[i]);
+//				    				numMap.put(pd[i], sumNum);
+//				    				sumWeight = weightMap.get(pd[i]).add(new BigDecimal(weight[i])).setScale(5,BigDecimal.ROUND_HALF_UP);
+//				    				weightMap.put(pd[i],sumWeight);
+//				    			}
+//				    			else
+//				    			{
+//				    				numMap.put(pd[i], Integer.valueOf(num[i]));
+//				    				weightMap.put(pd[i],new BigDecimal(weight[i]).setScale(5,BigDecimal.ROUND_HALF_UP));
+//				    			}
+//
+//				    	    	localnum.set(numMap);
+//								localweight.set(weightMap);
+//		        	    		stock.setNum(localnum.get().get(pd[i]));
+//		        	    		stock.setWeight(localweight.get().get(pd[i]));
+//	    			    		stock.setProductid(pd[i]);
+//	    			    		stock.setId(Integer.valueOf(id));
+//		    			    	stock.setStatus(EnumStockStatus.INSTOCK.getText());
+//	    			    		stock.setLockman("");
+//	    			    		updatestocklist.add(stock);
+//	    			    	}
+//				    		//如果判断只是锁了一部分
+//				    		else {
 				    			stockMapper.deleteById(Integer.valueOf(id));
 				    			if(numMap.containsKey(pd[i])&&weightMap.containsKey(pd[i]))
 				    			{
@@ -111,10 +111,11 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
 				    			localweight.set(weightMap);
 		        	    		stock.setNum(localnum.get().get(pd[i])+stock.getNum());
 								stock.setWeight(localweight.get().get(pd[i]).add(stock.getWeight()));
+								stock.setOriweight(localweight.get().get(pd[i]).add(stock.getWeight()));
 		        	    		stock.setProductid(pd[i]);
 		        	    		stock.setStatus(EnumStockStatus.INSTOCK.getText());
 		        	    		addstocklist.add(stock);
-				    		}
+//				    		}
 	    			    }
 	        	        i++; 	    		
 	    		}
@@ -174,6 +175,8 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
     	        	    		stock.setCustomerid(customerId);
     	        	    		stock.setCustomername(customerName);
                                 stock.setParentstockid(Integer.valueOf(id));
+                                stock.setOriweight(new BigDecimal(0));
+                                stock.setOrinum(0);
                                 EntityWrapper<Stock> stockwrapper = new EntityWrapper<Stock>();
                                 stockwrapper.eq("parentStockId",id).eq("customerId",customerId).eq("status",EnumStockStatus.LOCKSTOCK.getText());
                                 List<Stock> newstockList = super.baseMapper.selectList(stockwrapper);

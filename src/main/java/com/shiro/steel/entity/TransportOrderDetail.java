@@ -15,7 +15,9 @@ public class TransportOrderDetail implements Serializable {
     private String transportno;
 
     private String deliveryno;
-    
+
+    private Integer podfid;
+
     private String saledetailid;
 
     private String productname;
@@ -71,7 +73,15 @@ public class TransportOrderDetail implements Serializable {
 		this.deliveryno = deliveryno;
 	}
 
-	public String getSaledetailid() {
+    public Integer getPodfid() {
+        return podfid;
+    }
+
+    public void setPodfid(Integer podfid) {
+        this.podfid = podfid;
+    }
+
+    public String getSaledetailid() {
         return saledetailid;
     }
 

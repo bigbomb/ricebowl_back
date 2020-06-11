@@ -12,7 +12,8 @@
     <result column="memberId" jdbcType="VARCHAR" property="memberid" />
     <result column="crt" jdbcType="TIMESTAMP" property="crt" />
     <result column="transportFee" jdbcType="DECIMAL" property="transportfee" />
-    <result column="transportWeight" jdbcType="DECIMAL" property="transportweight" />
+    <result column="transportActualWeight" jdbcType="DECIMAL" property="transportactualweight" />
+      <result column="transportFinalWeight" jdbcType="DECIMAL" property="transportfinalweight" />
     <result column="transportAddress" jdbcType="VARCHAR" property="transportaddress" />
     <result column="warehouse" jdbcType="VARCHAR" property="warehouse" />
     <result column="vehicleNumber" jdbcType="VARCHAR" property="vehiclenumber" />
@@ -37,7 +38,8 @@
       memberId = #{memberid,jdbcType=VARCHAR},
       crt = #{crt,jdbcType=TIMESTAMP},
       transportFee = #{transportfee,jdbcType=DECIMAL},
-      transportWeight = #{transportweight,jdbcType=DECIMAL},
+      transportActualWeight = #{transportactualweight,jdbcType=DECIMAL},
+      transportFinalWeight = #{transportfinalweight,jdbcType=DECIMAL},
       transportAddress = #{transportaddress,jdbcType=VARCHAR},
       warehouse = #{warehouse,jdbcType=VARCHAR},
       vehicleNumber = #{vehiclenumber,jdbcType=VARCHAR},
@@ -45,20 +47,20 @@
     where id = #{id,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
-    select id, verifyBy, createBy, upt, transportNo, contractNo, memberId, crt, transportFee, 
-    transportWeight, transportAddress, warehouse, vehicleNumber, carrier
+    select id, verifyBy, createBy, upt, transportNo, contractNo, memberId, crt, transportFee,
+      transportActualWeight, transportFinalWeight,transportAddress, warehouse, vehicleNumber, carrier
     from transport_order
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, verifyBy, createBy, upt, transportNo, contractNo, memberId, crt, transportFee, 
-    transportWeight, transportAddress, warehouse, vehicleNumber, carrier
+    select id, verifyBy, createBy, upt, transportNo, contractNo, memberId, crt, transportFee,
+      transportActualWeight, transportFinalWeight, transportAddress, warehouse, vehicleNumber, carrier
     from transport_order
   </select>
   
   <select id="findTransportOrderByPage" resultType="com.shiro.steel.pojo.dto.TransportOrderDto">
-	 select id, verifyBy, createBy, upt, transportNo,deliveryNo, contractNo, memberId, crt, transportFee, 
-    transportWeight, transportAddress, warehouse, vehicleNumber, carrier,remark,feeOption,transportTotalFee,status
+	 select id, verifyBy, createBy, upt, transportNo,deliveryNo, contractNo, memberId, crt, transportFee,
+      transportActualWeight, transportFinalWeight, transportAddress, warehouse, vehicleNumber, carrier,remark,feeOption,transportTotalFee,status
     from transport_order
 		WHERE 1=1
 		<if test="''!= dto.keyword and dto.keyword!=null">
@@ -77,7 +79,8 @@
 	</select>
 
     <select id="selectListBytransport" resultType="com.shiro.steel.pojo.dto.TransportOrderDto">
-        select tso.transportNo as transportno,sc.contractNo as contractno,tso.transportTotalFee as transportfee,tso.transportWeight as transportweight,tso.deliveryNo as deliveryno,
+        select tso.transportNo as transportno,sc.contractNo as contractno,tso.transportTotalFee as transportfee,
+        tso.transportActualWeight as transportactualweight, tso.transportActualWeight as transportfinalweight,tso.deliveryNo as deliveryno,
         sc.customerName as customername
         from transport_order tso LEFT JOIN sale_contract sc on tso.contractNo = sc.contractNo
         WHERE 1=1

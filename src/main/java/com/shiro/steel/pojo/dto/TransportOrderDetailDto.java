@@ -38,6 +38,8 @@ public class TransportOrderDetailDto implements Serializable {
 
     private Date upt;
 
+    private Integer podfid;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -166,5 +168,13 @@ public class TransportOrderDetailDto implements Serializable {
 
     public void setUpt(Date upt) {
         this.upt = upt;
+    }
+
+    public Integer getPodfid() {
+        return podfid;
+    }
+
+    public void setPodfid(Integer podfid) {
+        this.podfid = podfid;
     }
 }

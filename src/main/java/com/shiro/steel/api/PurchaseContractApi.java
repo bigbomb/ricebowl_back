@@ -112,10 +112,21 @@ public class PurchaseContractApi extends BaseApi {
      */
     @RequestMapping(value = "/addConstract",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public Object addUser(@Valid PurchaseContractVo purchaseContractVo, BindingResult bindingResult) throws ParseException {
+    public String addConstract(@Valid PurchaseContractVo purchaseContractVo, BindingResult bindingResult) throws Exception {
+		String resultUtil = "";
+     try{
+
+		 resultUtil = purchaseContractService.addContract(purchaseContractVo);
+	 }catch (Exception e)
+	 {
+        if(e.getMessage().equals("td"))
+		{
+			resultUtil = ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "该资源已经锁货，无法变更数据");
+		}
+	 }
 
 
-       return purchaseContractService.addContract(purchaseContractVo);
+       return resultUtil;
     }
     
     /**

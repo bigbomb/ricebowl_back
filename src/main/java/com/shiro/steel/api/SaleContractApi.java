@@ -70,7 +70,7 @@ public class SaleContractApi extends BaseApi {
 	private ProductSpecService productSpecService;
 	
 	@Autowired
-	private SaleContractWarehouseService saleContractWarehouseService;
+	private WarehouseInfoService warehouseInfoService;
 	
 	@Autowired
 	private SaleContractAnalyseService saleContractAnalyseService;
@@ -186,10 +186,10 @@ public class SaleContractApi extends BaseApi {
         List<Productspec> productspecList = productSpecService.selectList(productspecWrapper);
         
         //获取
-        SaleContractWarehouse saleContractWarehouse = new SaleContractWarehouse();
+        WarehouseInfo saleContractWarehouse = new WarehouseInfo();
     	saleContractWarehouse.setMemberid(memberId);
-        EntityWrapper<SaleContractWarehouse> saleContractWarehouseWrapper = new EntityWrapper<SaleContractWarehouse>(saleContractWarehouse);
-        List<SaleContractWarehouse> saleContractWarehouseList = saleContractWarehouseService.selectList(saleContractWarehouseWrapper);
+        EntityWrapper<WarehouseInfo> saleContractWarehouseWrapper = new EntityWrapper<WarehouseInfo>(saleContractWarehouse);
+        List<WarehouseInfo> saleContractWarehouseList = warehouseInfoService.selectList(saleContractWarehouseWrapper);
 
 
         //获取供方企业信息
@@ -374,7 +374,7 @@ public class SaleContractApi extends BaseApi {
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object delSaleContractWarehouse(String id,String memberId)
     {
-    	Boolean status = saleContractWarehouseService.deleteById(Integer.parseInt(id));
+    	Boolean status = warehouseInfoService.deleteById(Integer.parseInt(id));
     	if(status)
     	{
         	return ResultUtil.result(EnumCode.OK.getValue(), "删除成功");
@@ -449,10 +449,10 @@ public class SaleContractApi extends BaseApi {
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object findSaleContractWarehouse(String memberId)
     {
-    	SaleContractWarehouse saleContractWarehouse = new SaleContractWarehouse();
-    	saleContractWarehouse.setMemberid(memberId);
-        EntityWrapper<SaleContractWarehouse> saleContractWarehouseWrapper = new EntityWrapper<SaleContractWarehouse>(saleContractWarehouse);
-        List<SaleContractWarehouse> saleContractWarehouseList = saleContractWarehouseService.selectList(saleContractWarehouseWrapper);
+        WarehouseInfo warehouse_info = new WarehouseInfo();
+        warehouse_info.setMemberid(memberId);
+        EntityWrapper<WarehouseInfo> saleContractWarehouseWrapper = new EntityWrapper<WarehouseInfo>(warehouse_info);
+        List<WarehouseInfo> saleContractWarehouseList = warehouseInfoService.selectList(saleContractWarehouseWrapper);
         Map<String, Object> result = new HashMap<String, Object>();
         result.put("saleContractWarehouseList", saleContractWarehouseList);
         return ResultUtil.result(EnumCode.OK.getValue(), "读取成功",result);

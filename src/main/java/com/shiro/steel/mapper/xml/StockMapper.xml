@@ -151,12 +151,60 @@
     <update id="batchUpdatebyPurId" parameterType="java.util.List">
         <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             UPDATE stock
-            <set>
-                packingNo = #{item.packingno},oriweight = #{item.oriweight},
-                unit = #{item.unit},orinum = #{item.orinum}, weight =  #{item.weight},
-                num = #{item.num}
 
-            </set>
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="item.memberid != null and '' != item.memberid">
+                    memberId = #{item.memberid,jdbcType=VARCHAR},
+                </if>
+                <if test="item.productname != null and '' != item.productname">
+                    productName = #{item.productname,jdbcType=VARCHAR},
+                </if>
+                <if test="item.productspec != null and '' != item.productspec">
+                    productSpec = #{item.productspec,jdbcType=VARCHAR},
+                </if>
+                <if test="item.productfactory != null and '' != item.productfactory">
+                    productFactory = #{item.productfactory,jdbcType=VARCHAR},
+                </if>
+                <if test="item.productmark != null and '' != item.productmark">
+                    productMark = #{item.productmark,jdbcType=VARCHAR},
+                </if>
+                <if test="item.num != null and '' != item.num">
+                    num = #{item.num,jdbcType=INTEGER},
+                </if>
+                <if test="item.orinum != null and '' != item.orinum">
+                    orinum = #{item.orinum,jdbcType=INTEGER},
+                </if>
+                <if test="item.weight != null and '' != item.weight">
+                    weight = #{item.weight,jdbcType=DECIMAL},
+                </if>
+                <if test="item.oriweight != null and '' != item.oriweight">
+                    oriweight = #{item.oriweight,jdbcType=DECIMAL},
+                </if>
+                <if test="item.price != null and '' != item.price">
+                    price = #{item.price,jdbcType=DECIMAL},
+                </if>
+                <if test="item.unit != null and '' != item.unit">
+                    unit = #{item.unit,jdbcType=VARCHAR},
+                </if>
+                <if test="item.total != null and '' != item.total">
+                    total = #{item.total,jdbcType=DECIMAL},
+                </if>
+                <if test="item.warehousename != null and '' != item.warehousename">
+                    warehousename = #{item.warehousename,jdbcType=VARCHAR},
+                </if>
+                <if test="item.stockouttype != null and '' != item.stockouttype">
+                    stockOutType = #{item.stockouttype,jdbcType=VARCHAR},
+                </if>
+                <if test="item.quality != null and '' != item.quality">
+                    quality = #{item.quality,jdbcType=VARCHAR},
+                </if>
+                <if test="item.remark != null and '' != item.remark">
+                    remark = #{item.remark,jdbcType=VARCHAR},
+                </if>
+<!--                <if test="item.upt != null and '' != item.upt">-->
+                    upt = #{item.upt,jdbcType=TIMESTAMP}
+<!--                </if>-->
+            </trim>
             <where>
                 purDetailId = #{item.purdetailid} and parentStockId is null
             </where>
@@ -164,3 +212,4 @@
     </update>
 
 </mapper>
+

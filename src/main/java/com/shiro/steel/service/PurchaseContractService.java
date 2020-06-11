@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
+import com.shiro.steel.utils.ResultUtil;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.baomidou.mybatisplus.plugins.Page;
@@ -20,7 +21,7 @@ public interface PurchaseContractService extends IService<PurchaseContract>{
 	
 	List<PurchaseContractDto> findPurchaseContractByStatusPage(Page<PurchaseContractDto> page, ParamsDto dto,String statusTab,String invoiceStatus, String createby, String startTimeString, String endTimeString);
 	@Transactional(rollbackFor = Exception.class)
-	Object addContract(PurchaseContractVo purchaseContractVo) throws ParseException;
+	String addContract(PurchaseContractVo purchaseContractVo) throws Exception;
 	@Transactional(rollbackFor = Exception.class)
 	Integer delBatchIds(List<String> asList, List<String> asList2);
 	@Transactional(rollbackFor = Exception.class)

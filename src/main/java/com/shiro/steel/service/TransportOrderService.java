@@ -26,5 +26,5 @@ public interface TransportOrderService extends IService<TransportOrder>{
 
 	List<TransportOrderDto> selectListBytransport(Page<SaleContractDto> page, ParamsDto dto, String createby, String startTimeString, String endTimeString);
 	@Transactional(rollbackFor = Exception.class)
-	Boolean confirmTransportOrder(TransportOrderVo transportOrderVo,String actualTotalWeight);
+	Boolean confirmTransportOrder(TransportOrderVo transportOrderVo);
 }

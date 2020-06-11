@@ -10,7 +10,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.shiro.steel.entity.*;
 import com.shiro.steel.pojo.constant.CommonConstant;
+import com.shiro.steel.service.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,17 +25,6 @@ import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.plugins.Page;
 import com.baomidou.mybatisplus.service.impl.ServiceImpl;
 import com.shiro.steel.Enum.EnumCode;
-import com.shiro.steel.entity.CustomerInfo;
-import com.shiro.steel.entity.DeliveryOrder;
-import com.shiro.steel.entity.ProcessOrder;
-import com.shiro.steel.entity.Product;
-import com.shiro.steel.entity.Productfactory;
-import com.shiro.steel.entity.Productmark;
-import com.shiro.steel.entity.Productspec;
-import com.shiro.steel.entity.SaleContract;
-import com.shiro.steel.entity.SaleContractDetail;
-import com.shiro.steel.entity.SaleContractWarehouse;
-import com.shiro.steel.entity.Stock;
 import com.shiro.steel.mapper.CustomerInfoMapper;
 import com.shiro.steel.mapper.SaleContractDetailMapper;
 import com.shiro.steel.mapper.SaleContractMapper;
@@ -42,17 +33,6 @@ import com.shiro.steel.pojo.dto.SaleContractDto;
 import com.shiro.steel.pojo.dto.UserInfoDto;
 import com.shiro.steel.pojo.vo.ContractVo;
 import com.shiro.steel.pojo.vo.CustomerInfoVo;
-import com.shiro.steel.service.CustomerInfoService;
-import com.shiro.steel.service.DeliveryOrderService;
-import com.shiro.steel.service.ProcessOrderService;
-import com.shiro.steel.service.ProductFactoryService;
-import com.shiro.steel.service.ProductMarkService;
-import com.shiro.steel.service.ProductService;
-import com.shiro.steel.service.ProductSpecService;
-import com.shiro.steel.service.SaleContractDetailService;
-import com.shiro.steel.service.SaleContractService;
-import com.shiro.steel.service.SaleContractWarehouseService;
-import com.shiro.steel.service.StockService;
 import com.shiro.steel.utils.CommonUtil;
 import com.shiro.steel.utils.ResultUtil;
 @Service
@@ -83,7 +63,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 	private ProductSpecService productSpecService;
 	
 	@Autowired
-	private SaleContractWarehouseService saleContractWarehouseService;
+	private WarehouseInfoService warehouseInfoService;
     
 	@Autowired
 	private CustomerInfoMapper customerInfoMapper;
@@ -122,7 +102,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 				List<Productfactory> productfactoryList = new ArrayList<Productfactory>();
 				List<Productmark> productmarkList = new ArrayList<Productmark>();
 				List<Productspec> productspecList = new ArrayList<Productspec>();
-				List<SaleContractWarehouse> saleContractWarehouseList = new ArrayList<SaleContractWarehouse>();
+				List<WarehouseInfo> saleContractWarehouseList = new ArrayList<WarehouseInfo>();
 				List<Stock> stockItemList = new ArrayList<Stock>();
 				List checkProduct = new ArrayList();
 		    	for(SaleContractDetail s:collection){
@@ -135,7 +115,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 					  Productfactory productfactory = new Productfactory();
 					  Productmark productmark = new Productmark();
 					  Productspec productspec = new Productspec();
-					  SaleContractWarehouse saleContractWarehouse = new SaleContractWarehouse();
+					  WarehouseInfo saleContractWarehouse = new WarehouseInfo();
 		  		   	  s.setContractno(contractno); 
 	  				  s.setStatus("待审核");
 
@@ -220,13 +200,13 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 			  		 	}
 		  		      }
 		  		      
-		  		      EntityWrapper<SaleContractWarehouse> SaleContractWarehouseWapper = new EntityWrapper<SaleContractWarehouse>(saleContractWarehouse);
+		  		      EntityWrapper<WarehouseInfo> SaleContractWarehouseWapper = new EntityWrapper<WarehouseInfo>(saleContractWarehouse);
 		  		      saleContractWarehouse.setWarehousename(s.getWarehousename());
 		  		      saleContractWarehouse.setMemberid(contractVo.getMemberid());
-		  		      saleContractWarehouse = saleContractWarehouseService.selectOne(SaleContractWarehouseWapper);
+		  		      saleContractWarehouse = warehouseInfoService.selectOne(SaleContractWarehouseWapper);
 		  		      if(saleContractWarehouse == null)
 		  		      {
-		  		    	saleContractWarehouse = new SaleContractWarehouse();
+		  		    	saleContractWarehouse = new WarehouseInfo();
 		  		    	saleContractWarehouse.setWarehousename(s.getWarehousename());
 			  		    saleContractWarehouse.setMemberid(contractVo.getMemberid());
 		  		    	
@@ -267,7 +247,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 		    	}
 		    	if(saleContractWarehouseList.size()>0)
 		    	{
-		    		saleContractWarehouseService.insertBatch(saleContractWarehouseList);
+		    		warehouseInfoService.insertBatch(saleContractWarehouseList);
 		    	}
 		    	
 			    String customerIdString ="";
@@ -308,7 +288,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 				List<Productfactory> productfactoryList = new ArrayList<Productfactory>();
 				List<Productmark> productmarkList = new ArrayList<Productmark>();
 				List<Productspec> productspecList = new ArrayList<Productspec>();
-				List<SaleContractWarehouse> saleContractWarehouseList = new ArrayList<SaleContractWarehouse>();
+				List<WarehouseInfo> saleContractWarehouseList = new ArrayList<WarehouseInfo>();
 				 saleContract.setUpt(sdf1.parse(sdf1.format(new Date())));
 				 super.baseMapper.updateByPrimaryKey(saleContract);
 				 Map contractMap = new HashMap();
@@ -320,7 +300,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 					   Productfactory productfactory = new Productfactory();
 					   Productmark productmark = new Productmark();
 					   Productspec productspec = new Productspec();
-					   SaleContractWarehouse saleContractWarehouse = new SaleContractWarehouse();
+					   WarehouseInfo saleContractWarehouse = new WarehouseInfo();
 			  		   s.setContractno(saleContract.getContractno()); 
 				  		 if("意向临调合同".equals(contractVo.getContractstatus()))
 			  			  {
@@ -405,13 +385,13 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 			  		 		continue;
 			  		 	}
 		  		      }
-		  		    EntityWrapper<SaleContractWarehouse> SaleContractWarehouseWapper = new EntityWrapper<SaleContractWarehouse>(saleContractWarehouse);
+		  		    EntityWrapper<WarehouseInfo> SaleContractWarehouseWapper = new EntityWrapper<WarehouseInfo>(saleContractWarehouse);
 		  		      saleContractWarehouse.setWarehousename(s.getWarehousename());
 		  		      saleContractWarehouse.setMemberid(contractVo.getMemberid());
-		  		      saleContractWarehouse = saleContractWarehouseService.selectOne(SaleContractWarehouseWapper);
+		  		      saleContractWarehouse = warehouseInfoService.selectOne(SaleContractWarehouseWapper);
 		  		      if(saleContractWarehouse == null)
 		  		      {
-		  		    	saleContractWarehouse = new SaleContractWarehouse();
+		  		    	saleContractWarehouse = new WarehouseInfo();
 		  		    	saleContractWarehouse.setWarehousename(s.getWarehousename());
 			  		    saleContractWarehouse.setMemberid(contractVo.getMemberid());
 		  		    	
@@ -445,7 +425,7 @@ public class SaleContractServiceImpl extends ServiceImpl<SaleContractMapper, Sal
 			    	}
 			    	if(saleContractWarehouseList.size()>0)
 			    	{
-			    		saleContractWarehouseService.insertBatch(saleContractWarehouseList);
+			    		warehouseInfoService.insertBatch(saleContractWarehouseList);
 			    	}
 				 saleContractDetailService.insertBatch(collection);
 				 status = "更新成功";

@@ -1,6 +1,8 @@
 package com.shiro.steel.service.ipml;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +55,11 @@ public class ProcessOrderDetailFinishServiceImpl extends ServiceImpl<ProcessOrde
 	    	List<Integer>  delIds = JSONObject.parseArray(delidString, Integer.class);
 	    	List<ProcessOrderDetailFinish> noidprocessOrderDetailFinishList = new ArrayList<ProcessOrderDetailFinish>();
 	    	List<ProcessOrderDetailFinish> idprocessOrderDetailFinishList = new ArrayList<ProcessOrderDetailFinish>();
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    	for(ProcessOrderDetailFinish podf:processOrderDetailFinishList)
 	    	{
 	    		podf.setProcessno(processnoString);
+				podf.setCrt(sdf1.parse(sdf1.format(new Date())));
 	    		if(podf.getId()==null)
 	    		{
 	    			podf.setFinalweight(podf.getActualweight());

@@ -34,7 +34,9 @@ public class TransportOrderDto implements Serializable {
 
     private BigDecimal transportfee;
 
-    private BigDecimal transportweight;
+    private BigDecimal transportactualweight;
+
+    private BigDecimal transportfinalweight;
 
     private String transportaddress;
 
@@ -143,12 +145,20 @@ public class TransportOrderDto implements Serializable {
         this.transportfee = transportfee;
     }
 
-    public BigDecimal getTransportweight() {
-        return transportweight;
+    public BigDecimal getTransportactualweight() {
+        return transportactualweight;
     }
 
-    public void setTransportweight(BigDecimal transportweight) {
-        this.transportweight = transportweight;
+    public void setTransportactualweight(BigDecimal transportactualweight) {
+        this.transportactualweight = transportactualweight;
+    }
+
+    public BigDecimal getTransportfinalweight() {
+        return transportfinalweight;
+    }
+
+    public void setTransportfinalweight(BigDecimal transportfinalweight) {
+        this.transportfinalweight = transportfinalweight;
     }
 
     public String getTransportaddress() {
