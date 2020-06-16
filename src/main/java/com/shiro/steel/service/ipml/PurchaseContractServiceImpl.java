@@ -81,7 +81,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	
 	
 	@Override
-	public String addContract(PurchaseContractVo purchaseContractVo) throws Exception {
+	public String addinstockConstract(PurchaseContractVo purchaseContractVo) throws Exception {
 		// TODO Auto-generated method stub
 		String contractno = "";
     	//contractVo.setContractstatus(ContractStatus.TOPAY.getText());
@@ -557,7 +557,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	}
 
 	@Override
-	public Integer updateByVerify(Integer id, String purchaseno,String memberId) throws ParseException {
+	public Integer updatePurchaseByVerify(Integer id, String purchaseno,String memberId) throws ParseException {
 		// TODO Auto-generated method stub
 	   	PurchaseContract purchaseContract = new PurchaseContract();
     	purchaseContract.setId(id);
@@ -569,27 +569,27 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
     	 PurchaseContractDetail purchaseContractDetail = new PurchaseContractDetail();
     	 purchaseContractDetail.setPurchaseno(purchaseno);
 //    	 purchaseContractDetail.setStatus("在库");
-    	 EntityWrapper<PurchaseContractDetail> eWrapper = new EntityWrapper<PurchaseContractDetail>(purchaseContractDetail);
-    	 List<PurchaseContractDetail> purchaseContractDetailList = purchaseContractDetailService.selectList(eWrapper);
-    	 List<Stock> stockList = new ArrayList<Stock>();
-    	 for(PurchaseContractDetail lpurchaseContractDetail:purchaseContractDetailList)
-    	 {
-    		 Stock stock = new Stock();
-    		 BeanCopier copier = BeanCopier.create(PurchaseContractDetail.class, Stock.class, false);
-    		 copier.copy(lpurchaseContractDetail, stock, null);
-    		 String uuid = UUID.randomUUID().toString().replaceAll("-","");
-    		 stock.setPurdetailid(lpurchaseContractDetail.getId());
-    		 stock.setOrinum(lpurchaseContractDetail.getNum());
-    		 stock.setOriweight(lpurchaseContractDetail.getWeight());
-    		 stock.setProductid(uuid);
-    		 stock.setMemberid(memberId);
-    		 stock.setStatus("在库");
-			 SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    		 stock.setUpt(sdf1.parse(sdf1.format(new Date())));
-    		 stockList.add(stock);
-    	 }
-    	 stockService.insertBatch(stockList);
-    	 purchaseContractDetail.setStatus("在库");
+//    	 EntityWrapper<PurchaseContractDetail> eWrapper = new EntityWrapper<PurchaseContractDetail>(purchaseContractDetail);
+//    	 List<PurchaseContractDetail> purchaseContractDetailList = purchaseContractDetailService.selectList(eWrapper);
+//    	 List<Stock> stockList = new ArrayList<Stock>();
+//    	 for(PurchaseContractDetail lpurchaseContractDetail:purchaseContractDetailList)
+//    	 {
+//    		 Stock stock = new Stock();
+//    		 BeanCopier copier = BeanCopier.create(PurchaseContractDetail.class, Stock.class, false);
+//    		 copier.copy(lpurchaseContractDetail, stock, null);
+//    		 String uuid = UUID.randomUUID().toString().replaceAll("-","");
+//    		 stock.setPurdetailid(lpurchaseContractDetail.getId());
+//    		 stock.setOrinum(lpurchaseContractDetail.getNum());
+//    		 stock.setOriweight(lpurchaseContractDetail.getWeight());
+//    		 stock.setProductid(uuid);
+//    		 stock.setMemberid(memberId);
+//    		 stock.setStatus("在库");
+//			 SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//    		 stock.setUpt(sdf1.parse(sdf1.format(new Date())));
+//    		 stockList.add(stock);
+//    	 }
+//    	 stockService.insertBatch(stockList);
+//    	 purchaseContractDetail.setStatus("在库");
     	 purchaseContractDetailService.updateByDetail(purchaseContractDetail);
     	 Integer status = super.baseMapper.updateById(purchaseContract);
 		return status;
@@ -637,6 +637,334 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 	   	 }
 
 	}
+
+	@Override
+	public String addContract(PurchaseContractVo purchaseContractVo) throws Exception {
+
+			// TODO Auto-generated method stub
+			String contractno = "";
+			//contractVo.setContractstatus(ContractStatus.TOPAY.getText());
+			String purchaseContractDetail = purchaseContractVo.getPurchaseContractDetail();
+			List<PurchaseContractDetail>  collection = JSONObject.parseArray(purchaseContractDetail, PurchaseContractDetail.class);
+			String status ="";
+			PurchaseContract purchaseContract = new PurchaseContract();
+			BeanCopier copier = BeanCopier.create(PurchaseContractVo.class, PurchaseContract.class, false);
+			copier.copy(purchaseContractVo, purchaseContract, null);
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			if(StringUtils.isEmpty(purchaseContractVo.getPurchaseno()))
+			{
+				contractno = preName+CommonUtil.getTimeStamp();
+				purchaseContract.setPurchaseno(contractno);
+				List<Product> productList = new ArrayList<Product>();
+				List<Productfactory> productfactoryList = new ArrayList<Productfactory>();
+				List<Productmark> productmarkList = new ArrayList<Productmark>();
+				List<Productspec> productspecList = new ArrayList<Productspec>();
+				List<WarehouseInfo> saleContractWarehouseList = new ArrayList<WarehouseInfo>();
+				List checkProduct = new ArrayList();
+				for(PurchaseContractDetail s:collection){
+					Product product = new Product();
+					Productfactory productfactory = new Productfactory();
+					Productmark productmark = new Productmark();
+					Productspec productspec = new Productspec();
+					WarehouseInfo saleContractWarehouse = new WarehouseInfo();
+					s.setPurchaseno(contractno);
+					s.setStatus("待审核");
+					s.setCrt(sdf1.parse(sdf1.format(new Date())));
+					EntityWrapper<Product> eWrapper = new EntityWrapper<Product>(product);
+					product.setProductname(s.getProductname());
+					product.setMemberid(purchaseContractVo.getMemberid());
+					product = productService.selectOne(eWrapper);
+					if(product == null)
+					{
+						product = new Product();
+						product.setProductname(s.getProductname());
+						product.setMemberid(purchaseContractVo.getMemberid());
+						if(!checkProduct.contains(s.getProductname()))
+						{
+							checkProduct.add(s.getProductname());
+							productList.add(product);
+						}
+						else
+						{
+							continue;
+						}
+					}
+					EntityWrapper<Productfactory> wapperFactory = new EntityWrapper<Productfactory>(productfactory);
+					productfactory.setFactoryname(s.getProductfactory());
+					productfactory.setMemberid(purchaseContractVo.getMemberid());
+					productfactory = productFactoryService.selectOne(wapperFactory);
+					if(productfactory == null)
+					{
+						productfactory = new Productfactory();
+						productfactory.setFactoryname(s.getProductfactory());
+						productfactory.setMemberid(purchaseContractVo.getMemberid());
+
+						if(!checkProduct.contains(s.getProductfactory()))
+						{
+							checkProduct.add(s.getProductfactory());
+							productfactoryList.add(productfactory);
+						}
+						else
+						{
+							continue;
+						}
+
+					}
+					EntityWrapper<Productmark> wrapperMark = new EntityWrapper<Productmark>(productmark);
+					productmark.setMarkname(s.getProductmark());
+					productmark.setMemberid(purchaseContractVo.getMemberid());
+					productmark = productMarkService.selectOne(wrapperMark);
+					if(productmark == null)
+					{
+						productmark = new Productmark();
+						productmark.setMarkname(s.getProductmark());
+						productmark.setMemberid(purchaseContractVo.getMemberid());
+						if(!checkProduct.contains(s.getProductmark()))
+						{
+							checkProduct.add(s.getProductmark());
+							productmarkList.add(productmark);
+						}
+						else
+						{
+							continue;
+						}
+					}
+
+					EntityWrapper<Productspec> wrapperSpec = new EntityWrapper<Productspec>(productspec);
+					productspec.setSpecname(s.getProductspec());
+					productspec.setMemberid(purchaseContractVo.getMemberid());
+					productspec = productSpecService.selectOne(wrapperSpec);
+					if(productspec == null)
+					{
+						productspec = new Productspec();
+						productspec.setSpecname(s.getProductspec());
+						productspec.setMemberid(purchaseContractVo.getMemberid());
+						if(!checkProduct.contains(s.getProductspec()))
+						{
+							checkProduct.add(s.getProductspec());
+							productspecList.add(productspec);
+						}
+						else
+						{
+							continue;
+						}
+					}
+
+
+					EntityWrapper<WarehouseInfo> SaleContractWarehouseWapper = new EntityWrapper<WarehouseInfo>(saleContractWarehouse);
+					saleContractWarehouse.setWarehousename(s.getWarehousename());
+					saleContractWarehouse.setMemberid(purchaseContractVo.getMemberid());
+					saleContractWarehouse = warehouseInfoService.selectOne(SaleContractWarehouseWapper);
+					if(saleContractWarehouse == null)
+					{
+						saleContractWarehouse = new WarehouseInfo();
+						saleContractWarehouse.setWarehousename(s.getWarehousename());
+						saleContractWarehouse.setMemberid(purchaseContractVo.getMemberid());
+
+						if(!checkProduct.contains(s.getWarehousename()))
+						{
+							checkProduct.add(s.getWarehousename());
+							saleContractWarehouseList.add(saleContractWarehouse);
+						}
+						else
+						{
+							continue;
+						}
+
+					}
+
+
+				}
+				if(productList.size()>0)
+				{
+					productService.insertBatch(productList);
+				}
+				if(productfactoryList.size()>0)
+				{
+					productFactoryService.insertBatch(productfactoryList);
+				}
+				if(productmarkList.size()>0)
+				{
+					productMarkService.insertBatch(productmarkList);
+				}
+				if(productspecList.size()>0)
+				{
+					productSpecService.insertBatch(productspecList);
+				}
+				if(saleContractWarehouseList.size()>0)
+				{
+					warehouseInfoService.insertBatch(saleContractWarehouseList);
+				}
+				UserInfoDto userInfoDto = new UserInfoDto();
+				Subject subject = SecurityUtils.getSubject();
+				userInfoDto = (UserInfoDto) subject.getPrincipal();
+				purchaseContractVo.setMemberid(purchaseContractVo.getMemberid());
+				purchaseContract.setPurchasedate(sdf.parse(sdf.format(new Date())));
+				purchaseContract.setCrt(sdf1.parse(sdf1.format(new Date())));
+				purchaseContract.setPurchasestatus("待审核");
+				purchaseContract.setInvoicestatus("未收到");
+				purchaseContract.setCreateby(userInfoDto.getUsername());
+				super.baseMapper.insert(purchaseContract);
+				purchaseContractDetailService.insertBatch(collection);
+				status = "新增成功";
+			}
+			else
+			{
+				List<Product> productList = new ArrayList<Product>();
+				List<Productfactory> productfactoryList = new ArrayList<Productfactory>();
+				List<Productmark> productmarkList = new ArrayList<Productmark>();
+				List<Productspec> productspecList = new ArrayList<Productspec>();
+				List<WarehouseInfo> saleContractWarehouseList = new ArrayList<WarehouseInfo>();
+				List<Stock> stockList = new ArrayList<Stock>();
+
+				List checkProduct = new ArrayList();
+				purchaseContract.setUpt(sdf1.parse(sdf1.format(new Date())));
+				super.baseMapper.updateByPrimaryKey(purchaseContract);
+
+				for(PurchaseContractDetail s:collection){
+//
+					Product product = new Product();
+					Productfactory productfactory = new Productfactory();
+					Productmark productmark = new Productmark();
+					Productspec productspec = new Productspec();
+					WarehouseInfo saleContractWarehouse = new WarehouseInfo();
+					s.setPurchaseno(purchaseContract.getPurchaseno());
+//			  		  s.setStatus("在库");
+					EntityWrapper<Product> eWrapper = new EntityWrapper<Product>(product);
+					product.setProductname(s.getProductname());
+					product.setMemberid(purchaseContractVo.getMemberid());
+					product = productService.selectOne(eWrapper);
+					if(product == null)
+					{
+						product = new Product();
+						product.setProductname(s.getProductname());
+						product.setMemberid(purchaseContractVo.getMemberid());
+						if(!checkProduct.contains(s.getProductname()))
+						{
+							checkProduct.add(s.getProductname());
+							productList.add(product);
+						}
+						else
+						{
+							continue;
+						}
+					}
+					EntityWrapper<Productfactory> wapperFactory = new EntityWrapper<Productfactory>(productfactory);
+					productfactory.setFactoryname(s.getProductfactory());
+					productfactory.setMemberid(purchaseContractVo.getMemberid());
+					productfactory = productFactoryService.selectOne(wapperFactory);
+					if(productfactory == null)
+					{
+						productfactory = new Productfactory();
+						productfactory.setFactoryname(s.getProductfactory());
+						productfactory.setMemberid(purchaseContractVo.getMemberid());
+						if(!checkProduct.contains(s.getProductfactory()))
+						{
+							checkProduct.add(s.getProductfactory());
+							productfactoryList.add(productfactory);
+						}
+						else
+						{
+							continue;
+						}
+
+
+					}
+					EntityWrapper<Productmark> wrapperMark = new EntityWrapper<Productmark>(productmark);
+					productmark.setMarkname(s.getProductmark());
+					productmark.setMemberid(purchaseContractVo.getMemberid());
+					productmark = productMarkService.selectOne(wrapperMark);
+					if(productmark == null)
+					{
+						productmark = new Productmark();
+						productmark.setMarkname(s.getProductmark());
+						productmark.setMemberid(purchaseContractVo.getMemberid());
+						if(!checkProduct.contains(s.getProductmark()))
+						{
+							checkProduct.add(s.getProductmark());
+							productmarkList.add(productmark);
+						}
+						else
+						{
+							continue;
+						}
+					}
+
+					EntityWrapper<Productspec> wrapperSpec = new EntityWrapper<Productspec>(productspec);
+					productspec.setSpecname(s.getProductspec());
+					productspec.setMemberid(purchaseContractVo.getMemberid());
+					productspec = productSpecService.selectOne(wrapperSpec);
+					if(productspec == null)
+					{
+						productspec = new Productspec();
+						productspec.setSpecname(s.getProductspec());
+						productspec.setMemberid(purchaseContractVo.getMemberid());
+						if(!checkProduct.contains(s.getProductspec()))
+						{
+							checkProduct.add(s.getProductspec());
+							productspecList.add(productspec);
+						}
+						else
+						{
+							continue;
+						}
+					}
+
+					EntityWrapper<WarehouseInfo> SaleContractWarehouseWapper = new EntityWrapper<WarehouseInfo>(saleContractWarehouse);
+					saleContractWarehouse.setWarehousename(s.getWarehousename());
+					saleContractWarehouse.setMemberid(purchaseContractVo.getMemberid());
+					saleContractWarehouse = warehouseInfoService.selectOne(SaleContractWarehouseWapper);
+					if(saleContractWarehouse == null)
+					{
+						saleContractWarehouse = new WarehouseInfo();
+						saleContractWarehouse.setWarehousename(s.getWarehousename());
+						saleContractWarehouse.setMemberid(purchaseContractVo.getMemberid());
+
+						if(!checkProduct.contains(s.getWarehousename()))
+						{
+							checkProduct.add(s.getWarehousename());
+							saleContractWarehouseList.add(saleContractWarehouse);
+						}
+						else
+						{
+							continue;
+						}
+
+					}
+				}
+				if(productList.size()>0)
+				{
+					productService.insertBatch(productList);
+				}
+				if(productfactoryList.size()>0)
+				{
+					productFactoryService.insertBatch(productfactoryList);
+				}
+				if(productmarkList.size()>0)
+				{
+					productMarkService.insertBatch(productmarkList);
+				}
+				if(productspecList.size()>0)
+				{
+					productSpecService.insertBatch(productspecList);
+				}
+				if(saleContractWarehouseList.size()>0)
+				{
+					warehouseInfoService.insertBatch(saleContractWarehouseList);
+				}
+
+				if(stockList.size()>0)
+				{
+
+					Boolean st = stockService.batchUpdatebyPurId(stockList);
+
+				}
+				status ="保存成功";
+				purchaseContractDetailService.updateBatchById(collection);
+			}
+			return ResultUtil.result(EnumCode.OK.getValue(), status);
+		}
 
 
 }

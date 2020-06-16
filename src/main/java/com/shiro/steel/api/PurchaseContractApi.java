@@ -104,19 +104,48 @@ public class PurchaseContractApi extends BaseApi {
          List<PurchaseContractDto> list = purchaseContractService.findPurchaseContractByStatusPage(page,dto,statusTab,invoiceStatus,createby,startTimeString,endTimeString);
         return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list, page.getTotal(),page.getPages());
     }
+
+
+	/**
+	 * @desc: 新增采购单
+	 *
+	 * @author: lujunjie
+	 * @date: 2017/12/25
+	 */
+	@RequestMapping(value = "/addConstract",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
+	public String addConstract(@Valid PurchaseContractVo purchaseContractVo, BindingResult bindingResult) throws Exception {
+		String resultUtil = "";
+		try{
+
+			resultUtil = purchaseContractService.addContract(purchaseContractVo);
+		}catch (Exception e)
+		{
+			if(e.getMessage().equals("td"))
+			{
+				resultUtil = ResultUtil.result(EnumCode.EXCPTION_ERROR.getValue(), "该资源已经锁货，无法变更数据");
+			}
+		}
+
+
+		return resultUtil;
+	}
+
+
+
     /**
-     * @desc: 新增合同
+     * @desc: 新增采购入库单
      *
-     * @author: jwy
+     * @author: lujunjie
      * @date: 2017/12/25
      */
-    @RequestMapping(value = "/addConstract",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/addinstockConstract",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
-    public String addConstract(@Valid PurchaseContractVo purchaseContractVo, BindingResult bindingResult) throws Exception {
+    public String addinstockConstract(@Valid PurchaseContractVo purchaseContractVo, BindingResult bindingResult) throws Exception {
 		String resultUtil = "";
      try{
 
-		 resultUtil = purchaseContractService.addContract(purchaseContractVo);
+		 resultUtil = purchaseContractService.addinstockConstract(purchaseContractVo);
 	 }catch (Exception e)
 	 {
         if(e.getMessage().equals("td"))
@@ -190,7 +219,7 @@ public class PurchaseContractApi extends BaseApi {
     @RequestMapping(value = "/verifyPurchaseContract" ,method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.GET, RequestMethod.POST})//跨域
     public Object verifySaleContract(Integer id,String purchaseno,String memberId) throws ParseException {
-    	 Integer status = purchaseContractService.updateByVerify(id,purchaseno,memberId);
+    	 Integer status = purchaseContractService.updatePurchaseByVerify(id,purchaseno,memberId);
     	 if (status>0)
 	     {
 	    	 return ResultUtil.result(EnumCode.OK.getValue(), "审核成功");
