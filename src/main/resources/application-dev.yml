@@ -35,15 +35,13 @@ spring:
 mybatis:
   mapper-locations: classpath:com/shiro/steel/mapper/xml/*.xml
   type-aliases-package: com.shiro.steel.entity
-
-logging:
-  config: classpath:log4j2.xml
-  level:
-    com.shiro.steel.mapper: debug
 cos:
   accessKeyId: AKID39AA3AN5tVwJdosmDYqwUoBRgniWKrHb
   accessKeySecret: IUXVIvRl27A32riT2hG2lO4hRUvKdsy3
   endpoint: ap-shanghai
   bucket: fw-1300712873
   dir: steel/
+
+logging:
+  path: D:/log/steel
 
