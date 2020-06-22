@@ -32,6 +32,10 @@ public class PurchaseContract implements Serializable {
 
     private BigDecimal purchaseamount;
 
+    private BigDecimal instockweight;
+
+    private BigDecimal instockamount;
+
     private Date purchasedate;
 
     private String payment;
@@ -131,6 +135,22 @@ public class PurchaseContract implements Serializable {
 
     public BigDecimal getPurchaseamount() {
         return purchaseamount;
+    }
+
+    public BigDecimal getInstockweight() {
+        return instockweight;
+    }
+
+    public void setInstockweight(BigDecimal instockweight) {
+        this.instockweight = instockweight;
+    }
+
+    public BigDecimal getInstockamount() {
+        return instockamount;
+    }
+
+    public void setInstockamount(BigDecimal instockamount) {
+        this.instockamount = instockamount;
     }
 
     public void setPurchaseamount(BigDecimal purchaseamount) {

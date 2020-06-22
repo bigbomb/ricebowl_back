@@ -24,15 +24,21 @@ public class PurchaseContractDetail implements Serializable {
 
     private String productmark;
 
+    private Integer instocknum;
+
     private Integer num;
 
     private BigDecimal weight;
+
+    private BigDecimal instockweight;
 
     private BigDecimal price;
 
     private String unit;
 
-    private BigDecimal total;
+    private BigDecimal totalamount;
+
+    private BigDecimal instocktotalamount;
     
     private String warehousename;
 
@@ -139,15 +145,22 @@ public class PurchaseContractDetail implements Serializable {
         this.unit = unit;
     }
 
-    public BigDecimal getTotal() {
-        return total;
+    public BigDecimal getTotalamount() {
+        return totalamount;
     }
 
-    public void setTotal(BigDecimal total) {
-        this.total = total;
+    public void setTotalamount(BigDecimal totalamount) {
+        this.totalamount = totalamount;
     }
 
-    
+    public BigDecimal getInstocktotalamount() {
+        return instocktotalamount;
+    }
+
+    public void setInstocktotalamount(BigDecimal instocktotalamount) {
+        this.instocktotalamount = instocktotalamount;
+    }
+
     public String getWarehousename() {
 		return warehousename;
 	}
@@ -203,5 +216,21 @@ public class PurchaseContractDetail implements Serializable {
 
     public void setUpt(Date upt) {
         this.upt = upt;
+    }
+
+    public Integer getInstocknum() {
+        return instocknum;
+    }
+
+    public void setInstocknum(Integer instocknum) {
+        this.instocknum = instocknum;
+    }
+
+    public BigDecimal getInstockweight() {
+        return instockweight;
+    }
+
+    public void setInstockweight(BigDecimal instockweight) {
+        this.instockweight = instockweight;
     }
 }

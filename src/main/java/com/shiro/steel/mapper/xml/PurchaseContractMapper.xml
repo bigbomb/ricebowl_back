@@ -13,6 +13,8 @@
     <result column="customerName" jdbcType="VARCHAR" property="customername" />
     <result column="purchaseWeight" jdbcType="DECIMAL" property="purchaseweight" />
     <result column="purchaseAmount" jdbcType="DECIMAL" property="purchaseamount" />
+    <result column="instockWeight" jdbcType="DECIMAL" property="instockweight" />
+    <result column="instockAmount" jdbcType="DECIMAL" property="instockamount" />
     <result column="purchaseDate" jdbcType="TIMESTAMP" property="purchasedate" />
     <result column="payment" jdbcType="VARCHAR" property="payment" />
     <result column="createBy" jdbcType="VARCHAR" property="createby" />
@@ -35,6 +37,8 @@
       customerName = #{customername,jdbcType=VARCHAR},
       purchaseWeight = #{purchaseweight,jdbcType=DECIMAL},
       purchaseAmount = #{purchaseamount,jdbcType=DECIMAL},
+      instockWeight = #{instockweight,jdbcType=DECIMAL},
+      instockAmount = #{instockamount,jdbcType=DECIMAL},
       purchaseDate = #{purchasedate,jdbcType=TIMESTAMP},
       payment = #{payment,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
@@ -43,14 +47,14 @@
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select id, memberId, purchaseStatus, supplyerName, purchaseNo, contractNo, customerName, 
-    purchaseWeight, purchaseAmount, purchaseDate, payment, createBy, verifyBy, remark, 
+    purchaseWeight, purchaseAmount, instockWeight,instockAmount,purchaseDate, payment, createBy, verifyBy, remark,
     crt, upt
     from purchase_contract
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select id, memberId, purchaseStatus, supplyerName, purchaseNo, contractNo, customerName, 
-    purchaseWeight, purchaseAmount, purchaseDate, payment, createBy, verifyBy, remark, 
+    select id, memberId, purchaseStatus, supplyerName, purchaseNo, contractNo, customerName,
+    purchaseWeight, purchaseAmount, instockWeight, instockAmount,purchaseDate, payment, createBy, verifyBy, remark,
     crt, upt
     from purchase_contract
   </select>
@@ -58,7 +62,7 @@
 		SELECT
 		id,memberId, purchaseStatus, supplyerName, 
       purchaseNo, contractNo,customerName,purchaseWeight,
-      purchaseAmount, purchaseDate, payment, 
+      purchaseAmount,instockWeight,instockAmount, purchaseDate, payment,
       createBy, verifyBy, remark, crt,upt
 		FROM
 		purchase_contract
@@ -73,7 +77,7 @@
 		SELECT
 		id,memberId, purchaseStatus, invoiceStatus,supplyerName, 
       purchaseNo, contractNo,customerName,purchaseWeight,
-      purchaseAmount, purchaseDate, payment, 
+      purchaseAmount, instockWeight, instockAmount, purchaseDate, payment,
       createBy, verifyBy, remark, crt,upt
 		FROM
 		purchase_contract

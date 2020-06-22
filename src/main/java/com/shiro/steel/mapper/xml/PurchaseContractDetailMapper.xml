@@ -9,10 +9,13 @@
     <result column="productFactory" jdbcType="VARCHAR" property="productfactory" />
     <result column="productMark" jdbcType="VARCHAR" property="productmark" />
     <result column="num" jdbcType="INTEGER" property="num" />
+    <result column="instockNum" jdbcType="INTEGER" property="instocknum" />
     <result column="weight" jdbcType="DECIMAL" property="weight" />
+    <result column="instockWeight" jdbcType="DECIMAL" property="instockweight" />
     <result column="price" jdbcType="DECIMAL" property="price" />
     <result column="unit" jdbcType="VARCHAR" property="unit" />
-    <result column="total" jdbcType="DECIMAL" property="total" />
+    <result column="totalAmount" jdbcType="DECIMAL" property="totalamount" />
+    <result column="instockTotalAmount" jdbcType="DECIMAL" property="instocktotalamount" />
     <result column="stockOutType" jdbcType="VARCHAR" property="stockouttype" />
     <result column="quality" jdbcType="VARCHAR" property="quality" />
     <result column="status" jdbcType="VARCHAR" property="status" />
@@ -34,9 +37,12 @@
       productMark = #{productmark,jdbcType=VARCHAR},
       num = #{num,jdbcType=INTEGER},
       weight = #{weight,jdbcType=DECIMAL},
+      instockNum = #{instocknum,jdbcType=INTEGER},
+      instockWeight = #{instockweight,jdbcType=DECIMAL},
       price = #{price,jdbcType=DECIMAL},
       unit = #{unit,jdbcType=VARCHAR},
-      total = #{total,jdbcType=DECIMAL},
+      totalAmount = #{totalamount,jdbcType=DECIMAL},
+      instockTotalAmount = #{instocktotalamount,jdbcType=DECIMAL},
       stockOutType = #{stockouttype,jdbcType=VARCHAR},
       quality = #{quality,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
@@ -56,13 +62,13 @@
   
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select id, purchaseNo, productName, productSpec, productFactory, productMark, num, 
-    weight, price, unit, total, stockOutType, quality, remark, crt, upt
+    weight, instockNum,instockWeight, price, unit, totalAmount,instockTotalAmount, stockOutType, quality, remark, crt, upt
     from purchase_contract_detail
     where id = #{id,jdbcType=INTEGER}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     select id, purchaseNo, productName, productSpec, productFactory, productMark, num, 
-    weight, price, unit, total, stockOutType, quality, remark, crt, upt
+    weight, instockNum,instockWeight,instockTotalAmount, price, unit, total, stockOutType, quality, remark, crt, upt
     from purchase_contract_detail
   </select>
   
