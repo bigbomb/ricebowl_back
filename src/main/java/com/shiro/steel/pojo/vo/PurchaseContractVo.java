@@ -31,6 +31,12 @@ public class PurchaseContractVo implements Serializable {
 
     private Date purchasedate;
 
+    private BigDecimal instocktotalweight;
+
+    private BigDecimal instocktotalamount;
+
+    private BigDecimal instocktotalnum;
+
     private String payment;
 
     private String createby;
@@ -134,6 +140,30 @@ public class PurchaseContractVo implements Serializable {
 
     public void setPurchasedate(Date purchasedate) {
         this.purchasedate = purchasedate;
+    }
+
+    public BigDecimal getInstocktotalweight() {
+        return instocktotalweight;
+    }
+
+    public void setInstocktotalweight(BigDecimal instocktotalweight) {
+        this.instocktotalweight = instocktotalweight;
+    }
+
+    public BigDecimal getInstocktotalamount() {
+        return instocktotalamount;
+    }
+
+    public void setInstocktotalamount(BigDecimal instocktotalamount) {
+        this.instocktotalamount = instocktotalamount;
+    }
+
+    public BigDecimal getInstocktotalnum() {
+        return instocktotalnum;
+    }
+
+    public void setInstocktotalnum(BigDecimal instocktotalnum) {
+        this.instocktotalnum = instocktotalnum;
     }
 
     public String getPayment() {
