@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shiro.steel.mapper.PurchaseContractInstockMapper">
+  <resultMap id="BaseResultMap" type="com.shiro.steel.entity.PurchaseContractInstock">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="memberId" jdbcType="VARCHAR" property="memberid" />
+    <result column="purchaseStatus" jdbcType="VARCHAR" property="purchasestatus" />
+    <result column="invoiceStatus" jdbcType="VARCHAR" property="invoicestatus" />
+    <result column="supplyerName" jdbcType="VARCHAR" property="supplyername" />
+    <result column="purchaseNo" jdbcType="VARCHAR" property="purchaseno" />
+    <result column="contractNo" jdbcType="VARCHAR" property="contractno" />
+    <result column="purchaseInstockNo" jdbcType="VARCHAR" property="purchaseinstockno" />
+    <result column="customerName" jdbcType="VARCHAR" property="customername" />
+    <result column="totalWeight" jdbcType="DECIMAL" property="totalweight" />
+    <result column="totalAmount" jdbcType="DECIMAL" property="totalamount" />
+    <result column="payment" jdbcType="VARCHAR" property="payment" />
+    <result column="createBy" jdbcType="VARCHAR" property="createby" />
+    <result column="verifyBy" jdbcType="VARCHAR" property="verifyby" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="crt" jdbcType="TIMESTAMP" property="crt" />
+    <result column="upt" jdbcType="TIMESTAMP" property="upt" />
+    <result column="supplyerId" jdbcType="INTEGER" property="supplyerid" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from purchase_contract_instock
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.shiro.steel.entity.PurchaseContractInstock">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into purchase_contract_instock (memberId, purchaseStatus, invoiceStatus, 
+      supplyerName, purchaseNo, contractNo, 
+      purchaseInstockNo, customerName, totalWeight, 
+      totalAmount, payment, createBy, 
+      verifyBy, remark, crt, 
+      upt, supplyerId)
+    values (#{memberid,jdbcType=VARCHAR}, #{purchasestatus,jdbcType=VARCHAR}, #{invoicestatus,jdbcType=VARCHAR}, 
+      #{supplyername,jdbcType=VARCHAR}, #{purchaseno,jdbcType=VARCHAR}, #{contractno,jdbcType=VARCHAR}, 
+      #{purchaseinstockno,jdbcType=VARCHAR}, #{customername,jdbcType=VARCHAR}, #{totalweight,jdbcType=DECIMAL}, 
+      #{totalamount,jdbcType=DECIMAL}, #{payment,jdbcType=VARCHAR}, #{createby,jdbcType=VARCHAR}, 
+      #{verifyby,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{crt,jdbcType=TIMESTAMP}, 
+      #{upt,jdbcType=TIMESTAMP}, #{supplyerid,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.shiro.steel.entity.PurchaseContractInstock">
+    update purchase_contract_instock
+    set memberId = #{memberid,jdbcType=VARCHAR},
+      purchaseStatus = #{purchasestatus,jdbcType=VARCHAR},
+      invoiceStatus = #{invoicestatus,jdbcType=VARCHAR},
+      supplyerName = #{supplyername,jdbcType=VARCHAR},
+      purchaseNo = #{purchaseno,jdbcType=VARCHAR},
+      contractNo = #{contractno,jdbcType=VARCHAR},
+      purchaseInstockNo = #{purchaseinstockno,jdbcType=VARCHAR},
+      customerName = #{customername,jdbcType=VARCHAR},
+      totalWeight = #{totalweight,jdbcType=DECIMAL},
+      totalAmount = #{totalamount,jdbcType=DECIMAL},
+      payment = #{payment,jdbcType=VARCHAR},
+      createBy = #{createby,jdbcType=VARCHAR},
+      verifyBy = #{verifyby,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      crt = #{crt,jdbcType=TIMESTAMP},
+      upt = #{upt,jdbcType=TIMESTAMP},
+      supplyerId = #{supplyerid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, memberId, purchaseStatus, invoiceStatus, supplyerName, purchaseNo, contractNo, 
+    purchaseInstockNo, customerName, totalWeight, totalAmount, payment, createBy, verifyBy, 
+    remark, crt, upt, supplyerId
+    from purchase_contract_instock
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, memberId, purchaseStatus, invoiceStatus, supplyerName, purchaseNo, contractNo, 
+    purchaseInstockNo, customerName, totalWeight, totalAmount, payment, createBy, verifyBy, 
+    remark, crt, upt, supplyerId
+    from purchase_contract_instock
+  </select>
+</mapper>
