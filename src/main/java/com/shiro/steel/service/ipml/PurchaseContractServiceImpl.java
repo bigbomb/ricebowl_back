@@ -65,7 +65,14 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 
 	@Autowired
 	private TransportOrderDetailService transportOrderDetailService;
+
+	@Autowired
+	private PurchaseContractInstockService purchaseContractInstockService;
+
+	@Autowired
+	private PurchaseContractInstockDetailService purchaseContractInstockDetailService;
 	final static String preName = "cg";
+	final static String instockPreName = "is";
 	@Override
 	public List<PurchaseContractDto> findPurchaseContractByStatusPage(Page<PurchaseContractDto> page, ParamsDto dto,String statusTab,String invoiceStatus,String createby, String startTime,String endTime) {
 		// TODO Auto-generated method stub
@@ -85,31 +92,50 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 		// TODO Auto-generated method stub
 		String contractno = "";
     	//contractVo.setContractstatus(ContractStatus.TOPAY.getText());
-    	String purchaseContractDetail = purchaseContractVo.getPurchaseContractDetail();
-    	List<PurchaseContractDetail>  collection = JSONObject.parseArray(purchaseContractDetail, PurchaseContractDetail.class);
+    	String purchaseContractInstockDetail = purchaseContractVo.getPurchaseContractDetail();
+    	List<PurchaseContractInstockDetail>  collection = JSONObject.parseArray(purchaseContractInstockDetail, PurchaseContractInstockDetail.class);
     	String status ="";
-		PurchaseContract purchaseContract = new PurchaseContract();
-		BeanCopier copier = BeanCopier.create(PurchaseContractVo.class, PurchaseContract.class, false);
-		copier.copy(purchaseContractVo, purchaseContract, null);
+    	PurchaseContractDetail purchaseContractDetail = new PurchaseContractDetail();
+    	List<PurchaseContractDetail> purchaseContractDetailList = new ArrayList<PurchaseContractDetail>();
+    	Map<Integer,String> totalMap = new HashMap<>(6);
+		PurchaseContractInstock purchaseContractInstock = new PurchaseContractInstock();
+		BeanCopier copier = BeanCopier.create(PurchaseContractVo.class, PurchaseContractInstock.class, false);
+		copier.copy(purchaseContractVo, purchaseContractInstock, null);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			if(StringUtils.isEmpty(purchaseContractVo.getPurchaseno()))
+			if(StringUtils.isEmpty(purchaseContractVo.getPurchaseinstockno()))
 			{
-				contractno = preName+CommonUtil.getTimeStamp();
-				purchaseContract.setPurchaseno(contractno);
+				contractno = instockPreName+CommonUtil.getTimeStamp();
+				purchaseContractInstock.setPurchaseinstockno(contractno);
 				List<Product> productList = new ArrayList<Product>();
 				List<Productfactory> productfactoryList = new ArrayList<Productfactory>();
 				List<Productmark> productmarkList = new ArrayList<Productmark>();
 				List<Productspec> productspecList = new ArrayList<Productspec>();
 				List<WarehouseInfo> saleContractWarehouseList = new ArrayList<WarehouseInfo>();
 				List checkProduct = new ArrayList();
-		    	for(PurchaseContractDetail s:collection){
+				BigDecimal newweight = new BigDecimal(0);
+				BigDecimal newamount = new BigDecimal(0);
+				Integer newnum = 0;
+		    	for(PurchaseContractInstockDetail s:collection){
+		    		if(!totalMap.containsKey(s.getId()))
+					{
+						totalMap.put(s.getId(),s.getWeight().toString()+"_"+s.getTotal().toString()+"_"+s.getNum().toString());
+					}
+		    		else
+					{
+                        String totalString = totalMap.get(s.getId());
+                        String[] totalList = totalString.split("_");
+                        newweight = new BigDecimal(totalList[0]).add(s.getWeight());
+						newamount = new BigDecimal(totalList[1]).add(s.getTotal());
+						newnum = Integer.valueOf(totalList[2])+s.getNum();
+						totalMap.put(s.getId(),newweight.toString()+"_"+newamount.toString()+"_"+newnum.toString());
+					}
 		    		Product product = new Product();
 					Productfactory productfactory = new Productfactory();
 					Productmark productmark = new Productmark();
 					Productspec productspec = new Productspec();
 					WarehouseInfo saleContractWarehouse = new WarehouseInfo();
-		  		   s.setPurchaseno(contractno);
+		  		   s.setPurchaseinstockno(contractno);
 		  		   s.setStatus("待审核");
 		  		   s.setCrt(sdf1.parse(sdf1.format(new Date())));
 		  		   EntityWrapper<Product> eWrapper = new EntityWrapper<Product>(product);
@@ -240,14 +266,28 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 		    	UserInfoDto userInfoDto = new UserInfoDto();
 		        Subject subject = SecurityUtils.getSubject();   
 			    userInfoDto = (UserInfoDto) subject.getPrincipal();
+				for (Integer key : totalMap.keySet()) {
+					String totalMapString = totalMap.get(key);
+					String[] totalMapStringList = totalMapString.split("_");
+					purchaseContractDetail.setUpt(sdf1.parse(sdf1.format(new Date())));
+					purchaseContractDetail.setId(key);
+					purchaseContractDetail.setInstockweight(new BigDecimal(totalMapStringList[0]));
+					purchaseContractDetail.setInstocktotalamount(new BigDecimal(totalMapStringList[1]));
+					purchaseContractDetail.setInstocknum(Integer.valueOf(totalMapStringList[2]));
+					purchaseContractDetailList.add(purchaseContractDetail);
+				}
+				purchaseContractDetailService.updateBatchById(purchaseContractDetailList);
 			    purchaseContractVo.setMemberid(purchaseContractVo.getMemberid());
-			    purchaseContract.setPurchasedate(sdf.parse(sdf.format(new Date())));
-			    purchaseContract.setCrt(sdf1.parse(sdf1.format(new Date())));
-			    purchaseContract.setPurchasestatus("待审核");
-			    purchaseContract.setInvoicestatus("未收到");
-			    purchaseContract.setCreateby(userInfoDto.getUsername());
-				super.baseMapper.insert(purchaseContract);
-				purchaseContractDetailService.insertBatch(collection);
+//			    purchaseContract.setPurchasedate(sdf.parse(sdf.format(new Date())));
+			    purchaseContractInstock.setCrt(sdf1.parse(sdf1.format(new Date())));
+				purchaseContractInstock.setPurchasestatus("待审核");
+				purchaseContractInstock.setTotalweight(purchaseContractVo.getInstocktotalweight());
+				purchaseContractInstock.setTotalamount(purchaseContractVo.getInstocktotalamount());
+				purchaseContractInstock.setTotalnum(purchaseContractVo.getInstocktotalnum());
+//				purchaseContractInstock.setInvoicestatus("未收到");
+				purchaseContractInstock.setCreateby(userInfoDto.getUsername());
+				purchaseContractInstockService.insert(purchaseContractInstock);
+				purchaseContractInstockDetailService.insertBatch(collection);
 				status = "新增成功";
 			}
 			else
@@ -260,10 +300,10 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 				List<Stock> stockList = new ArrayList<Stock>();
 
 				 List checkProduct = new ArrayList();
-				purchaseContract.setUpt(sdf1.parse(sdf1.format(new Date())));
-				super.baseMapper.updateByPrimaryKey(purchaseContract);
+				purchaseContractInstock.setUpt(sdf1.parse(sdf1.format(new Date())));
+				purchaseContractInstockService.updateByPrimaryKey(purchaseContractInstock);
 
-				for(PurchaseContractDetail s:collection){
+				for(PurchaseContractInstockDetail s:collection){
 //					if(purchaseContractVo.getChange()==1)
 //					{
 						EntityWrapper stockWrapper = new EntityWrapper();
@@ -309,7 +349,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 					Productmark productmark = new Productmark();
 					Productspec productspec = new Productspec();
 					WarehouseInfo saleContractWarehouse = new WarehouseInfo();
-			  		  s.setPurchaseno(purchaseContract.getPurchaseno());  
+			  		  s.setPurchaseno(purchaseContractInstock.getPurchaseno());
 //			  		  s.setStatus("在库");
 			  		  EntityWrapper<Product> eWrapper = new EntityWrapper<Product>(product);
 		  		 	  product.setProductname(s.getProductname());
@@ -533,7 +573,7 @@ public class PurchaseContractServiceImpl extends ServiceImpl<PurchaseContractMap
 //
 				}
 		    	status ="保存成功";
-				purchaseContractDetailService.updateBatchById(collection);
+				purchaseContractInstockDetailService.updateBatchById(collection);
 			}
 		 return ResultUtil.result(EnumCode.OK.getValue(), status);
 	}

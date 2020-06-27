@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import com.shiro.steel.pojo.dto.PurchaseInstockDto;
+import com.shiro.steel.service.PurchaseContractInstockService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,8 @@ public class PurchaseContractApi extends BaseApi {
     private PurchaseContractService purchaseContractService;
     @Autowired
     private PurchaseContractDetailService purchaseContractDetailService;
+    @Autowired
+	private PurchaseContractInstockService purchaseContractInstockService;
     
     @Autowired
     private SupplyerService supplyerService;
@@ -105,6 +109,56 @@ public class PurchaseContractApi extends BaseApi {
         return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list, page.getTotal(),page.getPages());
     }
 
+	/**
+	 * @desc: 查询订单
+	 *
+	 * @param dto 参数dto
+	 * @author: jwy
+	 * @throws ParseException
+	 * @date: 2017/12/19
+	 */
+	@RequestMapping(value = "/findPurchaseInstockByPage",method = RequestMethod.POST,produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	@CrossOrigin(origins = "*",maxAge = 3600,methods = {RequestMethod.POST})//跨域
+	public Object findInstockByPage(ParamsDto dto,String statusTab,String invoiceStatus,String memberId, String startTime,String endTime) throws ParseException{
+		UserInfoDto userInfoDto = new UserInfoDto();
+		Subject subject = SecurityUtils.getSubject();
+		userInfoDto = (UserInfoDto) subject.getPrincipal();
+		String createby = null;
+		Integer type = userInfoDto.getType();
+		if(type==1)
+		{
+
+		}
+		else if(type==2)
+		{
+			createby = userInfoDto.getUsername();
+		}
+		Page<PurchaseInstockDto> page = new Page<>(dto.getStartPage(),dto.getPageSize());
+		if("全部".equals(statusTab))
+		{
+			statusTab = null;
+		}
+
+		Date startTimeDate = null;
+		Date endTimeDate = null;
+		String startTimeString = "";
+		String endTimeString = "";
+		if(!StringUtils.isEmpty(startTime))
+		{
+			SimpleDateFormat sf = new SimpleDateFormat("EEE MMM dd yyyy HH:mm:ss 'GMT'Z",Locale.ENGLISH);
+			startTimeDate = sf.parse(startTime);
+			endTimeDate = sf.parse(endTime);
+			startTimeString =new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(startTimeDate);
+			endTimeString =new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(endTimeDate);
+//        	startTimeDate = new Date(startTime);
+//
+//        	endTimeDate = new Date(endTime);
+		}
+
+
+		List<PurchaseInstockDto> list = purchaseContractInstockService.findPurchaseInstockByStatusPage(page,dto,statusTab,invoiceStatus,createby,startTimeString,endTimeString);
+		return ResultUtil.result(EnumCode.OK.getValue(), "读取成功", list, page.getTotal(),page.getPages());
+	}
 
 	/**
 	 * @desc: 新增采购单

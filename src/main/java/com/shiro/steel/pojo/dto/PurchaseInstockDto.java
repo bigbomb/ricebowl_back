@@ -4,38 +4,30 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import com.baomidou.mybatisplus.annotations.TableId;
-import com.baomidou.mybatisplus.annotations.TableName;
-import com.baomidou.mybatisplus.enums.IdType;
-
-public class PurchaseContractDto implements Serializable {
+public class PurchaseInstockDto implements Serializable {
     private Integer id;
 
     private String memberid;
 
     private String purchasestatus;
-    
+
     private String invoicestatus;
 
     private String supplyername;
-
-    private Integer supplyerid;
 
     private String purchaseno;
 
     private String contractno;
 
+    private String purchaseinstockno;
+
     private String customername;
 
-    private BigDecimal purchaseweight;
+    private BigDecimal totalweight;
 
-    private BigDecimal purchaseamount;
+    private BigDecimal totalamount;
 
-    private BigDecimal instockweight;
-
-    private BigDecimal instockamount;
-
-    private Date purchasedate;
+    private Integer totalnum;
 
     private String payment;
 
@@ -48,7 +40,9 @@ public class PurchaseContractDto implements Serializable {
     private Date crt;
 
     private Date upt;
-    
+
+    private Integer supplyerid;
+
     private static final long serialVersionUID = 1L;
 
     public Integer getId() {
@@ -75,16 +69,15 @@ public class PurchaseContractDto implements Serializable {
         this.purchasestatus = purchasestatus;
     }
 
-    
     public String getInvoicestatus() {
-		return invoicestatus;
-	}
+        return invoicestatus;
+    }
 
-	public void setInvoicestatus(String invoicestatus) {
-		this.invoicestatus = invoicestatus;
-	}
+    public void setInvoicestatus(String invoicestatus) {
+        this.invoicestatus = invoicestatus;
+    }
 
-	public String getSupplyername() {
+    public String getSupplyername() {
         return supplyername;
     }
 
@@ -92,28 +85,28 @@ public class PurchaseContractDto implements Serializable {
         this.supplyername = supplyername;
     }
 
-    public Integer getSupplyerid() {
-        return supplyerid;
-    }
-
-    public void setSupplyerid(Integer supplyerid) {
-        this.supplyerid = supplyerid;
-    }
-
     public String getPurchaseno() {
-		return purchaseno;
-	}
+        return purchaseno;
+    }
 
-	public void setPurchaseno(String purchaseno) {
-		this.purchaseno = purchaseno;
-	}
+    public void setPurchaseno(String purchaseno) {
+        this.purchaseno = purchaseno;
+    }
 
-	public String getContractno() {
+    public String getContractno() {
         return contractno;
     }
 
     public void setContractno(String contractno) {
         this.contractno = contractno;
+    }
+
+    public String getPurchaseinstockno() {
+        return purchaseinstockno;
+    }
+
+    public void setPurchaseinstockno(String purchaseinstockno) {
+        this.purchaseinstockno = purchaseinstockno;
     }
 
     public String getCustomername() {
@@ -124,44 +117,28 @@ public class PurchaseContractDto implements Serializable {
         this.customername = customername;
     }
 
-    public BigDecimal getPurchaseweight() {
-        return purchaseweight;
+    public BigDecimal getTotalweight() {
+        return totalweight;
     }
 
-    public void setPurchaseweight(BigDecimal purchaseweight) {
-        this.purchaseweight = purchaseweight;
+    public void setTotalweight(BigDecimal totalweight) {
+        this.totalweight = totalweight;
     }
 
-    public BigDecimal getPurchaseamount() {
-        return purchaseamount;
+    public BigDecimal getTotalamount() {
+        return totalamount;
     }
 
-    public void setPurchaseamount(BigDecimal purchaseamount) {
-        this.purchaseamount = purchaseamount;
+    public void setTotalamount(BigDecimal totalamount) {
+        this.totalamount = totalamount;
     }
 
-    public BigDecimal getInstockweight() {
-        return instockweight;
+    public Integer getTotalnum() {
+        return totalnum;
     }
 
-    public void setInstockweight(BigDecimal instockweight) {
-        this.instockweight = instockweight;
-    }
-
-    public BigDecimal getInstockamount() {
-        return instockamount;
-    }
-
-    public void setInstockamount(BigDecimal instockamount) {
-        this.instockamount = instockamount;
-    }
-
-    public Date getPurchasedate() {
-        return purchasedate;
-    }
-
-    public void setPurchasedate(Date purchasedate) {
-        this.purchasedate = purchasedate;
+    public void setTotalnum(Integer totalnum) {
+        this.totalnum = totalnum;
     }
 
     public String getPayment() {
@@ -212,6 +189,12 @@ public class PurchaseContractDto implements Serializable {
         this.upt = upt;
     }
 
+    public Integer getSupplyerid() {
+        return supplyerid;
+    }
 
+    public void setSupplyerid(Integer supplyerid) {
+        this.supplyerid = supplyerid;
+    }
     
 }

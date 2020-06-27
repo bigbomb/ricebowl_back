@@ -13,6 +13,7 @@
     <result column="customerName" jdbcType="VARCHAR" property="customername" />
     <result column="totalWeight" jdbcType="DECIMAL" property="totalweight" />
     <result column="totalAmount" jdbcType="DECIMAL" property="totalamount" />
+    <result column="totalNum" jdbcType="DECIMAL" property="totalnum" />
     <result column="payment" jdbcType="VARCHAR" property="payment" />
     <result column="createBy" jdbcType="VARCHAR" property="createby" />
     <result column="verifyBy" jdbcType="VARCHAR" property="verifyby" />
@@ -30,15 +31,15 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into purchase_contract_instock (memberId, purchaseStatus, invoiceStatus, 
-      supplyerName, purchaseNo, contractNo, 
+      supplyerName, purchaseNo, contractNo,
       purchaseInstockNo, customerName, totalWeight, 
-      totalAmount, payment, createBy, 
+      totalAmount, totalNum,payment, createBy,
       verifyBy, remark, crt, 
       upt, supplyerId)
     values (#{memberid,jdbcType=VARCHAR}, #{purchasestatus,jdbcType=VARCHAR}, #{invoicestatus,jdbcType=VARCHAR}, 
-      #{supplyername,jdbcType=VARCHAR}, #{purchaseno,jdbcType=VARCHAR}, #{contractno,jdbcType=VARCHAR}, 
+      #{supplyername,jdbcType=VARCHAR}, #{purchaseno,jdbcType=VARCHAR}, #{contractno,jdbcType=VARCHAR},
       #{purchaseinstockno,jdbcType=VARCHAR}, #{customername,jdbcType=VARCHAR}, #{totalweight,jdbcType=DECIMAL}, 
-      #{totalamount,jdbcType=DECIMAL}, #{payment,jdbcType=VARCHAR}, #{createby,jdbcType=VARCHAR}, 
+      #{totalamount,jdbcType=DECIMAL}, #{totalnum,jdbcType=INTEGER},#{payment,jdbcType=VARCHAR}, #{createby,jdbcType=VARCHAR},
       #{verifyby,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{crt,jdbcType=TIMESTAMP}, 
       #{upt,jdbcType=TIMESTAMP}, #{supplyerid,jdbcType=INTEGER})
   </insert>
@@ -54,6 +55,7 @@
       customerName = #{customername,jdbcType=VARCHAR},
       totalWeight = #{totalweight,jdbcType=DECIMAL},
       totalAmount = #{totalamount,jdbcType=DECIMAL},
+      totalNum= #{totalnum,jdbcType=DECIMAL},
       payment = #{payment,jdbcType=VARCHAR},
       createBy = #{createby,jdbcType=VARCHAR},
       verifyBy = #{verifyby,jdbcType=VARCHAR},
@@ -75,5 +77,33 @@
     purchaseInstockNo, customerName, totalWeight, totalAmount, payment, createBy, verifyBy, 
     remark, crt, upt, supplyerId
     from purchase_contract_instock
+  </select>
+
+  <select id="findPurchaseInstockByStatusPage" resultType="com.shiro.steel.pojo.dto.PurchaseInstockDto">
+    select id, memberId, purchaseStatus, invoiceStatus, supplyerName, purchaseNo, contractNo,
+    purchaseInstockNo, customerName, totalWeight, totalAmount,totalNum, payment, createBy, verifyBy,
+    remark, crt, upt, supplyerId
+    FROM
+    purchase_contract_instock
+    WHERE 1=1
+    <if test="''!= dto.keyword and dto.keyword!=null">
+      AND supplyerName LIKE CONCAT('%',#{dto.keyword},'%')
+    </if>
+    <if test="''!=statusTab and statusTab!=null">
+      AND purchaseStatus =#{statusTab}
+    </if>
+    <if test="''!= invoicestatus and invoicestatus!=null">
+      AND invoiceStatus =#{invoicestatus}
+    </if>
+    <if test="startTime != null and startTime != ''">
+      AND  DATE_FORMAT(crt,'%Y-%m-%d') <![CDATA[>=]]> DATE_FORMAT(#{startTime},'%Y-%m-%d')
+    </if>
+    <if test="endTime != null and endTime != ''">
+      AND  DATE_FORMAT(crt,'%Y-%m-%d')  <![CDATA[<=]]> DATE_FORMAT(#{endTime},'%Y-%m-%d')
+    </if>
+    <if test="''!=createby and createby!=null">
+      AND createBy =#{createby}
+    </if>
+    order by crt desc
   </select>
 </mapper>

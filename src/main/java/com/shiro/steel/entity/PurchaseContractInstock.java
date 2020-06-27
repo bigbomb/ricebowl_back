@@ -32,6 +32,8 @@ public class PurchaseContractInstock implements Serializable {
 
     private BigDecimal totalamount;
 
+    private Integer totalnum;
+
     private String payment;
 
     private String createby;
@@ -134,6 +136,14 @@ public class PurchaseContractInstock implements Serializable {
 
     public void setTotalamount(BigDecimal totalamount) {
         this.totalamount = totalamount;
+    }
+
+    public Integer getTotalnum() {
+        return totalnum;
+    }
+
+    public void setTotalnum(Integer totalnum) {
+        this.totalnum = totalnum;
     }
 
     public String getPayment() {

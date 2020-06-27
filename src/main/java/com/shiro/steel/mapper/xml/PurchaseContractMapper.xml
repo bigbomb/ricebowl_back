@@ -75,7 +75,7 @@
 	</select>
    <select id="findPurchaseContractByStatusPage" resultType="com.shiro.steel.pojo.dto.PurchaseContractDto">
 		SELECT
-		id,memberId, purchaseStatus, invoiceStatus,supplyerName, 
+		id,memberId, purchaseStatus, invoiceStatus,supplyerName, supplyerId,
       purchaseNo, contractNo,customerName,purchaseWeight,
       purchaseAmount, instockWeight, instockAmount, purchaseDate, payment,
       createBy, verifyBy, remark, crt,upt

@@ -23,6 +23,8 @@ public class PurchaseContractVo implements Serializable {
 
     private String contractno;
 
+    private String purchaseinstockno;
+
     private String customername;
 
     private BigDecimal purchaseweight;
@@ -35,7 +37,7 @@ public class PurchaseContractVo implements Serializable {
 
     private BigDecimal instocktotalamount;
 
-    private BigDecimal instocktotalnum;
+    private Integer instocktotalnum;
 
     private String payment;
 
@@ -110,6 +112,14 @@ public class PurchaseContractVo implements Serializable {
         this.contractno = contractno;
     }
 
+    public String getPurchaseinstockno() {
+        return purchaseinstockno;
+    }
+
+    public void setPurchaseinstockno(String purchaseinstockno) {
+        this.purchaseinstockno = purchaseinstockno;
+    }
+
     public String getCustomername() {
         return customername;
     }
@@ -158,11 +168,11 @@ public class PurchaseContractVo implements Serializable {
         this.instocktotalamount = instocktotalamount;
     }
 
-    public BigDecimal getInstocktotalnum() {
+    public Integer getInstocktotalnum() {
         return instocktotalnum;
     }
 
-    public void setInstocktotalnum(BigDecimal instocktotalnum) {
+    public void setInstocktotalnum(Integer instocktotalnum) {
         this.instocktotalnum = instocktotalnum;
     }
 
